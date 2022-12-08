@@ -18,22 +18,16 @@ function productlist() {
     console.log(articulos.productsCollection[0]?.["photo/s"])
 
     return (
-
         <div>
-            
             <h1>esto es un product list</h1>
-
             <div className='card.prodList'>
                 {
                     articulos.productsCollection?.map((p) => (
                    <CardProductList
                         productName={p.productName}
                         photo={p["photo/s"]}
-                        productPrice={p.productPrice} id={undefined} 
-                        
+                        productPrice={p.productPrice} id={undefined}         
                     />           
-                            
-                        
                     )) 
                 }
             </div>    
