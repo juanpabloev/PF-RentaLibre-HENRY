@@ -67,7 +67,7 @@ import {
             </Heading>
             <Stack direction={'row'} align={'center'}>
               <Text fontWeight={800} fontSize={'xl'}>
-                {productPrice}
+              {'$ '+productPrice}
               </Text>
               {/* <Text textDecoration={'line-through'} color={'gray.600'}>
                 $199
