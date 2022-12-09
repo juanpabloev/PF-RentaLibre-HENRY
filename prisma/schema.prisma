@@ -71,6 +71,7 @@ model PaymentMethod {
 } 
 
 model Transanction {
+  paymentName   String
   transactionID String @id @default(auto()) @map("_id") @db.ObjectId
   productPrice  String
   productTitle  String
