@@ -17,7 +17,7 @@ import {
   export default function CardProductList({ id, photo, productName, productPrice}) {
     return (
       <Center py={12}>
-        <Link href="#">
+        <Link href={`/productDetail/${id}`}>  {/* {`/productDetail/$id}`} */}
         <Box
           role={'group'}
           p={6}
@@ -71,7 +71,7 @@ import {
                 {'$ '+productPrice}
               </Text>
               {/* <Text textDecoration={'line-through'} color={'gray.600'}>
-                $199
+                $199 
               </Text> */}
               
             </Stack>

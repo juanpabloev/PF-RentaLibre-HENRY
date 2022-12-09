@@ -1,5 +1,6 @@
 import articulos from '../productListScratchData/articulos.json';
 import CardProductList from '../components/CardProductList';
+import styles from '../styles/productList.module.css';
 
 
 // para traer del back: 
@@ -15,18 +16,20 @@ import CardProductList from '../components/CardProductList';
 
 
 function productlist() {
-    console.log(articulos.productsCollection[0]?.["photo/s"])
+    /* console.log(articulos.productsCollection[0]?.["photo/s"]) */
+    console.log(articulos.productsCollection[0])
 
     return (
         <div>
             <h1>esto es un product list</h1>
-            <div className='card.prodList'>
+            <div className={styles.cardsDivProdHome}>
                 {
                     articulos.productsCollection?.map((p) => (
                    <CardProductList
                         productName={p.productName}
                         photo={p["photo/s"]}
-                        productPrice={p.productPrice} id={undefined}         
+                        productPrice={p.productPrice} 
+                        id={p.id}         
                     />           
                     )) 
                 }
