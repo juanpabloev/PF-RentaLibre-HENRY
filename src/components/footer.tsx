@@ -1,16 +1,25 @@
-import { Box, Container, Stack, Text, Link } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Stack,
+  Text,
+  Link,
+  useColorModeValue,
+} from "@chakra-ui/react";
 
 function footer() {
   return (
     <Box>
       <Container
         as={Stack}
-        maxW={"6xl"}
+        maxW={"100%"}
         py={4}
         direction={{ base: "column", md: "row" }}
         spacing={4}
         justify={{ base: "center", md: "space-between" }}
         align={{ base: "center", md: "center" }}
+        bg={useColorModeValue("#404c5a", "gray.800")}
+        color={useColorModeValue("white", "#404c5a")}
       >
         <Stack direction={"row"} spacing={6}>
           <Link href={"contacto"}>Contacto</Link>

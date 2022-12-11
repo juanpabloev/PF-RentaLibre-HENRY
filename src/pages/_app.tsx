@@ -9,7 +9,7 @@ import "../styles/globals.css";
 
 const colors = {
   brand: {
-    blueberry: "#6B7A8F",
+    blueberry: "#404c5a",
     apricot: "#F7882F",
     citrus: "#F7C331",
     apple_core: "#DCC7AA",
