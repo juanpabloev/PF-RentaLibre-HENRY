@@ -46,12 +46,12 @@ export const productsRouter = router({
     .query(async ({ ctx, input }) => {
       const { title } = input;
 
-      const productById = await ctx.prisma.product.findMany({
+      const productByName = await ctx.prisma.product.findMany({
         where: {
           title,
         },
       });
 
-      return productById;
+      return productByName;
     }),
 });
