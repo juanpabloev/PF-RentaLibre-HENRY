@@ -2,6 +2,7 @@ import articulos from "../productListScratchData/articulos.json";
 import CardProductList from "../components/CardProductList";
 import styles from "../styles/productList.module.css";
 import React from "react";
+import { useRouter } from "next/router";
 
 // para traer del back:
 
@@ -15,9 +16,14 @@ import React from "react";
 } */
 
 export const getServerSideProps = async () => {
+  // const router = useRouter();
+  // const { q } = router.query;
+
+  // let res;
+  // if (q) res = await fetch(`http://localhost:3001/productsCollection?q=${q}`);
+  // else res = await fetch("http://localhost:3001/productsCollection");
   const res = await fetch("http://localhost:3001/productsCollection");
   const data = await res.json();
-
   return {
     props: {
       data,
@@ -30,7 +36,7 @@ interface Item {
   productName: string;
   productPrice: number;
   userName: string;
-  ["photo/s"]: string;
+  ["photos"]: string;
   description: string;
   fecha: string;
   category: string;
@@ -48,19 +54,35 @@ export default function Productlist({ data }: Props) {
   //console.log(articulos.productsCollection[0])
 
   return (
-    <div>
-      <h1>esto es un product list</h1>
-      <div className={styles.cardsDivProdHome}>
-        {data?.map((p) => (
-          <CardProductList
-            productName={p.productName}
-            photo={p["photo/s"]}
-            productPrice={p.productPrice}
-            id={p.id}
-          />
-        ))}
-      </div>
-    </div>
+    <>
+      {false ? (
+        <div>
+          <div className={styles.cardsDivProdHome}>
+            {data?.map((p) => (
+              <CardProductList
+                productName={p.productName}
+                photo={p["photos"]}
+                productPrice={p.productPrice}
+                id={p.id}
+              />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div className={styles.cardsDivProdHome}>
+            {data?.map((p) => (
+              <CardProductList
+                productName={p.productName}
+                photo={p["photos"]}
+                productPrice={p.productPrice}
+                id={p.id}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

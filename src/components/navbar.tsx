@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 
 import {
   Box,
@@ -27,10 +28,14 @@ import {
 } from "react-icons/rx";
 
 export default function WithSubnavigation() {
+  const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
-  const [value, setValue] = useState("");
+  const [inputSearch, setInputSearch] = useState("");
   const handleChange = (event: React.FormEvent<HTMLInputElement>) =>
-    setValue(event.currentTarget.value);
+    setInputSearch(event.currentTarget.value);
+  const handleSubmit = (inputText: String) => {
+    router.push(`/productList?q=${inputText}`);
+  };
 
   return (
     <Box>
@@ -66,7 +71,7 @@ export default function WithSubnavigation() {
             RentaLibre
           </Text>
           <Input
-            value={value}
+            value={inputSearch}
             onChange={handleChange}
             placeholder="Busca productos marcas y mas..."
             size="lg"
@@ -77,11 +82,13 @@ export default function WithSubnavigation() {
             borderEndRadius={"none"}
           />
           <IconButton
+            onClick={() => {
+              handleSubmit(inputSearch);
+            }}
             icon={<SearchIcon />}
             size="lg"
             fontSize={"32px"}
             bgColor={"#F7C331"}
-            onClick={onToggle}
             aria-label={""}
             height={""}
             borderStartRadius={"none"}

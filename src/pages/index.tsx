@@ -208,7 +208,6 @@ export const getServerSideProps = async () => {
   const data = await res.json();
   const resCarusel = await fetch("http://localhost:3001/carrousel");
   const dataCarusel = await resCarusel.json();
-  console.log(dataCarusel);
   return {
     props: {
       data,
