@@ -16,9 +16,7 @@ import { useRouter } from "next/router";
 } */
 
 export const getServerSideProps = async () => {
-  // const router = useRouter();
-  // const { q } = router.query;
-
+  
   // let res;
   // if (q) res = await fetch(`http://localhost:3001/productsCollection?q=${q}`);
   // else res = await fetch("http://localhost:3001/productsCollection");
@@ -50,6 +48,9 @@ interface Props {
 // trae de local host 3001 - json server
 
 export default function Productlist({ data }: Props) {
+  const router = useRouter();
+  const { q } = router.query;
+  
   /* console.log(articulos.productsCollection[0]?.["photo/s"]) */
   //console.log(articulos.productsCollection[0])
 
