@@ -34,7 +34,14 @@ export default function WithSubnavigation() {
   const handleChange = (event: React.FormEvent<HTMLInputElement>) =>
     setInputSearch(event.currentTarget.value);
   const handleSubmit = (inputText: String) => {
+    const { category } = router.query;
+    if (category) inputText += `&category=${category}`;
     router.push(`/productList?q=${inputText}`);
+  };
+  const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.code === "Enter") {
+      handleSubmit(inputSearch);
+    }
   };
 
   return (
@@ -67,12 +74,17 @@ export default function WithSubnavigation() {
             fontSize={"32px"}
             fontWeight={"bold"}
             color={useColorModeValue("#F7882F", "white")}
+            cursor={"pointer"}
+            onClick={() => {
+              router.push("/");
+            }}
           >
             RentaLibre
           </Text>
           <Input
             value={inputSearch}
             onChange={handleChange}
+            onKeyDown={keyDownHandler}
             placeholder="Busca productos marcas y mas..."
             size="lg"
             maxW={"500px"}
@@ -80,6 +92,7 @@ export default function WithSubnavigation() {
             height={""}
             bgColor={"white"}
             borderEndRadius={"none"}
+            focusBorderColor={"#66000000"}
           />
           <IconButton
             onClick={() => {
@@ -129,9 +142,6 @@ export default function WithSubnavigation() {
         minH={"40px"}
         py={{ base: 2 }}
         px={{ base: 4 }}
-        borderBottom={1}
-        borderStyle={"solid"}
-        borderColor={useColorModeValue("gray.200", "gray.900")}
         align={"center"}
       >
         <Flex
@@ -352,53 +362,61 @@ const NAV_ITEMS: Array<NavItem> = [
     label: "Categorías",
     children: [
       {
-        label: "Categoría 1",
-        href: "#",
+        label: "Bienes de Consumo no Duraderos",
+        href: "/productList?category=Bienes de Consumo no Duraderos",
       },
       {
-        label: "Categoría 2",
-        href: "#",
+        label: "Bienes de Equipo",
+        href: "/productList?category=Bienes de Equipo",
       },
       {
-        label: "Categoría 3",
-        href: "#",
+        label: "Cuidado de la Salud",
+        href: "/productList?category=Cuidado de la Salud",
       },
       {
-        label: "Categoría 4",
-        href: "#",
+        label: "Energía",
+        href: "/productList?category=Energía",
       },
       {
-        label: "Categoría 5",
-        href: "#",
+        label: "Finanzas",
+        href: "/productList?category=Finanzas",
       },
       {
-        label: "Categoría 6",
-        href: "#",
+        label: "Industrias Básicas",
+        href: "/productList?category=Industrias Básicas",
       },
       {
-        label: "Categoría 7",
-        href: "#",
+        label: "Servicio al Consumidor",
+        href: "/productList?category=Servicio al Consumidor",
+      },
+      {
+        label: "Tecnología",
+        href: "/productList?category=Tecnología",
+      },
+      {
+        label: "Transportación",
+        href: "/productList?category=Transportación",
       },
     ],
   },
   {
-    label: "Hobbies",
-    href: "#",
+    label: "Tecnología",
+    href: "/productList?category=Tecnología",
   },
   {
-    label: "Deportes",
-    href: "#",
+    label: "Finanzas",
+    href: "/productList?category=Finanzas",
   },
   {
-    label: "Electronica",
-    href: "#",
+    label: "Cuidado de la Salud",
+    href: "/productList?category=Cuidado de la Salud",
   },
   {
-    label: "Hogar",
-    href: "#",
+    label: "Bienes de Equipo",
+    href: "/productList?category=Bienes de Equipo",
   },
   {
-    label: "Herramientas",
-    href: "#",
+    label: "Misceláneas",
+    href: "/productList?category=Misceláneas",
   },
 ];
