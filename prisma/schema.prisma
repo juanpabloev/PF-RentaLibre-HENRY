@@ -19,29 +19,42 @@ model User {
   email          String @unique
   id             String @id @default(auto()) @map("_id") @db.ObjectId
   products       Product[]
-  rating         Rating[]
+  rater          Rating[] @relation(name: "userRater")
+  rated          Rating[] @relation(name: "userRated")
   userPicture    String?
-  paymentMethods PaymentMethod[]
   seller         Transanction[] @relation(name: "seller")
-  buyer          Transanction[] @relation(name: "buyer")
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  buyer          Transanction[] @relation(name: "buyer") 
+  emailVerified  DateTime?
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  favoritos      Favorito[]
+  active         Boolean @default(true)
 }
-
+model Favorito {
+  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  user               User?   @relation(fields: [userId], references: [id])
+  userId             String? @db.ObjectId
+  product            Product?   @relation(fields: [productId], references: [id])
+  productId          String? @db.ObjectId
+}
 model Product {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  title         String
-  price         String
-  user          User?   @relation(fields: [userId], references: [id])
-  userId        String? @db.ObjectId
-  pictures      String[] @default([])
-  description   String
-  category      String?
-  availability  Availability?
-  features      Feature?
-  createdAt     DateTime @default(now())
+  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  title              String
+  price              String  
+  rating             Rating[]  
+  user               User?   @relation(fields: [userId], references: [id])
+  userId             String? @db.ObjectId
+  pictures           String[] @default([])
+  description        String
+  category           String?
+  availability       Availability?
+  features           Feature?
+  createdAt          DateTime @default(now())
+  favorito           Favorito[]
+  transaction        Transanction[]
+  paymentMethod      PaymentMethod?  @relation(fields: [methodName], references: [paymentName])
+  methodName         String?
 }
 
 type Availability {
@@ -54,32 +67,38 @@ type Feature {
 }
 
 model Rating {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  comment       String?
-  stars         Int
-  user          User   @relation(fields: [userId], references: [id])
-  userId        String @db.ObjectId
-  createdAt     DateTime @default(now())
+  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  comment            String?
+  stars              String
+  userRater          User   @relation(fields: [userRaterId], references: [id],name: "userRater")
+  userRaterId        String @db.ObjectId
+  userRated          User?   @relation(fields: [userRatedId], references: [id], name: "userRated")
+  userRatedId        String? @db.ObjectId
+  product            Product?   @relation(fields: [productId], references: [id])
+  productId          String? @db.ObjectId
+  createdAt          DateTime @default(now())
 }
 
 model PaymentMethod {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  paymentName String
-  type        String
-  user        User   @relation(fields: [userId], references: [id])
-  userId      String @db.ObjectId
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  paymentName     String @unique
+  type            String
+  product         Product[]
+  transaction     Transanction[]
 } 
 
 model Transanction {
-  paymentName   String
+  paymentMethod PaymentMethod?  @relation(fields: [methodName], references: [paymentName])
+  methodName    String? 
   transactionID String @id @default(auto()) @map("_id") @db.ObjectId
-  productPrice  String
-  productTitle  String
+  product       Product   @relation(fields: [productId], references: [id])
+  productId     String @db.ObjectId      
   createdAt     DateTime @default(now())
   seller        User @relation(fields: [sellerId], references: [id], name:"seller")
   buyer         User @relation(fields: [buyerId], references: [id], name: "buyer")
   sellerId      String @db.ObjectId
   buyerId       String @db.ObjectId
+
 }
 
 model Account {
