@@ -6,6 +6,7 @@ import {
   Link,
   useColorModeValue,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 
 function footer() {
   return (
@@ -22,9 +23,15 @@ function footer() {
         color={useColorModeValue("white", "#404c5a")}
       >
         <Stack direction={"row"} spacing={6}>
-          <Link href={"contacto"}>Contacto</Link>
-          <Link href={"faq"}>Preguntas Frecuentes</Link>
-          <Link href={"legal"}>Legales</Link>
+          <Link as={NextLink} href={"contacto"}>
+            Contacto
+          </Link>
+          <Link as={NextLink} href={"faq"}>
+            Preguntas Frecuentes
+          </Link>
+          <Link as={NextLink} href={"legal"}>
+            Legales
+          </Link>
         </Stack>
         <Text>© 2022 RentaLibre. Todos los derechos reservados</Text>
       </Container>
