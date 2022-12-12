@@ -19,6 +19,7 @@ import {
   useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 import {
   RxHamburgerMenu as HamburgerIcon,
   RxCross2 as CloseIcon,
@@ -209,8 +210,9 @@ const DesktopNav = () => {
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
               <Link
-                p={2}
+                as={NextLink}
                 href={navItem.href ?? "#"}
+                p={2}
                 fontSize={"sm"}
                 fontWeight={500}
                 color={linkColor}
@@ -249,7 +251,8 @@ const DesktopNav = () => {
 const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
   return (
     <Link
-      href={href}
+      as={NextLink}
+      href={href ?? "#"}
       role={"group"}
       display={"block"}
       p={2}
@@ -340,7 +343,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         >
           {children &&
             children.map((child) => (
-              <Link key={child.label} py={2} href={child.href}>
+              <Link as={NextLink} key={child.label} py={2} href={child.href}>
                 {child.label}
               </Link>
             ))}
