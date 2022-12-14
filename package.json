@@ -21,6 +21,7 @@
     "@trpc/next": "^10.0.0",
     "@trpc/react-query": "^10.0.0",
     "@trpc/server": "^10.0.0",
+    "firebase": "^9.15.0",
     "framer-motion": "^6",
     "next": "13.0.2",
     "next-auth": "4.17.0",
