@@ -1,5 +1,16 @@
 import React from "react";
 
+import { trpc } from "../utils/trpc";
+
+/* const createUser = trpc.user.createUser.useMutation();
+
+function handleSubmit (e: FormEvent<HTMLFormElement>) {
+  e.preventDefault()
+  createUser.mutate(user)
+ } */
+
+ 
+
 const register = () => {
     return (
         <p>SOY REGISTER</p>

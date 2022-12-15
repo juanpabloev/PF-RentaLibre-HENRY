@@ -1,36 +1,29 @@
 import React from "react";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 
+function handleSignIn() {
+  
+  signIn();
+  //deberia pregunta si existe user en DB - existe, redirect home, mno existe, crea registro DB - a form
+  //pongo buleano como test
+  if (false) {
+    return {
+      redirect: {
+        destination: "/",
+      },
+    };
+  } else {
+    return {
+      redirect: {
+        destination: "/register",
+      },
+    };
+  }
+}
 
 const login = () => {
   const { data: session } = useSession();
   //console.log(session); //me va a dar  objeto con la info de la sesion
-
-
-  /* function handleSignIn(e) {
-    e.preventDefault();
-  
-    signIn();
-    //deberia pregunta si existe user en DB - existe, redirect home, mno existe, crea registro DB - a form
-    //pongo buleano como test
-    if (false) {
-      return {
-        redirect: {
-          destination: "/",
-        },
-      };
-    } else {
-      return {
-        redirect: {
-          destination: "/register",
-        },
-      };
-    }
-  } */
-
-
-
-
 
   if (session) {
     return (
@@ -43,7 +36,7 @@ const login = () => {
     return (
       <div>
         <p>Login</p>
-        <button onClick={() => signIn()}>Iniciar Sesión</button>
+        <button onClick={() => handleSignIn()}>Iniciar Sesión</button>
       </div>
     );
   }
@@ -77,5 +70,4 @@ export default login;
     };
   }
 
-};
- */
+}; */
