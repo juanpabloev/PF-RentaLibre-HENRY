@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { useSession, signIn, signOut, getSession } from "next-auth/react";
 
 import {
   Box,
@@ -28,11 +27,8 @@ import {
   RxCaretUp as ChevronRightIcon,
   RxMagnifyingGlass as SearchIcon,
 } from "react-icons/rx";
-import { Session } from "inspector";
 
 export default function WithSubnavigation() {
-  const [session, loading] = useSession();
-  console.log( {session, loading} );
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const [inputSearch, setInputSearch] = useState("");
@@ -118,7 +114,7 @@ export default function WithSubnavigation() {
           justify={"flex-end"}
           direction={"row"}
           spacing={6}
-        > {!loading && !session && (
+        >
           <Button
             as={"a"}
             fontSize={"lg"}
@@ -129,30 +125,16 @@ export default function WithSubnavigation() {
           >
             Ingresar
           </Button>
-          )}
-
-          {session && (
-            <Button
+          <Button
             as={"a"}
             fontSize={"lg"}
             fontWeight={600}
             color={"white"}
             variant={"link"}
-            href={"/api/auth/signout"}
+            href={"/register"}
           >
-            <a
-                onClick={(e) => {
-                  e.preventDefault()
-                  signOut()
-                }}
-              >
-              Salir
-            </a>
-            
+            Registrarse
           </Button>
-          )}
-          
-          
         </Stack>
       </Flex>
       <Flex
