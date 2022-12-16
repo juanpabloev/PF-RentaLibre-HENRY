@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 
 /* const createUser = trpc.user.createUser.useMutation();
@@ -7,7 +9,6 @@ function handleSubmit (e: FormEvent<HTMLFormElement>) {
   createUser.mutate(user)
  } */
 
-  import React, { useState } from 'react';
 import {
   Progress,
   Box,
@@ -30,38 +31,43 @@ import {
 
 import { useToast } from '@chakra-ui/react';
 
+
+
 const Form1 = () => {
   const [show, setShow] = React.useState(false);
+
+
   const handleClick = () => setShow(!show);
+
   return (
     <>
       <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
-        User Registration
+        Nuevo Usuario Rentalibre
       </Heading>
       <Flex>
-        <FormControl mr="5%">
+        <FormControl mr="5%" id="first-name" isRequired>
           <FormLabel htmlFor="first-name" fontWeight={'normal'}>
-            First name
+            Nombre
           </FormLabel>
-          <Input id="first-name" placeholder="First name" />
+          <Input id="first-name" placeholder="Nombre" />
         </FormControl>
 
-        <FormControl>
+        <FormControl id="last-name" isRequired>
           <FormLabel htmlFor="last-name" fontWeight={'normal'}>
-            Last name
+            Apellido
           </FormLabel>
-          <Input id="last-name" placeholder="First name" />
+          <Input id="last-name" placeholder="Apellido" />
         </FormControl>
       </Flex>
-      <FormControl mt="2%">
+      <FormControl mt="2%" id="email" isRequired>
         <FormLabel htmlFor="email" fontWeight={'normal'}>
-          Email address
+          Email
         </FormLabel>
-        <Input id="email" type="email" />
-        <FormHelperText>We'll never share your email.</FormHelperText>
+        <Input id="email" type="email" placeholder="email"/>
+        <FormHelperText>La información suministrada no será compartida con nadie.</FormHelperText>
       </FormControl>
-
-      <FormControl>
+  
+      {/* <FormControl>
         <FormLabel htmlFor="password" fontWeight={'normal'} mt="2%">
           Password
         </FormLabel>
@@ -77,7 +83,7 @@ const Form1 = () => {
             </Button>
           </InputRightElement>
         </InputGroup>
-      </FormControl>
+      </FormControl> */}
     </>
   );
 };
@@ -316,7 +322,7 @@ export default function register() {
                 variant="solid"
                 w="7rem"
                 mr="5%">
-                Back
+                Atrás
               </Button>
               <Button
                 w="7rem"
@@ -331,7 +337,7 @@ export default function register() {
                 }}
                 colorScheme="teal"
                 variant="outline">
-                Next
+                Próximo
               </Button>
             </Flex>
             {step === 3 ? (
@@ -348,7 +354,7 @@ export default function register() {
                     isClosable: true,
                   });
                 }}>
-                Submit
+                Registrarse
               </Button>
             ) : null}
           </Flex>
@@ -357,3 +363,5 @@ export default function register() {
     </>
   );
 }
+
+
