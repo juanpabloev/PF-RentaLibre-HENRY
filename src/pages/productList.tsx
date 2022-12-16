@@ -3,6 +3,8 @@ import CardProductList from "../components/CardProductList";
 import styles from "../styles/productList.module.css";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { RouterOutputs, trpc } from "../utils/trpc";
+import { FaLeaf } from "react-icons/fa";
 
 // para traer del back:
 
@@ -16,11 +18,11 @@ import { useRouter } from "next/router";
 } */
 
 // export const getServerSideProps = async () => {
-//   const res = await fetch("http://localhost:3001/productsCollection");
-//   const data = await res.json();
+//   const res = trpc.product.getProducts.useQuery({ limit: 100, page: 1 }).data;
+//   const productsData = res.data;
 //   return {
 //     props: {
-//       data,
+//       productsData,
 //     },
 //   };
 // };
@@ -38,32 +40,54 @@ import { useRouter } from "next/router";
 // }
 
 // interface Props {
-//   data: Item[];
+//   productsData: RouterOutputs["product"]["getProducts"];
 // }
 
 // trae de local host 3001 - json server
+// function bringData(category?: string) {
+//   let data: RouterOutputs["product"]["getProducts"];
 
-// export default function Productlist({ data }: Props) {
+//   if (category) {
+//     data = trpc.product.getProductByCategory.useQuery({
+//       categoryName: category,
+//     });
+//   } else {
+//     data = trpc.product.getProducts.useQuery({ page: 1, limit: 10 });
+//   }
+//   return data;
+// }
+//export default function Productlist({ productsData }: Props) {
 export default function Productlist() {
   const router = useRouter();
-  const { q, category } = router.query;
-  const [data, setData] = useState(null);
-  const [isLoading, setLoading] = useState(false);
-
+  const { category, q } = router.query;
+  //trae del back
+  const utils = trpc.useContext();
+  let products;
+  if (category || q) {
+    console.log(category);
+    if (category && !(typeof q == undefined)) {
+      products = trpc.product.getProductByCategory.useQuery({
+        categoryName: category,
+      }).data;
+    } else if (q && !category) {
+      products = trpc.product.getProductByTitle.useQuery({ title: q }).data;
+    } else {
+      products = trpc.product.getProductByCategory.useQuery({
+        categoryName: category,
+        title: q,
+      }).data;
+    }
+  } else {
+    products = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data;
+  }
+  const [data, setData] = useState();
+  // const [isLoading, setLoading] = useState(false);
+  // if (isLoading) return <p>Loading...</p>;
+  //para que refresque los datos
   useEffect(() => {
-    setLoading(true);
-    let url = "http://localhost:3001/productsCollection?";
-    if (q) url += `&q=${q}`;
-    if (category) url += `&category=${category}`;
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        setLoading(false);
-      });
-  }, [q, category]);
+    setData(products);
+  }, [products]);
 
-  if (isLoading) return <p>Loading...</p>;
   if (!data) return <p>No profile data</p>;
 
   return (
@@ -71,10 +95,11 @@ export default function Productlist() {
       <div className={styles.cardsDivProdHome}>
         {data?.map((p) => (
           <CardProductList
-            productName={p.productName}
-            photo={p["photos"]}
-            productPrice={p.productPrice}
+            productName={p.title}
+            photo={p.pictures[0]}
+            productPrice={p.price}
             id={p.id}
+            key={p.id}
           />
         ))}
       </div>

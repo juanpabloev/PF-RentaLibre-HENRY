@@ -1,9 +1,9 @@
+import { title } from "process";
 import { string, z } from "zod";
 import { router, publicProcedure } from "../trpc";
 
-
 export const productRouter = router({
-getProducts: publicProcedure
+  getProducts: publicProcedure
     .input(
       z.object({
         page: z.number(),
@@ -16,6 +16,10 @@ getProducts: publicProcedure
       const products = await ctx.prisma.product.findMany({
         skip: page * limit - limit,
         take: limit,
+        include: {
+          category: true,
+          user: true,
+        },
       });
 
       return products;
@@ -33,11 +37,15 @@ getProducts: publicProcedure
         where: {
           id,
         },
+        include: {
+          category: true,
+          user: true,
+        },
       });
 
       return productById;
     }),
-  getProductByName: publicProcedure
+  getProductByTitle: publicProcedure
     .input(
       z.object({
         title: z.string(),
@@ -46,78 +54,130 @@ getProducts: publicProcedure
     .query(async ({ ctx, input }) => {
       const { title } = input;
 
-      const productByName = await ctx.prisma.product.findMany({
+      const productByTiltle = await ctx.prisma.product.findMany({
         where: {
-          title,
+          title: {
+            contains: title,
+            mode: "insensitive",
+          },
         },
       });
 
-      return productByName;
+      return productByTiltle;
     }),
-    createProducts: publicProcedure
-    .input(z.object({title: z.string(),price: z.string(),category: z.string(),
-    description: z.string(),availability: z.object({available:z.boolean(),
-    dateAvailable:z.array(z.string(),z.string())
-       })
-     })
-    )
-    .mutation(async ({ctx,input}) => {
-     const {title,price,category,description,availability} = input
-     const product = await ctx.prisma.product.create({
-        data: {
-           title,
-           price,
-           category,
-           description,
-           availability,
-           user: {
-            connect: {
-             id: '639640531a4b6c6f07111635'
-            }
-           },
-           paymentMethod: {
-            connect: {
-              paymentName: 'Reba'
-            }
-           }
-        },
-        include: {
-          user: true,
-        }
-     })
-    }),
-    deleteProduct: publicProcedure
-    .mutation(async ({ctx})=>{
-      const deleteProduct = await ctx.prisma.user.update({
-        where: {
-          id: '6395a57846a0e8adb17b8257',
-        },
-        data: {
-          products: {
-            deleteMany: [{ id: '6395dd0bc06f1d7ba549237a' }],
-          },
-        },
+  getProductByCategory: publicProcedure
+    .input(
+      z.object({
+        categoryName: z.string(),
+        title: z.string().default(" "),
       })
+    )
+    .query(async ({ ctx, input }) => {
+      const { categoryName } = input;
+      const category = await ctx.prisma.category.findFirst({
+        where: { name: categoryName },
+      });
+      const categoryId = category?.id;
+      let productByCategory;
+      console.log(title);
+      if (title == " ") {
+        productByCategory = await ctx.prisma.product.findMany({
+          include: {
+            category: true,
+            user: true,
+          },
+          where: {
+            categoryId,
+            title: {
+              contains: title,
+              mode: "insensitive",
+            },
+          },
+        });
+      } else {
+        productByCategory = await ctx.prisma.product.findMany({
+          include: {
+            category: true,
+            user: true,
+          },
+          where: {
+            categoryId,
+          },
+        });
+      }
+
+      return productByCategory;
     }),
-    updateProduct: publicProcedure
-    .mutation(async ({ctx})=>{
-      const updateProduct = await ctx.prisma.user.update({
-        where: {
-          id: '6395a57846a0e8adb17b8257',
-        },
+  createProducts: publicProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        price: z.string(),
+        category: z.string(),
+        description: z.string(),
+        availability: z.object({
+          available: z.boolean(),
+          dateAvailable: z.array(z.string(), z.string()),
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { title, price, category, description, availability } = input;
+      const product = await ctx.prisma.product.create({
         data: {
-          products: {
-            update: {
-              where: {
-                id:'6395d258c9f34b57356092e9'
-              },
-              data: {
-                title: 'Moto Voladora',
-                price: '5,50'
-              }
+          title,
+          price,
+          category, //category Id???
+          description,
+          availability,
+          user: {
+            connect: {
+              id: "639640531a4b6c6f07111635",
+            },
+          },
+          paymentMethod: {
+            connect: {
+              paymentName: "Reba",
             },
           },
         },
-      })
-    })
+        include: {
+          category: true,
+          user: true,
+        },
+      });
+    }),
+
+  deleteProduct: publicProcedure.mutation(async ({ ctx }) => {
+    const deleteProduct = await ctx.prisma.user.update({
+      where: {
+        id: "6395a57846a0e8adb17b8257",
+      },
+      data: {
+        products: {
+          deleteMany: [{ id: "6395dd0bc06f1d7ba549237a" }],
+        },
+      },
+    });
+  }),
+  updateProduct: publicProcedure.mutation(async ({ ctx }) => {
+    const updateProduct = await ctx.prisma.user.update({
+      where: {
+        id: "6395a57846a0e8adb17b8257",
+      },
+      data: {
+        products: {
+          update: {
+            where: {
+              id: "6395d258c9f34b57356092e9",
+            },
+            data: {
+              title: "Moto Voladora",
+              price: "5,50",
+            },
+          },
+        },
+      },
+    });
+  }),
 });
