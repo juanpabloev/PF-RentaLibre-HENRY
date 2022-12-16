@@ -6,7 +6,6 @@ import {
   AccordionPanel,
   AccordionIcon,
 } from "@chakra-ui/react";
-import { blue } from "@mui/material/colors";
 import { useState } from "react";
 import { trpc } from "../utils/trpc";
 
@@ -117,7 +116,7 @@ export default function dashboardRentedProducts() {
                           </Text>
                         </Text>
                       </AccordionPanel>
-                    </AccordionItem>
+                    </AccordionItem>dfdfv
                   </Accordion>
                 </Box>
               );
