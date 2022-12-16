@@ -116,7 +116,7 @@ export default function dashboardRentedProducts() {
                           </Text>
                         </Text>
                       </AccordionPanel>
-                    </AccordionItem>dfdfv
+                    </AccordionItem>
                   </Accordion>
                 </Box>
               );
