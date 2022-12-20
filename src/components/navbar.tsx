@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import { useSession, signIn, signOut, getSession } from "next-auth/react";
+
+import styles from '../styles/navbar.module.css';
 
 import {
   Box,
@@ -27,8 +30,11 @@ import {
   RxCaretUp as ChevronRightIcon,
   RxMagnifyingGlass as SearchIcon,
 } from "react-icons/rx";
+import { Session } from "inspector";
 
 export default function WithSubnavigation() {
+  const { data: session, status } = useSession();
+  console.log({ session, status });
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const [inputSearch, setInputSearch] = useState("");
@@ -114,27 +120,51 @@ export default function WithSubnavigation() {
           justify={"flex-end"}
           direction={"row"}
           spacing={6}
-        >
+        > {!session && (
           <Button
             as={"a"}
             fontSize={"lg"}
             fontWeight={600}
             color={"white"}
             variant={"link"}
-            href={"/login"}
+            href={"/api/auth/signin"}
           >
             Ingresar
           </Button>
-          <Button
-            as={"a"}
-            fontSize={"lg"}
-            fontWeight={600}
-            color={"white"}
-            variant={"link"}
-            href={"/register"}
-          >
-            Registrarse
-          </Button>
+        )}
+          {session && (
+            <>
+              <Flex minWidth='max-content' alignItems='center' gap='2'>
+              <Text
+                fontSize={"lg"}
+                fontWeight={600}
+                color={"white"}
+              >
+                Hola, {session.user?.name}
+              </Text>
+              </Flex>
+
+              <Button
+                as={"a"}
+                fontSize={"lg"}
+                fontWeight={600}
+                color={"white"}
+                variant={"link"}
+                href={"/api/auth/signout"}
+              >
+                <a
+                  onClick={(e) => {
+                    e.preventDefault();
+                    signOut();
+                  }}
+                >
+                  Salir
+                </a>
+
+              </Button></>
+          )}
+
+
         </Stack>
       </Flex>
       <Flex
