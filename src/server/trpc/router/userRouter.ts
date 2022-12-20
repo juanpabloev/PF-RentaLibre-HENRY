@@ -31,22 +31,22 @@ makeTransaction: publicProcedure
     data: {
      paymentMethod: {
       connect: {
-       paymentName: "Mercado Pago"
+       paymentName: "Reba"
       }
     },
      product: {
       connect: {
-       id:'6394dcd65d08a717b149339f'
+       id:'639640531a4b6c6f07111635'
       }
     },
     buyer: {
       connect: {
-        id: '63948d191794cc8c855be54a'
+        id: '639ba56718b33ca641acd28f'
         }
       },
       seller: {
         connect: {
-          id: '6395201a068b40f2f8d23356'
+          id: '639640531a4b6c6f07111635'
           }
         }
      },
@@ -101,5 +101,30 @@ makeTransaction: publicProcedure
       id: '63962642c06f1d7ba549237d'
     }
    })
+ }),
+ getUser: publicProcedure
+ .input(z.object({userId: z.string()}))
+ .query(async ({ctx,input})=> {
+  const {userId} = input;
+  const user = await ctx.prisma.user.findUnique({
+    where: {
+      id: userId
+    },
+    include: {
+      buyer: {
+      include: {
+          product:true,
+          seller: true,
+        }
+      },
+      seller: {
+        include: {
+          product:true,
+          buyer: true,
+        }
+      }
+    }
+  }) 
+   return  user
  })
 })
