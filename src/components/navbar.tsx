@@ -411,8 +411,8 @@ const NAV_ITEMS: Array<NavItem> = [
         href: "/productList?category=Energía",
       },
       {
-        label: "Finanzas",
-        href: "/productList?category=Finanzas",
+        label: "Electrónica, Audio y Video",
+        href: "/productList?category=Electrónica, Audio y Video",
       },
       {
         label: "Industrias Básicas",
@@ -423,8 +423,8 @@ const NAV_ITEMS: Array<NavItem> = [
         href: "/productList?category=Servicio al Consumidor",
       },
       {
-        label: "Tecnología",
-        href: "/productList?category=Tecnología",
+        label: "Electrodomésticos y Aires Ac.",
+        href: "/productList?category=Electrodomésticos y Aires Ac.",
       },
       {
         label: "Transportación",
@@ -433,12 +433,12 @@ const NAV_ITEMS: Array<NavItem> = [
     ],
   },
   {
-    label: "Tecnología",
-    href: "/productList?category=Tecnología",
+    label: "Electrodomésticos y Aires Ac.",
+    href: "/productList?category=Electrodomésticos y Aires Ac.",
   },
   {
-    label: "Finanzas",
-    href: "/productList?category=Finanzas",
+    label: "Electrónica, Audio y Video",
+    href: "/productList?category=Electrónica, Audio y Video",
   },
   {
     label: "Cuidado de la Salud",

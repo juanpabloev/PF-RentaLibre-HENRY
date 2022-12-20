@@ -30,6 +30,7 @@ model User {
   sessions       Session[]
   favorites      Favorito[]
   active         Boolean @default(true)
+  feedback       String?
 }
 model Favorito {
   id                 String @id @default(auto()) @map("_id") @db.ObjectId
@@ -37,6 +38,7 @@ model Favorito {
   userId             String? @db.ObjectId
   product            Product?   @relation(fields: [productId], references: [id])
   productId          String? @db.ObjectId
+  active             Boolean @default(true)         
 }
 model Product {
   id                 String @id @default(auto()) @map("_id") @db.ObjectId
@@ -47,7 +49,7 @@ model Product {
   userId             String? @db.ObjectId
   pictures           String[] @default([])
   description        String
-  category           Category   @relation(fields: [categoryId], references: [id])
+  category           Category  @relation(fields: [categoryId], references: [id])
   categoryId         String @db.ObjectId          
   availability       Availability?
   features           Feature?
