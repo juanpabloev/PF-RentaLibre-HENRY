@@ -3,6 +3,8 @@ import { useSession, signOut, getSession } from "next-auth/react";
 
 //otra forma de ver estado de autenticacion con google
 
+// ESTE COMPONENTE PUEDE MOSTRAR PAGINA DE DETALLE DE CUENTA - O DASHBOAARD USER
+
 const account = () => {
   const { data: session, status } = useSession({ required: true });
   console.log(session); //me va a dar  objeto con la info de la sesion
