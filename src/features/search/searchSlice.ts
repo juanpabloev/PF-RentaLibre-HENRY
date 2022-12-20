@@ -8,14 +8,14 @@ enum orderEnum {
 }
 
 export interface SearchState {
-  inputWords: Array<string>;
-  filers: Object;
+  searchText: string;
+  filers: { category: string };
   order: orderEnum;
 }
 
 const initialState: SearchState = {
-  inputWords: [],
-  filers: {},
+  searchText: "",
+  filers: { category: "" },
   order: orderEnum.relevance,
 };
 
@@ -28,17 +28,36 @@ export const searchSlice = createSlice({
       // doesn't actually mutate the state because it uses the Immer library,
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
-      state.inputWords = [];
-      state.filers = {};
+      state.searchText = "";
+      state.filers.category = "";
       state.order = orderEnum.relevance;
     },
-    setInputWords: (state, action: PayloadAction<Array<string>>) => {
-      state.inputWords = action.payload;
+    setSearchText: (state, action: PayloadAction<string>) => {
+      state.searchText = action.payload;
+    },
+    setCategory: (state, action: PayloadAction<string>) => {
+      state.filers.category = action.payload;
+    },
+    setOrder: (state, action: PayloadAction<orderEnum>) => {
+      state.order = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { reset, setInputWords: setInputText } = searchSlice.actions;
+export const { reset, setSearchText, setCategory, setOrder } =
+  searchSlice.actions;
+export const selectSearchText = (state: {
+  persistedReducer: any;
+  searchText: string;
+}) => state.persistedReducer.searchState.searchText;
+export const selectCategory = (state: {
+  persistedReducer: any;
+  category: string;
+}) => state.persistedReducer.searchState.filers.category;
+export const selectOrder = (state: {
+  persistedReducer: any;
+  order: orderEnum;
+}) => state.persistedReducer.searchState.order;
 
 export default searchSlice.reducer;
