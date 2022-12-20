@@ -70,7 +70,9 @@ export default function Productlist() {
               query={`${q}`}
               styles={{ px: "1", py: "0", rounded: "full", bg: "orange.100" }}
             >
-              {`1 a ${data?.length} de ${data?.length} resultados para: ${q}`}
+              {`1 a ${data?.length} de ${data?.length} resultados ${
+                q ? `para: ${q}` : ""
+              }`}
             </Highlight>
           </Flex>
           <Flex alignItems={"center"}>
