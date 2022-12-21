@@ -35,6 +35,7 @@ import {
   ReactPortal,
 } from "react";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 // type Params = {
 //   params: {
@@ -74,9 +75,19 @@ import { useRouter } from "next/router";
 
 export default function ProductDetail() {
   const router = useRouter();
+  const session = useSession();
   const { id } = router.query;
   //trae del back con id
   const product = trpc.product.getProductByID.useQuery({ id }).data;
+  const addFavorite = trpc.user.addFavorite.useMutation();
+
+  const handleFavorites = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    addFavorite.mutate({ productId: id });
+
+    alert(`${product?.title} agregado a favoritos`);
+  };
+
   return (
     <Container maxW={"7xl"}>
       <SimpleGrid
@@ -112,7 +123,25 @@ export default function ProductDetail() {
               {"$ " + product?.price}
             </Text>
           </Box>
-
+          {session.status === "authenticated" ? (
+            <Button
+              rounded={"none"}
+              w={"full"}
+              mt={8}
+              size={"lg"}
+              py={"7"}
+              bg={useColorModeValue("yellow.300", "orange.50")}
+              color={useColorModeValue("black", "gray.900")}
+              textTransform={"uppercase"}
+              _hover={{
+                transform: "translateY(2px)",
+                boxShadow: "lg",
+              }}
+              onClick={(e) => handleFavorites(e)}
+            >
+              Añadir a favoritos
+            </Button>
+          ) : null}
           <Stack
             spacing={{ base: 4, sm: 6 }}
             direction={"column"}
