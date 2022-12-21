@@ -1,54 +1,79 @@
-import React, { useState } from "react";
+import { Session } from "inspector";
+import { getSession, signIn, signOut, useSession } from "next-auth/react";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { useSession, signIn, signOut, getSession } from "next-auth/react";
+import React, { useState } from "react";
 
-import styles from '../styles/navbar.module.css';
+import styles from "../styles/navbar.module.css";
+import { RouterOutputs, trpc } from "../utils/trpc";
 
 import {
   Box,
-  Flex,
-  Text,
-  Input,
-  IconButton,
   Button,
-  Stack,
   Collapse,
+  Flex,
   Icon,
+  IconButton,
+  Input,
   Link,
+  Select,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuGroup,
+  MenuItem,
+  MenuItemOption,
+  MenuList,
+  MenuOptionGroup,
   Popover,
-  PopoverTrigger,
   PopoverContent,
-  useColorModeValue,
+  PopoverTrigger,
+  Stack,
+  Text,
   useBreakpointValue,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
+
 import {
-  RxHamburgerMenu as HamburgerIcon,
-  RxCross2 as CloseIcon,
   RxCaretDown as ChevronDownIcon,
-  RxCaretUp as ChevronRightIcon,
+  RxCaretRight as ChevronRightIcon,
+  RxCross2 as CloseIcon,
+  RxHamburgerMenu as HamburgerIcon,
   RxMagnifyingGlass as SearchIcon,
 } from "react-icons/rx";
-import { Session } from "inspector";
 
 export default function WithSubnavigation() {
+  const categories = trpc.category.getCategories.useQuery().data;
   const { data: session, status } = useSession();
-  console.log({ session, status });
+  // console.log({ session, status });
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const [inputSearch, setInputSearch] = useState("");
+  const [selectCategory, setSelectCategory] = useState(
+    router.query.category ?? ""
+  );
+
   const handleChange = (event: React.FormEvent<HTMLInputElement>) =>
     setInputSearch(event.currentTarget.value);
   const handleSubmit = (inputText: String) => {
-    const { category } = router.query;
-    if (category) inputText += `&category=${category}`;
+    // const { category } = router.query;
+    setInputSearch(inputText);
+    inputText += `&category=${selectCategory}`;
     router.push(`/productList?q=${inputText}`);
   };
   const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.code === "Enter") {
       handleSubmit(inputSearch);
     }
+  };
+
+  const handleChangeSelect = (e: React.FormEvent<HTMLInputElement>) => {
+    setSelectCategory(e.currentTarget.value);
+    document.getElementById("inputSearch")?.focus();
+    // const { category } = router.query;
+    // if (category) inputText += `&category=${category}`;
+    // router.push(`/productList?q=${inputText}`);
   };
 
   return (
@@ -88,31 +113,54 @@ export default function WithSubnavigation() {
           >
             RentaLibre
           </Text>
-          <Input
-            value={inputSearch}
-            onChange={handleChange}
-            onKeyDown={keyDownHandler}
-            placeholder="Busca productos marcas y mas..."
-            size="lg"
-            maxW={"500px"}
+          <Flex
+            flex={{ base: 1 }}
+            justify={{ base: "center", md: "start" }}
             marginLeft={"82px"}
-            height={""}
-            bgColor={"white"}
-            borderEndRadius={"none"}
-            focusBorderColor={"#66000000"}
-          />
-          <IconButton
-            onClick={() => {
-              handleSubmit(inputSearch);
-            }}
-            icon={<SearchIcon />}
-            size="lg"
-            fontSize={"32px"}
-            bgColor={"#F7C331"}
-            aria-label={""}
-            height={""}
-            borderStartRadius={"none"}
-          />{" "}
+            maxWidth={"720px"}
+          >
+            <Select
+              placeholder="Todas"
+              size="lg"
+              value={selectCategory}
+              borderEndRadius={"none"}
+              bgColor={"white"}
+              focusBorderColor={"#66000000"}
+              width={(selectCategory.length * 8 + 64) * 2 + "px"}
+              minWidth="150px"
+              maxWidth={"max-content"}
+              onChange={handleChangeSelect}
+            >
+              {categories?.map((c) => (
+                <option value={c.name}>{c.name} </option>
+              ))}
+            </Select>
+            <Input
+              id="inputSearch"
+              value={inputSearch}
+              onChange={handleChange}
+              onKeyDown={keyDownHandler}
+              placeholder="Busca productos marcas y mas..."
+              size="lg"
+              width={"100%"}
+              height={""}
+              bgColor={"white"}
+              borderRadius={"none"}
+              focusBorderColor={"#66000000"}
+            />
+            <IconButton
+              onClick={() => {
+                handleSubmit(inputSearch);
+              }}
+              icon={<SearchIcon />}
+              size="lg"
+              fontSize={"32px"}
+              bgColor={"#F7C331"}
+              aria-label={""}
+              height={""}
+              borderStartRadius={"none"}
+            />{" "}
+          </Flex>
         </Flex>
 
         <Stack
@@ -120,28 +168,27 @@ export default function WithSubnavigation() {
           justify={"flex-end"}
           direction={"row"}
           spacing={6}
-        > {!session && (
-          <Button
-            as={"a"}
-            fontSize={"lg"}
-            fontWeight={600}
-            color={"white"}
-            variant={"link"}
-            href={"/api/auth/signin"}
-          >
-            Ingresar
-          </Button>
-        )}
+          marginLeft={"82px"}
+        >
+          {" "}
+          {!session && (
+            <Button
+              as={"a"}
+              fontSize={"lg"}
+              fontWeight={600}
+              color={"white"}
+              variant={"link"}
+              href={"/api/auth/signin"}
+            >
+              Ingresar
+            </Button>
+          )}
           {session && (
             <>
-              <Flex minWidth='max-content' alignItems='center' gap='2'>
-              <Text
-                fontSize={"lg"}
-                fontWeight={600}
-                color={"white"}
-              >
-                Hola, {session.user?.name}
-              </Text>
+              <Flex minWidth="max-content" alignItems="center" gap="2">
+                <Text fontSize={"lg"} fontWeight={600} color={"white"}>
+                  Hola, {session.user?.name}
+                </Text>
               </Flex>
 
               <Button
@@ -160,11 +207,9 @@ export default function WithSubnavigation() {
                 >
                   Salir
                 </a>
-
-              </Button></>
+              </Button>
+            </>
           )}
-
-
         </Stack>
       </Flex>
       <Flex
@@ -189,7 +234,10 @@ export default function WithSubnavigation() {
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
-            <DesktopNav />
+            <DesktopNav
+              setSelectCategory={setSelectCategory}
+              setInputSearch={setInputSearch}
+            />
           </Flex>
         </Flex>
 
@@ -228,10 +276,15 @@ export default function WithSubnavigation() {
   );
 }
 
-const DesktopNav = () => {
+const DesktopNav = (props: {
+  setSelectCategory: Function;
+  setInputSearch: Function;
+}) => {
+  const { setSelectCategory, setInputSearch } = props;
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
+  // const categories = trpc.category.getCategories.useQuery().data;
 
   return (
     <Stack direction={"row"} spacing={4}>
@@ -241,6 +294,12 @@ const DesktopNav = () => {
             <PopoverTrigger>
               <Link
                 as={NextLink}
+                onClick={() => {
+                  setSelectCategory(
+                    navItem.label != "Todas" ? navItem.label : ""
+                  );
+                  setInputSearch("");
+                }}
                 href={navItem.href ?? "#"}
                 p={2}
                 fontSize={"sm"}
@@ -256,20 +315,23 @@ const DesktopNav = () => {
             </PopoverTrigger>
 
             {navItem.children && (
-              <PopoverContent
-                border={0}
-                boxShadow={"xl"}
-                bg={popoverContentBgColor}
-                p={4}
-                rounded={"xl"}
-                minW={"sm"}
-              >
-                <Stack>
-                  {navItem.children.map((child) => (
-                    <DesktopSubNav key={child.label} {...child} />
-                  ))}
-                </Stack>
-              </PopoverContent>
+              <>
+                <PopoverContent
+                  border={0}
+                  boxShadow={"xl"}
+                  bg={popoverContentBgColor}
+                  p={4}
+                  rounded={"xl"}
+                  minW={"sm"}
+                >
+                  <Stack>
+                    {navItem.children.map((child) => (
+                      <DesktopSubNav key={child.label} {...child} />
+                    ))}
+                  </Stack>
+                </PopoverContent>
+                <Icon as={ChevronDownIcon} w={6} h={6} />
+              </>
             )}
           </Popover>
         </Box>
@@ -323,7 +385,7 @@ const MobileNav = () => {
       p={4}
       display={{ md: "none" }}
     >
-      {NAV_ITEMS.map((navItem) => (
+      {NAV_ITEMS.map((navItem, i) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>
@@ -391,46 +453,50 @@ interface NavItem {
 }
 
 const NAV_ITEMS: Array<NavItem> = [
+  // {
+  //   label: "Categorías",
+  //   children: [
+  //     {
+  //       label: "Bienes de Consumo no Duraderos",
+  //       href: "/productList?category=Bienes de Consumo no Duraderos",
+  //     },
+  //     {
+  //       label: "Bienes de Equipo",
+  //       href: "/productList?category=Bienes de Equipo",
+  //     },
+  //     {
+  //       label: "Cuidado de la Salud",
+  //       href: "/productList?category=Cuidado de la Salud",
+  //     },
+  //     {
+  //       label: "Energía",
+  //       href: "/productList?category=Energía",
+  //     },
+  //     {
+  //       label: "Electrónica, Audio y Video",
+  //       href: "/productList?category=Electrónica, Audio y Video",
+  //     },
+  //     {
+  //       label: "Industrias Básicas",
+  //       href: "/productList?category=Industrias Básicas",
+  //     },
+  //     {
+  //       label: "Servicio al Consumidor",
+  //       href: "/productList?category=Servicio al Consumidor",
+  //     },
+  //     {
+  //       label: "Electrodomésticos y Aires Ac.",
+  //       href: "/productList?category=Electrodomésticos y Aires Ac.",
+  //     },
+  //     {
+  //       label: "Transportación",
+  //       href: "/productList?category=Transportación",
+  //     },
+  //   ],
+  // },
   {
-    label: "Categorías",
-    children: [
-      {
-        label: "Bienes de Consumo no Duraderos",
-        href: "/productList?category=Bienes de Consumo no Duraderos",
-      },
-      {
-        label: "Bienes de Equipo",
-        href: "/productList?category=Bienes de Equipo",
-      },
-      {
-        label: "Cuidado de la Salud",
-        href: "/productList?category=Cuidado de la Salud",
-      },
-      {
-        label: "Energía",
-        href: "/productList?category=Energía",
-      },
-      {
-        label: "Electrónica, Audio y Video",
-        href: "/productList?category=Electrónica, Audio y Video",
-      },
-      {
-        label: "Industrias Básicas",
-        href: "/productList?category=Industrias Básicas",
-      },
-      {
-        label: "Servicio al Consumidor",
-        href: "/productList?category=Servicio al Consumidor",
-      },
-      {
-        label: "Electrodomésticos y Aires Ac.",
-        href: "/productList?category=Electrodomésticos y Aires Ac.",
-      },
-      {
-        label: "Transportación",
-        href: "/productList?category=Transportación",
-      },
-    ],
+    label: "Todas",
+    href: "/productList",
   },
   {
     label: "Electrodomésticos y Aires Ac.",
@@ -441,15 +507,11 @@ const NAV_ITEMS: Array<NavItem> = [
     href: "/productList?category=Electrónica, Audio y Video",
   },
   {
-    label: "Cuidado de la Salud",
-    href: "/productList?category=Cuidado de la Salud",
+    label: "Herramientas",
+    href: "/productList?category=Herramientas",
   },
   {
-    label: "Bienes de Equipo",
-    href: "/productList?category=Bienes de Equipo",
-  },
-  {
-    label: "Misceláneas",
-    href: "/productList?category=Misceláneas",
+    label: "Salud y Equipamiento Médico",
+    href: "/productList?category=Salud y Equipamiento Médico",
   },
 ];
