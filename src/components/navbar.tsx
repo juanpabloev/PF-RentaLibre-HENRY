@@ -59,7 +59,7 @@ export default function WithSubnavigation() {
   const handleSubmit = (inputText: String) => {
     // const { category } = router.query;
     setInputSearch(inputText);
-    if (selectCategory != "") inputText += `&category=${selectCategory}`;
+    inputText += `&category=${selectCategory}`;
     router.push(`/productList?q=${inputText}`);
   };
   const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -132,7 +132,7 @@ export default function WithSubnavigation() {
               onChange={handleChangeSelect}
             >
               {categories?.map((c) => (
-                <option value={c.name} >{c.name} </option>
+                <option value={c.name}>{c.name} </option>
               ))}
             </Select>
             <Input
@@ -276,7 +276,10 @@ export default function WithSubnavigation() {
   );
 }
 
-const DesktopNav = (props) => {
+const DesktopNav = (props: {
+  setSelectCategory: Function;
+  setInputSearch: Function;
+}) => {
   const { setSelectCategory, setInputSearch } = props;
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
@@ -292,7 +295,9 @@ const DesktopNav = (props) => {
               <Link
                 as={NextLink}
                 onClick={() => {
-                  setSelectCategory(navItem.label);
+                  setSelectCategory(
+                    navItem.label != "Todas" ? navItem.label : ""
+                  );
                   setInputSearch("");
                 }}
                 href={navItem.href ?? "#"}
