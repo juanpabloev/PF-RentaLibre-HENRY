@@ -4,6 +4,9 @@ import { SessionProvider } from "next-auth/react";
 import Layout from "../components/Layout";
 import { trpc } from "../utils/trpc";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { store, persistor } from "../app/store";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
 import "../styles/globals.css";
 
@@ -23,13 +26,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <ChakraProvider theme={theme}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </ChakraProvider>
-    </SessionProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <SessionProvider session={session}>
+          <ChakraProvider theme={theme}>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </ChakraProvider>
+        </SessionProvider>
+      </PersistGate>
+    </Provider>
   );
 };
 
