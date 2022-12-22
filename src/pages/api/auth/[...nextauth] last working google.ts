@@ -2,21 +2,21 @@
 //import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { prisma } from "../../../server/db/client";
 //import EmailProvider from 'next-auth/providers/email';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { PrismaClient } from '@prisma/client';
-import GitHubProvider from 'next-auth/providers/github';
+//import { PrismaClient } from '@prisma/client';
+//import GitHubProvider from "next-auth/providers/github";
 // import CredentialsProvider from 'next-auth/providers/credentials';
-
 
 //const prisma = new PrismaClient();
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   // https://next-auth.js.org/configuration/providers
-  //adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma),
   providers: [
     /* EmailProvider({
       server: process.env.EMAIL_SERVER,
@@ -49,7 +49,7 @@ export default NextAuth({
     //     return null;
     //   },
     // }),
-   /*  GitHubProvider({
+    /*  GitHubProvider({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
     }), */
@@ -62,7 +62,7 @@ export default NextAuth({
   // The secret should be set to a reasonably long random string.
   // It is used to sign cookies and to sign and encrypt JSON Web Tokens, unless
   // a separate secret is defined explicitly for encrypting the JWT.
-  
+
   secret: process.env.JWT_SECRET,
 
   session: {
@@ -70,10 +70,8 @@ export default NextAuth({
     // This option can be used with or without a database for users/accounts.
     // Note: `jwt` is automatically set to `true` if no database is specified.
     //jwt: true,
-
     // Seconds - How long until an idle session expires and is no longer valid.
     // maxAge: 30 * 24 * 60 * 60, // 30 days
-
     // Seconds - Throttle how frequently to write to database to extend a session.
     // Use it to limit write operations. Set to 0 to always update the database.
     // Note: This option is ignored if using JSON Web Tokens
@@ -114,18 +112,23 @@ export default NextAuth({
     // async signIn(user, account, profile) { return true },
     async redirect({ url, baseUrl }) {
       // Allows relative callback URLs
-      if (url.startsWith("/")) return `${baseUrl}${url}`
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
       // Allows callback URLs on the same origin
-      else if (new URL(url).origin === baseUrl) return url
-      return baseUrl
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     },
-    // async session(session, user) { return session },
+
+    async session(session) {
+      console.log(session);
+      return session;
+    },
+
     // async jwt(token, user, account, profile, isNewUser) { return token }
   },
 
   // Events are useful for logging
   // https://next-auth.js.org/configuration/events
- /*  events: {
+  /*  events: {
     signIn: ({ user, account, profile, isNewUser }) => {
       console.log(`isNewUser: ${JSON.stringify(isNewUser)}`);
     },
@@ -138,4 +141,5 @@ export default NextAuth({
 
   // Enable debug messages in the console if you are having problems
   debug: false,
-});
+};
+export default NextAuth(authOptions);

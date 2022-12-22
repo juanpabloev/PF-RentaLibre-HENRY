@@ -66,6 +66,7 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.JWT_SECRET,
 
   session: {
+    strategy: "jwt",
     // Use JSON Web Tokens for session instead of database sessions.
     // This option can be used with or without a database for users/accounts.
     // Note: `jwt` is automatically set to `true` if no database is specified.
@@ -83,7 +84,8 @@ export const authOptions: NextAuthOptions = {
   // https://next-auth.js.org/configuration/options#jwt
   jwt: {
     // A secret to use for key generation (you should set this explicitly)
-    // secret: 'INp8IvdIyeMcoGAgFGoA61DdBglwwSqnXJZkgz8PSnw',
+     secret: 'secreto-provisorio',
+     maxAge: 60 * 60 * 24 * 30,
     // Set to true to use encryption (default: false)
     // encryption: true,
     // You can define your own encode/decode functions for signing and encryption
@@ -118,12 +120,18 @@ export const authOptions: NextAuthOptions = {
       return baseUrl;
     },
 
-    // esta parte de aca abajo Juan Pablo la habia habilitado.. no lee sesion de google con esto..
-    /* async session(session, user) {
-      if (session.user) {
-        session.user.id = user.id;
-      }
+    async session(session) {
+      console.log(session);
       return session;
+    },
+
+    async jwt({ token, account, profile }) {
+      // Persist the OAuth access_token and or the user id to the token right after signin
+      if (account) {
+        token.accessToken = account.access_token
+        token.id = profile.id
+      }
+      return token
     },
 
     // async jwt(token, user, account, profile, isNewUser) { return token }

@@ -46,7 +46,7 @@ import {
 export default function WithSubnavigation() {
   const categories = trpc.category.getCategories.useQuery().data;
   const { data: session, status } = useSession();
-  // console.log({ session, status });
+  console.log({ session, status });
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const [inputSearch, setInputSearch] = useState("");
@@ -187,7 +187,7 @@ export default function WithSubnavigation() {
             <>
               <Flex minWidth="max-content" alignItems="center" gap="2">
                 <Text fontSize={"lg"} fontWeight={600} color={"white"}>
-                  Hola, {session.user?.name}
+                  Hola, {session.session.user?.name}
                 </Text>
               </Flex>
 
