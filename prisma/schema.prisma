@@ -10,12 +10,12 @@ datasource db {
   url = env("DATABASE_URL")
 }
 
-
+//lastname username y pasword optional para que funcione con google sing in 
 model User {
   name           String 
-  lastName       String
-  userName       String @unique
-  password       String
+  lastName       String ?
+  userName       String ?@unique
+  password       String ?
   email          String @unique
   id             String @id @default(auto()) @map("_id") @db.ObjectId
   products       Product[]
@@ -38,7 +38,8 @@ model Favorito {
   userId             String? @db.ObjectId
   product            Product?   @relation(fields: [productId], references: [id])
   productId          String? @db.ObjectId
-  active             Boolean @default(true)         
+  active             Boolean @default(true)  
+   detetedAt          DateTime?        
 }
 model Product {
   id                 String @id @default(auto()) @map("_id") @db.ObjectId
@@ -112,7 +113,7 @@ model Transanction {
 
 model Account {
   id                String @id @default(auto()) @map("_id") @db.ObjectId 
-  userId            String
+  userId            String @db.ObjectId 
   type              String
   provider          String
   providerAccountId String
@@ -130,7 +131,7 @@ model Account {
 model Session {
   id           String @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String   @unique
-  userId       String
+  userId       String @db.ObjectId 
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -34,24 +34,24 @@ export default function Productlist() {
 
   //trae del back
   const utils = trpc.useContext();
-  let products;
+  let products: any;
   if (category || q) {
-    // console.log(category);
-    if (category && !(typeof q == undefined)) {
+    if (!!category && !q) {
       products = trpc.product.getProductByCategory.useQuery({
         categoryName: category,
       }).data;
-    } else if (q && !category) {
+    } else if (!!q && !category) {
       products = trpc.product.getProductByTitle.useQuery({ title: q }).data;
     } else {
-      products = trpc.product.getProductByCategory.useQuery({
-        categoryName: category,
+      products = trpc.product.getProductByTitleAndCategory.useQuery({
         title: q,
+        categoryName: category,
       }).data;
     }
   } else {
     products = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data;
   }
+
   const [data, setData] = useState();
   const [order, setOrder] = useState("Más relevantes");
   //para que refresque los datos
