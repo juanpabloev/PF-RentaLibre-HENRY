@@ -65,6 +65,37 @@ export const productRouter = router({
 
       return productByTiltle;
     }),
+  getProductByTitleAndCategory: publicProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        categoryName: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { title, categoryName } = input;
+      
+      const category = await ctx.prisma.category.findFirst({
+        where: { name: categoryName },
+      });
+      const categoryId = category?.id;
+
+      const productsByTittleAndCategory = await ctx.prisma.product.findMany({
+        include: {
+          category: true,
+          user: true,
+        },
+        where: {
+          categoryId,
+          title: {
+            contains: title,
+            mode: "insensitive",
+          },
+        },
+      });
+
+      return productsByTittleAndCategory;
+    }),
   getProductByCategory: publicProcedure
     .input(
       z.object({

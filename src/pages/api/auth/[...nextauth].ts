@@ -117,6 +117,7 @@ export const authOptions: NextAuthOptions = {
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },
+
     async session(session) {
       return session;
     },
