@@ -11,6 +11,6 @@ export default withAuth(
     },
   } */
 )
-// con el matcher deberia proteger las rutas, (buscar exactante como)
+// con el matcher deberia proteger las rutas, (buscar exactante como)))
 
 export const config = { matcher: ["/faq"] }
