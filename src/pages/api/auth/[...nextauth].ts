@@ -117,12 +117,11 @@ export const authOptions: NextAuthOptions = {
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },
-    async session(session, user) {
-      if (session.user) {
-        session.user.id = user.id;
-      }
+
+    async session(session) {
       return session;
     },
+
     // async jwt(token, user, account, profile, isNewUser) { return token }
   },
 
