@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
   //console.log(request.nextUrl.pathname)
 
   const jwt = request.cookies.get("next-auth.session-token")?.value;
-  console.log(jwt); // => 'fast'
+  //console.log(jwt); // => 'fast'
 
   /*   const allCookies = request.cookies.getAll()
   console.log(allCookies) // => [{ name: 'nextjs', value: 'fast' }] */

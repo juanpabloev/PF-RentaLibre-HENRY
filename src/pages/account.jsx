@@ -7,7 +7,7 @@ import { useSession, signOut, getSession } from "next-auth/react";
 
 const account = () => {
   const { data: session, status } = useSession({ required: true });
-  console.log(session); //me va a dar  objeto con la info de la sesion
+  //console.log(session); //me va a dar  objeto con la info de la sesion
 
   if (status === "authenticated") {
     return (

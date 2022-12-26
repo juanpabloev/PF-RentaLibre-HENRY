@@ -46,7 +46,6 @@ import {
 export default function WithSubnavigation() {
   const categories = trpc.category.getCategories.useQuery().data;
   const { data: session, status } = useSession();
-  //console.log({ session, status });
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const [inputSearch, setInputSearch] = useState("");
