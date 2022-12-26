@@ -14,7 +14,7 @@ datasource db {
 model User {
   name           String 
   lastName       String ?
-  userName       String ?@unique
+  userName       String ? 
   password       String ?
   email          String @unique
   id             String @id @default(auto()) @map("_id") @db.ObjectId
@@ -31,6 +31,7 @@ model User {
   favorites      Favorito[]
   active         Boolean @default(true)
   feedback       String?
+  role Role @default(USER)
 }
 model Favorito {
   id                 String @id @default(auto()) @map("_id") @db.ObjectId
@@ -142,4 +143,9 @@ model VerificationToken {
   token      String   @unique
   expires    DateTime
  @@unique([identifier, token])
+}
+
+enum Role {
+  USER
+  ADMIN
 }
