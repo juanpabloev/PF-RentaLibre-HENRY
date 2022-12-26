@@ -9,7 +9,7 @@ const login = () => {
   if (session) {
     return (
       <div>
-        <p>{session.user.email}, estas logueado</p>
+        <p>{session.session.user.email}, estas logueado</p>
         <button onClick={() => signOut()}>Cerrar Sesión</button>
       </div>
     );
