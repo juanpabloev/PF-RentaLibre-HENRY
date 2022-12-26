@@ -12,23 +12,23 @@ const account = () => {
   if (status === "authenticated") {
     return (
       <div>
-        <p>Bienvenido, {session.user.name}</p>
+        <p>Bienvenido, {session.session.user.name}</p>
         <button onClick={() => signOut()}>Cerrar Sesión</button>
       </div>
     );
-  } else {
+  } /* else {
     return (
       <div>
         <p>Login</p>
         <button onClick={() => signIn()}>Iniciar Sesión</button>
       </div>
     );
-  }
+  } */
 };
 
 export default account;
 
-export const getServerSideProps = async (context) => {
+/* export const getServerSideProps = async (context) => {
   const session = await getSession(context);
   if (!session) {
     return {
@@ -42,3 +42,4 @@ export const getServerSideProps = async (context) => {
     props: { session },
   };
 };
+ */
