@@ -110,6 +110,7 @@ export default function Productlist() {
             productName={p.title}
             photo={p.pictures[0]}
             productPrice={p.price}
+            rating={p.rating}
             id={p.id}
             key={p.id}
           />
