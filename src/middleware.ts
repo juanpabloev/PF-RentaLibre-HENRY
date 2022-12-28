@@ -6,6 +6,7 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   //console.log(request.nextUrl.pathname)
+  
 
   const jwt = request.cookies.get("next-auth.session-token")?.value;
   //console.log(jwt); // => 'fast'
@@ -24,6 +25,13 @@ export function middleware(request: NextRequest) {
       return NextResponse.rewrite(new URL("/login", request.url));
     }
   }
+
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    if (jwt === undefined) {
+      return NextResponse.rewrite(new URL("/login", request.url));
+    }
+  }
+
 }
 
 // ver si poner en arreglo mas rutas-

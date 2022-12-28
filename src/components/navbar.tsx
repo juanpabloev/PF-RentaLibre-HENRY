@@ -186,7 +186,7 @@ export default function WithSubnavigation() {
             <>
               <Flex minWidth="max-content" alignItems="center" gap="2">
                 <Text fontSize={"lg"} fontWeight={600} color={"white"}>
-                  Hola, {session.session.user?.name}
+                  Hola, {session.user?.name}
                 </Text>
               </Flex>
 
