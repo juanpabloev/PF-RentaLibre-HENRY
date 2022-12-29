@@ -4,12 +4,9 @@
 
 //FALTA PASAR A TSX !!
 
-import { GetStaticProps, GetStaticPaths } from "next";
-import type { RouterOutputs } from "../../utils/trpc";
 import { trpc } from "../../utils/trpc";
 import {
   Box,
-  chakra,
   Container,
   Stack,
   Text,
@@ -21,21 +18,14 @@ import {
   SimpleGrid,
   StackDivider,
   useColorModeValue,
-  VisuallyHidden,
   List,
   ListItem,
+  Badge,
 } from "@chakra-ui/react";
-import { FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
 import { MdLocalShipping } from "react-icons/md";
-import { None } from "framer-motion";
-import {
-  ReactElement,
-  JSXElementConstructor,
-  ReactFragment,
-  ReactPortal,
-} from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 // type Params = {
 //   params: {
@@ -76,10 +66,51 @@ import { useSession } from "next-auth/react";
 export default function ProductDetail() {
   const router = useRouter();
   const session = useSession();
-  const { id } = router.query;
+  const { id }:any = router.query;
   //trae del back con id
   const product = trpc.product.getProductByID.useQuery({ id }).data;
   const addFavorite = trpc.user.addFavorite.useMutation();
+
+  async function handleSubmit(event:any) {
+    event.preventDefault();
+    if(product?.availability){
+    try {
+      const res = await fetch("https://api.mercadopago.com/checkout/preferences", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer APP_USR-5672095275524228-121515-ef3e594e4fc515b3e4d7d98cff8d97e1-1263932815'
+        },
+        body: JSON.stringify({
+            payer_email: session?.data?.session?.user.email,
+            items: [
+              {
+                title: product?.title,
+                description: product?.description,
+                picture_url: product?.pictures[0],
+                category_id: product?.category,
+                quantity: 1,//AGREGAR PRODUCT?.QUANTITY a schema
+                unit_price: parseFloat(product?.price)
+              }
+            ],
+            back_urls: {
+              success: 'https://www.success.com',
+              failure: 'http://www.failure.com',
+              pending: 'http://www.pending.com'
+            },
+            notification_url: 'https://www.your-site.com/ipn'
+          })
+      });
+      const json = await res.json();
+      console.log(json)
+      router.push(json.init_point)
+    } catch (error) {
+      console.error(error);
+    }
+  }else{
+    alert("Producto no disponible")
+  }
+}
 
   const handleFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -248,7 +279,7 @@ export default function ProductDetail() {
               </List>
             </Box>
           </Stack>
-
+          
           <Button
             rounded={"none"}
             w={"full"}
@@ -262,8 +293,17 @@ export default function ProductDetail() {
               transform: "translateY(2px)",
               boxShadow: "lg",
             }}
+            onClick={(e) => handleSubmit(e)}
           >
-            Consultar Disponibilidad
+            {product?.availability ? (
+              <Badge ml={2} colorScheme="green">
+                Disponible para renta!
+              </Badge>
+            ) : (
+              <Badge ml={2} colorScheme="red">
+                No disponible
+              </Badge>
+            )}
           </Button>
 
           <Stack direction="row" alignItems="center" justifyContent={"center"}>

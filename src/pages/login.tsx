@@ -16,7 +16,6 @@ const login = () => {
   } else {
     return (
       <div>
-        <p>Login</p>
         <button onClick={() => signIn()}>Iniciar Sesión</button>
       </div>
     );
