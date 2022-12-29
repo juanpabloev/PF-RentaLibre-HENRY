@@ -27,7 +27,7 @@ interface Carusel {
   image: string;
 }
 
-export default function Page({}: Props) {
+export default function Page({}: Props, props: Props) {
   //export default function Page() {
 
   //trae la data del back
