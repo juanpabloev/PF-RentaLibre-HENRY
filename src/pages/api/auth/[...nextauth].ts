@@ -12,6 +12,11 @@ import { prisma } from "../../../server/db/client";
 
 //const prisma = new PrismaClient();
 
+/* const userdDB = async () => {
+  const userDB = await prisma.user.findUnique({ where: { id: token.sub } });
+  return userDB;
+}; */
+
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
 export const authOptions: NextAuthOptions = {
@@ -84,8 +89,8 @@ export const authOptions: NextAuthOptions = {
   // https://next-auth.js.org/configuration/options#jwt
   jwt: {
     // A secret to use for key generation (you should set this explicitly)
-     secret: 'secreto-provisorio',
-     maxAge: 60 * 60 * 24 * 30,
+    secret: "secreto-provisorio",
+    maxAge: 60 * 60 * 24 * 30,
     // Set to true to use encryption (default: false)
     // encryption: true,
     // You can define your own encode/decode functions for signing and encryption
@@ -120,18 +125,30 @@ export const authOptions: NextAuthOptions = {
       return baseUrl;
     },
 
-    async session(session) {
-      console.log(session);
+    async session({ session, token }) {
+      const userDB = await prisma.user.findUnique({ where: { id: token.sub } });
+
+      if (session) {
+        session.userDB = userDB;
+      }
+      //console.log(session);
       return session;
     },
 
-    async jwt({ token, account, profile }) {
+    async jwt({ token, account, profile, user, isNewUser }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
+      const userDB = await prisma.user.findUnique({ where: { id: token.sub } });
+
       if (account) {
-        token.accessToken = account.access_token
-        token.id = profile.id
+        token.accessToken = account.access_token;
+        //token.id = profile.id
       }
-      return token
+      if (user) {
+        token.role = userDB?.role;
+      }
+      //console.log(token)
+
+      return token;
     },
 
     // async jwt(token, user, account, profile, isNewUser) { return token }

@@ -12,7 +12,7 @@ const account = () => {
   if (status === "authenticated") {
     return (
       <div>
-        <p>Bienvenido, {session.session.user.name}</p>
+        <p>Bienvenido, {session.user.name}</p>
         <button onClick={() => signOut()}>Cerrar Sesión</button>
       </div>
     );
