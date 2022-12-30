@@ -130,8 +130,10 @@ export default function WithSubnavigation() {
               maxWidth={"max-content"}
               onChange={handleChangeSelect}
             >
-              {categories?.map((c) => (
-                <option value={c.name}>{c.name} </option>
+              {categories?.map((c, index) => (
+                <option key={index} value={c.name}>
+                  {c.name}{" "}
+                </option>
               ))}
             </Select>
             <Input
@@ -262,7 +264,7 @@ export default function WithSubnavigation() {
             fontWeight={600}
             color={"#404c5a"}
             variant={"link"}
-            href={"/register"}
+            href={"/favorites"}
           >
             Favoritos
           </Button>
