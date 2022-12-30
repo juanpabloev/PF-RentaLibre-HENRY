@@ -13,7 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { sendContactForm } from "../lib/apiMail";
+//import { sendContactForm } from "../lib/apiMail";
 
 
 const initValues = { name: "", email: "", subject: "", message: "" };
@@ -46,7 +46,15 @@ export default function Contact() {
     }));
     try {
       console.log(values)
-      await sendContactForm(values);
+      const res = await fetch(`api/contactMail`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(values),
+			})
+
+
       setTouched({});
       setState(initState);
       toast({
