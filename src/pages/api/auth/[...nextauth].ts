@@ -130,6 +130,10 @@ export const authOptions: NextAuthOptions = {
 
       if (session) {
         session.userDB = userDB;
+        //para que el backend tome bien el id del usuario
+        if (session.user != undefined && userDB?.id) {
+          session.user["id"] = userDB?.id;
+        }
       }
       //console.log(session);
       return session;
