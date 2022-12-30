@@ -1,5 +1,7 @@
 // Esta funcion postea al handler en api/contactMail
 
+//hay que importarla al componente en el que querramos enviar un mail
+
 export const sendContactForm = async (data: any) =>
   fetch("/api/contactMail", {
     method: "POST",
