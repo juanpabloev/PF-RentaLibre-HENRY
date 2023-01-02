@@ -42,15 +42,15 @@ export default function Contact() {
 
   const { values, isLoading, error } = state;
 
-  const onBlur = ({ target }) =>
-    setTouched((prev) => ({ ...prev, [target.name]: true }));
+  const onBlur = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setTouched((prev) => ({ ...prev, [e.target.name]: true }));
 
-  const handleChange = ({ target }) =>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setState((prev) => ({
       ...prev,
       values: {
         ...prev.values,
-        [target.name]: target.value,
+        [e.target.name]: e.target.value,
       },
     }));
 
