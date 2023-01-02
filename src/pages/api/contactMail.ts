@@ -50,7 +50,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       `
     });
   } catch (error) {
-    return res.status(500).json({ error: error.message || error.toString() });
+    return res.status(500).json( error?.toString() );
   }
   return res.status(200).json({ error: "" });
 };

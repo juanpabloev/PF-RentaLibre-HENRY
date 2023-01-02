@@ -6,13 +6,15 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  FormHelperText,
   Heading,
   Input,
   Text,
   Textarea,
   useToast,
+  
 } from "@chakra-ui/react";
-import { useState } from "react";
+import React, { useState } from "react";
 //import { sendContactForm } from "../lib/apiMail";
 
 
@@ -23,7 +25,20 @@ const initState = { isLoading: false, error: "", values: initValues };
 export default function Contact() {
   const toast = useToast();
   const [state, setState] = useState(initState);
-  const [touched, setTouched] = useState({});
+
+  interface Touched {
+    name: boolean,
+    email: boolean,
+    subject: boolean,
+    message: boolean
+  }
+  const [touched, setTouched] = useState<Touched>({
+    name: false,
+    email: false,
+    subject: false,
+    message: false,
+  });
+
 
   const { values, isLoading, error } = state;
 
@@ -55,7 +70,12 @@ export default function Contact() {
 			})
 
 
-      setTouched({});
+      setTouched({
+        name: false,
+        email: false,
+        subject: false,
+        message: false,
+      });
       setState(initState);
       toast({
         title: "Message sent.",
@@ -63,11 +83,11 @@ export default function Contact() {
         duration: 2000,
         position: "top",
       });
-    } catch (error) {
+    } catch (error: any) {
       setState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error.message,
+        error: error?.message,
       }));
     }
   };
@@ -131,7 +151,6 @@ export default function Contact() {
       >
         <FormLabel>Mensage</FormLabel>
         <Textarea
-          type="text"
           name="message"
           rows={4}
           errorBorderColor="red.300"
