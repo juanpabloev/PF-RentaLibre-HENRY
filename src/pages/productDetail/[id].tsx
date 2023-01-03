@@ -25,8 +25,6 @@ import {
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
-
 // type Params = {
 //   params: {
 //     id: string;
@@ -71,15 +69,13 @@ export default function ProductDetail() {
   const product = trpc.product.getProductByID.useQuery({ id }).data;
   const addFavorite = trpc.user.addFavorite.useMutation();
 
-  async function handleSubmit(event:any) {
-    event.preventDefault();
-    if(product?.availability){
+  async function handleSubmit() {
     try {
       const res = await fetch("https://api.mercadopago.com/checkout/preferences", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer APP_USR-5672095275524228-121515-ef3e594e4fc515b3e4d7d98cff8d97e1-1263932815'
+            Authorization: `Bearer APP_USR-5672095275524228-121515-ef3e594e4fc515b3e4d7d98cff8d97e1-1263932815`
         },
         body: JSON.stringify({
             payer_email: session?.data?.session?.user.email,
@@ -90,15 +86,15 @@ export default function ProductDetail() {
                 picture_url: product?.pictures[0],
                 category_id: product?.category,
                 quantity: 1,//AGREGAR PRODUCT?.QUANTITY a schema
-                unit_price: parseFloat(product?.price)
+                unit_price: product?.price
               }
             ],
             back_urls: {
-              success: 'https://www.success.com',
-              failure: 'http://www.failure.com',
-              pending: 'http://www.pending.com'
+              success: 'http://localhost:3000/success',
+              failure: 'http://localhost:3000/failure',
+              pending: 'http://localhost:3000/pending'
             },
-            notification_url: 'https://www.your-site.com/ipn'
+            notification_url: 'https://04c5-191-97-97-69.sa.ngrok.io/api/notificar'
           })
       });
       const json = await res.json();
@@ -107,9 +103,6 @@ export default function ProductDetail() {
     } catch (error) {
       console.error(error);
     }
-  }else{
-    alert("Producto no disponible")
-  }
 }
 
   const handleFavorites = (e: React.MouseEvent<HTMLElement>) => {
@@ -293,7 +286,7 @@ export default function ProductDetail() {
               transform: "translateY(2px)",
               boxShadow: "lg",
             }}
-            onClick={(e) => handleSubmit(e)}
+            onClick={handleSubmit}
           >
             {product?.availability ? (
               <Badge ml={2} colorScheme="green">
