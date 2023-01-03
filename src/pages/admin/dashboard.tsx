@@ -1,9 +1,11 @@
 import React from "react";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
+import { useRouter } from 'next/router'
 
 
 const Dashboard = () => {
    const { data: session, status } = useSession({ required: true })
+   const router = useRouter()
     
    //console.log(session); //me va a dar  objeto con la info de la sesion
 
@@ -16,11 +18,13 @@ const Dashboard = () => {
      </div>
    );
  } else {
-   return (
-     <div>
-       <p>{session?.user?.name}, NO ESTAS AUTORIZADO A VER ESTA PAGINA</p>
-     </div>
-   );
+  router.push('/404')
+  /* return (
+    <div>
+      <p>SOS UN 404!!! test</p>
+      
+    </div>
+  ); */
  }
 };
 
