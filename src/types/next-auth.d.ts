@@ -11,6 +11,9 @@ declare module "next-auth" {
     session:{
       user:{
         email: string;
+        name: string;
+        image: string;
+        id: string;
       }
     } & DefaultSession["user"];
     userDB: any;
