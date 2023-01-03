@@ -58,6 +58,8 @@ export default function Contact() {
       isLoading: true,
     }));
     try {
+      values.message = 'E-MAIL: ' + values.email + ' / MENSAJE: ' + values.message;
+      values.email = 'rentalibre2022@gmail.com';
       console.log(values);
       sendEmail(values);
       setTouched({
@@ -84,7 +86,7 @@ export default function Contact() {
 
   return (
     <Container maxW="450px" mt={12}>
-      <Heading>Contactando 3ros test - Despues migrar a CONTACTANOS!!</Heading>
+      <Heading>Contactanos:</Heading>
       {error && (
         <Text color="red.300" my={4} fontSize="xl">
           {error}
