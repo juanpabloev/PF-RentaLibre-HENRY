@@ -1,5 +1,3 @@
-import { useSession, signIn, signOut, getSession } from "next-auth/react";
-
 import {
   Button,
   Container,
@@ -12,11 +10,11 @@ import {
   Text,
   Textarea,
   useToast,
-  
+
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-//import { sendContactForm } from "../lib/apiMail";
 
+import sendEmail from "../utils/contact-functions/contact-Email";
 
 const initValues = { name: "", email: "", subject: "", message: "" };
 
@@ -60,16 +58,8 @@ export default function Contact() {
       isLoading: true,
     }));
     try {
-      console.log(values)
-      const res = await fetch(`api/contactMail`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(values),
-			})
-
-
+      console.log(values);
+      sendEmail(values);
       setTouched({
         name: false,
         email: false,

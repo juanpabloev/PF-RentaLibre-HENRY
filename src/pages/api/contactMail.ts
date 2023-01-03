@@ -10,20 +10,10 @@ const gmailPass = process.env.GMAIL_ACCCOUNT_PASS;
 
 ej:
 
-const onSubmit = async () => {
-  setState((prev) => ({
-    ...prev,
-    isLoading: true,
-  }));
-  try {
-    console.log(values)
-    const res = await fetch(`api/contactMail`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(values),
-    }) */
+usar funcion sendMail desde:
+\src\utils\contact-functions
+
+*/
 
 ///////////////////////////////////////////////////////
 
