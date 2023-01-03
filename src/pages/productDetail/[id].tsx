@@ -70,6 +70,9 @@ export default function ProductDetail() {
   const product = trpc.product.getProductByID.useQuery({ id }).data;
   const addFavorite = trpc.user.addFavorite.useMutation();
 
+  const colorTxt = useColorModeValue("black", "gray.900");
+  const colorBg = useColorModeValue("yellow.300", "orange.50");
+
   async function handleSubmit() {
     try {
       const res = await fetch("https://api.mercadopago.com/checkout/preferences", {
@@ -159,8 +162,8 @@ export default function ProductDetail() {
               mt={8}
               size={"lg"}
               py={"7"}
-              bg={useColorModeValue("yellow.300", "orange.50")}
-              color={useColorModeValue("black", "gray.900")}
+              bg={colorBg}
+              color={colorTxt}
               textTransform={"uppercase"}
               _hover={{
                 transform: "translateY(2px)",

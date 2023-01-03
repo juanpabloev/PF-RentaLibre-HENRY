@@ -2,14 +2,14 @@ import React from "react";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 
 
-const login = () => {
+const Login = () => {
   const { data: session } = useSession();
   //console.log(session); //me va a dar  objeto con la info de la sesion
 
   if (session) {
     return (
       <div>
-        <p>{session.user.email}, estas logueado</p>
+        <p>{session.user?.email}, estas logueado</p>
         <button onClick={() => signOut()}>Cerrar Sesión</button>
       </div>
     );
@@ -22,4 +22,4 @@ const login = () => {
   }
 };
 
-export default login;
+export default Login;

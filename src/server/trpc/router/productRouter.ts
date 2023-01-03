@@ -74,7 +74,7 @@ export const productRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const { title, categoryName } = input;
-      
+
       const category = await ctx.prisma.category.findFirst({
         where: { name: categoryName },
       });

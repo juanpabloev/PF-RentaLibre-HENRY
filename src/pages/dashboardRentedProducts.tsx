@@ -9,7 +9,7 @@ import {
 import { useState } from "react";
 import { trpc } from "../utils/trpc";
 
-export default function dashboardRentedProducts() {
+export default function DashboardRentedProducts() {
   const user = trpc.user.getUser.useQuery({
     userId: "639640531a4b6c6f07111635",
   }).data;
@@ -41,7 +41,7 @@ export default function dashboardRentedProducts() {
         {user && seller
           ? user.seller.map((trans) => {
               return (
-                <Box>
+                <Box key={trans.transactionID}>
                   <Accordion allowToggle w="650px">
                     <AccordionItem>
                       <h2>
@@ -124,7 +124,7 @@ export default function dashboardRentedProducts() {
           : user &&
             user.buyer.map((trans) => {
               return (
-                <Box>
+                <Box key={trans.transactionID}>
                   <Accordion allowToggle w="650px">
                     <AccordionItem>
                       <h2>
