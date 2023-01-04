@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 
-function footer() {
+function Footer() {
   return (
     <Box>
       <Container
@@ -39,4 +39,4 @@ function footer() {
   );
 }
 
-export default footer;
+export default Footer;

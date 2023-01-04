@@ -56,6 +56,7 @@ import {
                 width={282}
                 objectFit={'cover'}
                 src={photo}
+                alt={productName}
               />
             </Box>
             <Stack pt={10} align={'center'}>

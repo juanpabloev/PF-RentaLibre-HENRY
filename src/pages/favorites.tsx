@@ -29,7 +29,7 @@ function Favorites() {
 
   const removeFavorite = trpc.user.deleteFavorite.useMutation();
 
-  const handleDelete = (e: React.MouseEvent<HTMLElement>) => {
+  const handleDelete = (e: any) => {
     e.preventDefault();
 
     removeFavorite.mutate({ favoriteId: e.target.id });

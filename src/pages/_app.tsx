@@ -4,7 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import Layout from "../components/Layout";
 import { trpc } from "../utils/trpc";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
-import { store, persistor } from "../app/store";
+import { store, persistor } from "../redux/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 

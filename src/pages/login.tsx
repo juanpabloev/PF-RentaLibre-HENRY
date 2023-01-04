@@ -4,7 +4,7 @@ import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { Button, ButtonGroup, Center, Text, Box, Flex } from '@chakra-ui/react'
 
 
-const login = () => {
+const Login = () => {
   const { data: session } = useSession();
   //console.log(session); //me va a dar  objeto con la info de la sesion
 
@@ -39,4 +39,4 @@ const login = () => {
   }
 };
 
-export default login;
+export default Login;
