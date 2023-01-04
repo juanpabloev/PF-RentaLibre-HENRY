@@ -143,8 +143,8 @@ export const productRouter = router({
     .input(
       z.object({
         title: z.string(),
-        price: z.string(),
-        category: z.string(),
+        price: z.number(),
+        category: z.any(),
         description: z.string(),
         availability: z.object({
           available: z.boolean(),
@@ -204,7 +204,7 @@ export const productRouter = router({
             },
             data: {
               title: "Moto Voladora",
-              price: "5,50",
+              price: 5.50,
             },
           },
         },

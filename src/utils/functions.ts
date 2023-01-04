@@ -102,10 +102,10 @@ export function deleteUser () {
  deleteU.mutate()
 }
 
-export function addFavorite () {
- addF.mutate()
-}
+// export function addFavorite () {
+//  addF.mutate()
+// }
 
-export function deleteFavorite () {
- deleteF.mutate()
-}
+// export function deleteFavorite () {
+//  deleteF.mutate()
+// }
