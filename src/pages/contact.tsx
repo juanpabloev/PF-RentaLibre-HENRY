@@ -162,7 +162,7 @@ export default function Contact() {
         }
         onClick={onSubmit}
       >
-        Submit
+        Enviar
       </Button>
     </Container>
   );

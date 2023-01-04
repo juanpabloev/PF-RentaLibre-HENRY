@@ -146,7 +146,7 @@ export default function Claim() {
                 }
                 onClick={onSubmit}
             >
-                Submit
+                Enviar
             </Button>
         </Container>
     );
