@@ -2,7 +2,7 @@ interface Values {
     name: string,
     email: string,
     subject: string,
-    message: string
+    message: string,
 };
 
 export default async function sendEmail(values: Values) {

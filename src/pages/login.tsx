@@ -4,7 +4,7 @@ import { useSession, signIn, signOut, getSession } from "next-auth/react";
 
 const Login = () => {
   const { data: session } = useSession();
-  //console.log(session); //me va a dar  objeto con la info de la sesion
+  // console.log(session); //me va a dar  objeto con la info de la sesion
 
   if (session) {
     return (

@@ -86,7 +86,7 @@ export default function Contact() {
 
   return (
     <Container maxW="450px" mt={12}>
-      <Heading>Contactanos:</Heading>
+      <Heading marginBottom={30}>Contactanos</Heading>
       {error && (
         <Text color="red.300" my={4} fontSize="xl">
           {error}
@@ -124,7 +124,7 @@ export default function Contact() {
         isRequired
         isInvalid={touched.subject && !values.subject}
       >
-        <FormLabel>Subject</FormLabel>
+        <FormLabel>Asunto</FormLabel>
         <Input
           type="text"
           name="subject"
