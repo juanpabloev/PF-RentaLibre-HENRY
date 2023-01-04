@@ -48,6 +48,7 @@ export default function CardProductList({
                 src={photo}
                 maxW={{ base: "100%", sm: "200px" }}
                 height="160px"
+                alt={productName}
               />
             </Box>
           </Flex>

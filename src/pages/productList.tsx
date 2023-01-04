@@ -30,7 +30,10 @@ import { RxCaretDown as ChevronDownIcon } from "react-icons/rx";
 
 export default function Productlist() {
   const router = useRouter();
-  const { category, q } = router.query;
+  const category: any = router.query.category;
+  const q: any = router.query.q;
+
+  const colorBg = useColorModeValue("gray.100", "gray.900");
 
   //trae del back
   const utils = trpc.useContext();
@@ -52,7 +55,7 @@ export default function Productlist() {
     products = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data;
   }
 
-  const [data, setData] = useState();
+  const [data, setData] = useState<any>();
   const [order, setOrder] = useState("Más relevantes");
   //para que refresque los datos
   useEffect(() => {
@@ -63,7 +66,7 @@ export default function Productlist() {
 
   return (
     <div>
-      <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+      <Box bg={colorBg} px={4}>
         <Flex h={8} alignItems={"center"} justifyContent={"space-between"}>
           <Flex alignItems={"center"}>
             <Highlight
@@ -105,7 +108,7 @@ export default function Productlist() {
       </Box>
 
       <div className={styles.cardsDivProdHome}>
-        {data?.map((p) => (
+        {data?.map((p: any) => (
           <CardProductList
             productName={p.title}
             photo={p.pictures[0]}

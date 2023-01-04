@@ -5,7 +5,7 @@ import { useSession, signOut, getSession } from "next-auth/react";
 
 // ESTE COMPONENTE PUEDE MOSTRAR PAGINA DE DETALLE DE CUENTA - O DASHBOAARD USER
 
-const account = () => {
+const Account = () => {
   const { data: session, status } = useSession({ required: true });
   //console.log(session); //me va a dar  objeto con la info de la sesion
 
@@ -26,7 +26,7 @@ const account = () => {
   } */
 };
 
-export default account;
+export default Account;
 
 /* export const getServerSideProps = async (context) => {
   const session = await getSession(context);

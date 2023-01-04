@@ -53,21 +53,21 @@ export default function WithSubnavigation() {
     router.query.category ?? ""
   );
 
-  const handleChange = (event: React.FormEvent<HTMLInputElement>) =>
+  const handleChange = (event: any) =>
     setInputSearch(event.currentTarget.value);
-  const handleSubmit = (inputText: String) => {
+  const handleSubmit = (inputText: any) => {
     // const { category } = router.query;
     setInputSearch(inputText);
     inputText += `&category=${selectCategory}`;
     router.push(`/productList?q=${inputText}`);
   };
-  const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const keyDownHandler = (event: any) => {
     if (event.code === "Enter") {
       handleSubmit(inputSearch);
     }
   };
 
-  const handleChangeSelect = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleChangeSelect = (e: any) => {
     setSelectCategory(e.currentTarget.value);
     document.getElementById("inputSearch")?.focus();
     // const { category } = router.query;

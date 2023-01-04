@@ -288,7 +288,7 @@ const Form3 = () => {
   );
 };
 
-export default function register() {
+export default function Register() {
   const toast = useToast();
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(33.33);
