@@ -25,14 +25,24 @@ model User {
   seller         Transanction[] @relation(name: "seller")
   buyer          Transanction[] @relation(name: "buyer") 
   emailVerified  DateTime?
-  image          String?
+  image          String @default("https://firebasestorage.googleapis.com/v0/b/rentalibre-fbbda.appspot.com/o/userPicture%2Fusuario.png?alt=media&token=9fa3eb31-e33e-429f-8af7-0519377d0e61")
   accounts       Account[]
   sessions       Session[]
   favorites      Favorito[]
   active         Boolean @default(true)
   feedback       String?
   role Role @default(USER)
+  location       Location?
+  phoneNumber    String?
+  codigoPostal   String?
 }
+
+type Location {
+  country  String?
+  state    String?
+  city     String?
+}
+
 model Favorito {
   id                 String @id @default(auto()) @map("_id") @db.ObjectId
   user               User?   @relation(fields: [userId], references: [id])
