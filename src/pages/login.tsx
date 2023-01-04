@@ -1,6 +1,8 @@
 import React from "react";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 
+import { Button, ButtonGroup, Center, Text, Box, Flex } from '@chakra-ui/react'
+
 
 const login = () => {
   const { data: session } = useSession();
@@ -8,16 +10,31 @@ const login = () => {
 
   if (session) {
     return (
-      <div>
-        <p>{session.user.email}, estas logueado</p>
-        <button onClick={() => signOut()}>Cerrar Sesión</button>
-      </div>
-    );
+      <Center marginTop={40}>
+        <Flex direction={'column'}>
+        <Box marginBottom={5}>
+        <Text fontSize='lg' as='b'>{session?.user?.name}, estas logueado</Text>
+        </Box>
+        <Button
+          colorScheme='teal'
+          size='md'
+          onClick={() => signOut()}>
+          Cerrar Sesión
+        </Button>
+        </Flex>
+      </Center>
+    )
+
   } else {
     return (
-      <div>
-        <button onClick={() => signIn()}>Iniciar Sesión</button>
-      </div>
+      <Center marginTop={40}>
+        <Button
+          colorScheme='teal'
+          size='md'
+          onClick={() => signIn()}>
+          Iniciar Sesión
+        </Button>
+      </Center>
     );
   }
 };

@@ -51,7 +51,6 @@ function Favorites() {
 
             <ListItem key={index}>
               <Center py={6}>
-
                 <Stack
                   //borderWidth="1px"
                   borderRadius="lg"
@@ -62,7 +61,6 @@ function Favorites() {
                   boxShadow={"xl"}
                   padding={4}
                 >
-
                   <button value={favorite.id} onClick={(e) => handleDelete(e)}>
                     <ListIcon
                       as={AiOutlineCloseSquare}
@@ -72,7 +70,6 @@ function Favorites() {
                       id={favorite.id}
                     />
                   </button>
-
                   <CardProductFavorites
                     productName={favorite.product?.title}
                     photo={favorite.product?.pictures[0]}
@@ -81,16 +78,12 @@ function Favorites() {
                     id={favorite.product?.id}
                     key={index}
                   />
-
                 </Stack>
               </Center>
-
             </ListItem>
-
           ))}
         </List>
       </div>
-
     );
   } else {
     return <div>Tenes que estar conectado para acceder a favoritos</div>;
