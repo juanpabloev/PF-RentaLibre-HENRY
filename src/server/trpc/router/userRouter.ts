@@ -89,6 +89,7 @@ export const userRouter = router({
         where: {
           productId: input.productId,
           active: true,
+          userId: ctx.session.user.id,
         },
       });
       if (isFavorited.length <= 0) {
