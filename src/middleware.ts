@@ -32,6 +32,12 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  if (request.nextUrl.pathname.startsWith("/favorites")) {
+    if (jwt === undefined) {
+      return NextResponse.rewrite(new URL("/login", request.url));
+    }
+  }
+
 }
 
 // ver si poner en arreglo mas rutas-
