@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
+import { RouterOutputs, trpc } from "../../utils/trpc";
+import ErrorPage from 'next/error';
 
 import {
     Button,
@@ -7,42 +9,46 @@ import {
     FormControl,
     FormErrorMessage,
     FormLabel,
-    FormHelperText,
     Heading,
     Input,
     Text,
     Textarea,
     useToast,
+    Center,
+    Select,
 
 } from "@chakra-ui/react";
 
 
 //import sendEmail from "../utils/contact-functions/contact-Email";
 
-const initValues = { name: "", email: "", subject: "", message: "", transactionNumber: "" };
+const initValues = { name: "", email: "", category: "", description: "", title: "" };
 
 const initState = { isLoading: false, error: "", values: initValues };
 
 
-export default function Claim() {
+export default function Addpublication() {
     const toast = useToast();
     const { data: session, status } = useSession({ required: true });
+
+    const categories = trpc.category.getCategories.useQuery().data;
+    //console.log(categories) // array - [id, name]
 
     const [state, setState] = useState(initState);
 
     interface Touched {
         name: boolean,
         email: boolean,
-        subject: boolean,
-        message: boolean,
-        transactionNumber: boolean,
+        category: boolean,
+        description: boolean,
+        title: boolean,
     }
     const [touched, setTouched] = useState<Touched>({
         name: false,
         email: false,
-        subject: false,
-        message: false,
-        transactionNumber: false,
+        category: false,
+        description: false,
+        title: false,
     });
 
 
@@ -60,6 +66,15 @@ export default function Claim() {
             },
         }));
 
+    const handleSelect = (e: any) =>
+        setState((prev) => ({
+            ...prev,
+            values: {
+                ...prev.values,
+                [e.target.name]: e.target.value,
+            },
+        }));
+
     const onSubmit = async () => {
         setState((prev) => ({
             ...prev,
@@ -69,18 +84,19 @@ export default function Claim() {
             console.log(values);
             //sendEmail(values);
 
-//77777777777777777777777777777777777
+            //77777777777777777777777777777777777
 
-//ACA AGREGAR LO QUE ADONDE QUERRAMOS ENVIAR LA INFO !!!!!!
+            //ACA AGREGAR LO QUE ADONDE QUERRAMOS ENVIAR LA INFO !!!!!!
 
-////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////
 
             setTouched({
                 name: false,
                 email: false,
-                subject: false,
-                message: false,
-                transactionNumber: false,
+                category: false,
+                description: false,
+                title: false,
+                
             });
             setState(initState);
             toast({
@@ -100,7 +116,7 @@ export default function Claim() {
 
     return (
         <Container maxW="450px" mt={12}>
-            <Heading marginBottom={30}>Formulario de Reclamo</Heading>
+            <Heading marginBottom={30}>Publicar Artículo</Heading>
             {error && (
                 <Text color="red.300" my={4} fontSize="xl">
                     {error}
@@ -108,29 +124,59 @@ export default function Claim() {
             )}
 
             <FormLabel marginBottom={5}>Nombre: {session?.userDB.name}</FormLabel>
+            <FormLabel marginBottom={5}>E-mail: {session?.userDB.email}</FormLabel>
+            <FormLabel marginBottom={5}>Teléfono: CHEQUEAR TELEFONO EN DB  !!!!</FormLabel>
+            <FormLabel marginBottom={5}>¿Datos Correctos?</FormLabel>
+            <Center marginBottom={10}>
+                <Button
+                    colorScheme='teal'
+                    size='md'
+                    /* onClick={() => signOut()} */>
+                    Editar Perfil
+                </Button>
+            </Center>
 
-            <FormControl isRequired isInvalid={touched.transactionNumber && !values.transactionNumber} mb={5}>
-                <FormLabel>Transacción Número</FormLabel>
+            <FormControl isRequired isInvalid={touched.title && !values.title} mb={5}>
+                <FormLabel>Título</FormLabel>
                 <Input
                     type="text"
-                    name="transactionNumber"
+                    name="title"
                     errorBorderColor="red.300"
-                    value={values.transactionNumber}
+                    value={values.title}
                     onChange={handleChange}
                     onBlur={onBlur}
                 />
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
-            <FormControl
-                isRequired isInvalid={touched.message && !values.message} mb={5}
-            >
-                <FormLabel>Reclamo</FormLabel>
-                <Textarea
-                    name="message"
-                    rows={4}
+            <FormControl isRequired isInvalid={touched.category && !values.category} mb={5}>
+                <FormLabel>Categoría</FormLabel>
+                <Select 
+                    variant='filled'
+                    placeholder='Elegir'
+                    name="category"
                     errorBorderColor="red.300"
-                    value={values.message}
+                    value={values.category}
+                    onChange={handleSelect}
+                    onBlur={onBlur}>
+                    {categories?.sort().map((c) => (
+                        <option value={c.name}>{c.name}</option>
+                    ))}
+
+                </Select>
+                <FormErrorMessage>Obligatorio</FormErrorMessage>
+            </FormControl>
+
+
+            <FormControl
+                isRequired isInvalid={touched.description && !values.description} mb={5}
+            >
+                <FormLabel>Descripción</FormLabel>
+                <Textarea
+                    name="description"
+                    rows={6}
+                    errorBorderColor="red.300"
+                    value={values.description}
                     onChange={handleChange}
                     onBlur={onBlur}
                 />
@@ -142,12 +188,13 @@ export default function Claim() {
                 colorScheme="blue"
                 isLoading={isLoading}
                 disabled={
-                    !values.transactionNumber || !values.message
+                    !values.title || !values.description
                 }
                 onClick={onSubmit}
             >
-                Enviar
+                Publicar
             </Button>
         </Container>
     );
+
 }

@@ -103,7 +103,7 @@ export default function Contact() {
           onChange={handleChange}
           onBlur={onBlur}
         />
-        <FormErrorMessage>Required</FormErrorMessage>
+        <FormErrorMessage>Obligatorio</FormErrorMessage>
       </FormControl>
 
       <FormControl isRequired isInvalid={touched.email && !values.email} mb={5}>
@@ -116,7 +116,7 @@ export default function Contact() {
           onChange={handleChange}
           onBlur={onBlur}
         />
-        <FormErrorMessage>Required</FormErrorMessage>
+        <FormErrorMessage>Obligatorio</FormErrorMessage>
       </FormControl>
 
       <FormControl
@@ -133,7 +133,7 @@ export default function Contact() {
           onChange={handleChange}
           onBlur={onBlur}
         />
-        <FormErrorMessage>Required</FormErrorMessage>
+        <FormErrorMessage>Obligatorio</FormErrorMessage>
       </FormControl>
 
       <FormControl
@@ -150,7 +150,7 @@ export default function Contact() {
           onChange={handleChange}
           onBlur={onBlur}
         />
-        <FormErrorMessage>Required</FormErrorMessage>
+        <FormErrorMessage>Obligatorio</FormErrorMessage>
       </FormControl>
 
       <Button
