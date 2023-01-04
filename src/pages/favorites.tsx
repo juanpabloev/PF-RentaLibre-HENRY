@@ -29,6 +29,8 @@ function Favorites() {
 
   const removeFavorite = trpc.user.deleteFavorite.useMutation();
 
+  const coloBG = useColorModeValue("white", "gray.900");
+
   const handleDelete = (e: any) => {
     e.preventDefault();
 
@@ -57,7 +59,7 @@ function Favorites() {
                   w={{ sm: "100%", md: "700px" }}
                   height={{ sm: "476px", md: "10rem" }}
                   direction={{ base: "column", md: "row" }}
-                  bg={useColorModeValue("white", "gray.900")}
+                  bg={coloBG}
                   boxShadow={"xl"}
                   padding={4}
                 >
