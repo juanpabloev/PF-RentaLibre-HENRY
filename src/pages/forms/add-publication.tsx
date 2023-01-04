@@ -18,11 +18,26 @@ import {
     Select,
 
 } from "@chakra-ui/react";
+import { string } from "zod";
 
 
 //import sendEmail from "../utils/contact-functions/contact-Email";
 
-const initValues = { name: "", email: "", category: "", description: "", title: "" };
+interface InitValues {
+    title: string;
+    category: string;
+    description: string;
+    price: any; // es any por que de lo contrario, en init state, me aparece un 0 en el campo.
+    email: string;
+}
+
+const initValues: InitValues = {
+    title: "",
+    category: "",
+    description: "",
+    price: "",
+    email: "",
+};
 
 const initState = { isLoading: false, error: "", values: initValues };
 
@@ -37,18 +52,18 @@ export default function Addpublication() {
     const [state, setState] = useState(initState);
 
     interface Touched {
-        name: boolean,
-        email: boolean,
+        title: boolean,
         category: boolean,
         description: boolean,
-        title: boolean,
+        price: boolean,
+        email: boolean,
     }
     const [touched, setTouched] = useState<Touched>({
-        name: false,
-        email: false,
+        title: false,
         category: false,
         description: false,
-        title: false,
+        price: false,
+        email: false,
     });
 
 
@@ -91,16 +106,15 @@ export default function Addpublication() {
             ////////////////////////////////////////////////////
 
             setTouched({
-                name: false,
-                email: false,
+                title: false,
                 category: false,
                 description: false,
-                title: false,
-                
+                price: false,
+                email: false,
             });
             setState(initState);
             toast({
-                title: "Message sent.",
+                title: "¡Artículo Publicado!",
                 status: "success",
                 duration: 2000,
                 position: "top",
@@ -146,27 +160,41 @@ export default function Addpublication() {
                     onChange={handleChange}
                     onBlur={onBlur}
                 />
+                {values.title.length > 60 && (<Text color="red.500" fontSize="sm" >Max 60 caracteres - {values.title.length} / 60</Text>)}
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
             <FormControl isRequired isInvalid={touched.category && !values.category} mb={5}>
                 <FormLabel>Categoría</FormLabel>
-                <Select 
+                <Select
                     variant='filled'
                     placeholder='Elegir'
                     name="category"
                     errorBorderColor="red.300"
                     value={values.category}
                     onChange={handleSelect}
-                    onBlur={onBlur}>
+                    onBlur={onBlur}
+                >
                     {categories?.sort().map((c) => (
                         <option value={c.name}>{c.name}</option>
                     ))}
-
                 </Select>
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
+            <FormControl isRequired isInvalid={touched.price && !values.price} mb={5}>
+                <FormLabel>Precio</FormLabel>
+                <Input
+                    type="number"
+                    name="price"
+                    errorBorderColor="red.300"
+                    value={values.price}
+                    onChange={handleChange}
+                    onBlur={onBlur}
+                />
+                {values.price < 80 && values.price > 0 && (<Text color="red.500" fontSize="sm" >El precio debe ser mayor a $80</Text>)}
+                <FormErrorMessage>Obligatorio</FormErrorMessage>
+            </FormControl>
 
             <FormControl
                 isRequired isInvalid={touched.description && !values.description} mb={5}
@@ -188,7 +216,7 @@ export default function Addpublication() {
                 colorScheme="blue"
                 isLoading={isLoading}
                 disabled={
-                    !values.title || !values.description
+                    !values.title || values.title.length > 60 || !values.description || !values.category || !values.price || values.price < 80
                 }
                 onClick={onSubmit}
             >
