@@ -1,43 +1,67 @@
-import { useState, useEffect } from "react";
-import { ref, uploadBytes, getDownloadURL, listAll, list } from "firebase/storage";
+import { useState } from "react";
+
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebaseConfig";
 
-import { v4 } from 'uuid';
+import { v4 } from "uuid"; //crea random UUID- se le suma al nombre del archivo
 
-function imageUpload() {
-  const [imageUpload, setImageUpload] = useState<any>(null);
-  const [imageUrls, setImageUrls] = useState<any>([]);
+//*********************************** */
+//****NO LOGRO MODULARIZARLA!!! ******
+//******************************* */
 
-  const imagesListRef = ref(storage, "publicationPicture/");
 
-  const uploadFile = () => {
-    if (imageUpload == null) return;
-    const imageRef = ref(storage, `publicationPicture/${imageUpload.name + v4()}`);
-    uploadBytes(imageRef, imageUpload).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((url) => {
-        setImageUrls((prev: any) => [...prev, url]);
-      });
-    });
-  };
+//En el componente://////////////////////////////////
 
-  useEffect(() => {
-    listAll(imagesListRef).then((response) => {
-      response.items.forEach((item) => {
-        getDownloadURL(item).then((url) => {
-          setImageUrls((prev: any) => [...prev, url]);
+// const [upload, setUpload] = useState<any>(null);
+
+// --> setUpload en onchange // se lo pasamos a handleSubmit
+
+/* EJ DE COMPONENTE
+
+return (
+  <div className="App">
+    <input
+      type="file"
+      onChange={(event) => {
+        setUpload(event.target.files[0]);
+      }}
+    />
+    <button onClick={uploadFile}> Upload Image</button>
+    {imageUrls.map((url: any) => {
+      return <img src={url} />;
+    })}
+  </div>
+); */
+
+
+// Recibe archivo, URL de firebase --> retorna url archivo en firebase
+
+const handleSubmitFirebase = (uploadToURL: string, fileUpload: any)  => {
+  const [url, setUrl] = useState<any>(null);
+  let fileURL: string = "";
+
+  const fileRef = ref(storage, `${uploadToURL}/${fileUpload.name + v4()}`);
+
+  uploadBytes(fileRef, fileUpload)
+    .then(() => {
+      getDownloadURL(fileRef)
+        .then((url) => {
+          setUrl(url);
+        })
+        .catch((error) => {
+          console.log(error.message, "error getting the file url");
         });
-      });
+    })
+    .catch((error) => {
+      console.log(error.message);
     });
-  }, []);
+    console.log(fileURL)
+  return url;
+};
 
-  return imageUrls;
-  //retorna array con url de imagenes
-}
+export default handleSubmitFirebase;
 
-
-export default imageUpload;
-
-  /* /---------------------------/
+/* /---------------------------/
  EJ DE COMPONENTE
 
   return (

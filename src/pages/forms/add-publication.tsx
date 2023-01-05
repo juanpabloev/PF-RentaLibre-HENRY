@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { RouterOutputs, trpc } from "../../utils/trpc";
 
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebaseConfig";
+import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+
+import { v4 } from "uuid"; //crea random UUID- se le suma al nombre del archivo
 
 import {
     Button,
@@ -18,6 +20,9 @@ import {
     useToast,
     Center,
     Select,
+    Box,
+    Img,
+    Progress,
 
 } from "@chakra-ui/react";
 import { string } from "zod";
@@ -33,7 +38,7 @@ interface InitValues {
     brand: string;
     model: string;
     securityDeposit: any;
-    picture: string;
+    pictures: any;
 }
 
 const initValues: InitValues = {
@@ -44,13 +49,13 @@ const initValues: InitValues = {
     brand: "",
     model: "",
     securityDeposit: "",
-    picture: "",
+    pictures: [],
 };
 
 const initState = { isLoading: false, error: "", values: initValues };
 
 
-export default function Addpublication() {
+export default function AddPublication() {
     const toast = useToast();
     const { data: session, status } = useSession({ required: true });
 
@@ -67,7 +72,7 @@ export default function Addpublication() {
         brand: boolean,
         model: boolean,
         securityDeposit: boolean,
-        picture: boolean,
+        pictures: boolean,
     }
     const [touched, setTouched] = useState<Touched>({
         title: false,
@@ -77,7 +82,7 @@ export default function Addpublication() {
         brand: false,
         model: false,
         securityDeposit: false,
-        picture: false,
+        pictures: false,
     });
 
 
@@ -104,6 +109,71 @@ export default function Addpublication() {
             },
         }));
 
+
+
+    /*  const handleClickPictures = (e: any) => {
+ 
+         const uploadedimageURL = handleSubmitFirebase("publicationPicture/", upload)
+ 
+         setState((prev) => ({
+             ...prev,
+             values: {
+                 ...prev.values,
+                 [e.target.name]: [...values.pictures, uploadedimageURL]
+             },
+         }));
+ 
+         console.log(values.pictures)
+     } */
+    //********IMAGE UPLOADS*********************************** */
+    const [url, setUrl] = useState<any>("");
+    const [file, setFile] = useState<any>();
+    const [progresUpload, setProgresUpload] = useState(0);
+
+    function handleSelectFile(file: any) {
+        file ? setFile(file[0]) : "";
+    }
+
+    function handleUpload(file: any) {
+        const name = file.name;
+        const storageRef = ref(storage, `publicationPicture/${'RL-Publication-Picture-' +v4() + name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on(
+            "state_changed",
+            .then((snapshot:any) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setProgresUpload(progress);
+                switch (snapshot.state) {
+                    case "paused":
+                        console.log("Upload is paused");
+                        break;
+                    case "running":
+                        console.log("Upload is running");
+                        break;
+                }
+            },
+            (error:any) => {
+                // Handle unsuccessful uploads
+                console.log(error)
+            },
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref)
+                    .then((url) => {
+                        setState((prev) => ({
+                            ...prev,
+                            values: {
+                                ...prev.values,
+                                [values.pictures]: [...values.pictures, url]
+                            },
+                        }));
+                    })
+            }
+        ));
+    }
+
+
+
     const onSubmit = async () => {
         setState((prev) => ({
             ...prev,
@@ -127,7 +197,7 @@ export default function Addpublication() {
                 brand: false,
                 model: false,
                 securityDeposit: false,
-                picture: false,
+                pictures: false,
             });
             setState(initState);
             toast({
@@ -199,18 +269,62 @@ export default function Addpublication() {
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
-            <FormControl isRequired isInvalid={touched.picture && !values.picture} mb={5}>
+            {/* <FormControl isRequired isInvalid={touched.pictures && !values.pictures} mb={5}>
                 <FormLabel>Fotos</FormLabel>
                 <Input
                     type="file"
-                    name="picture"
+                    name="pictures"
+                    accept="image/x-png,image/gif,image/jpeg"
                     errorBorderColor="red.300"
-                    value={values.picture}
-                    /* onClick={imageUpload} */
+                    value={values.pictures}
+                    onChange={handleImageChange}
+                    onClick={handleUploadPictures}
                     onBlur={onBlur}
                 />
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
+            </FormControl> */}
+
+
+            <FormControl isRequired isInvalid={touched.pictures && !values.pictures} mb={5}>
+            <FormLabel>Fotos</FormLabel>
+                <Input
+                variant='unstyled'
+                type='file'
+                name="pictures"
+                accept="image/x-png,image/gif,image/jpeg"
+                errorBorderColor="red.300"
+                onBlur={onBlur}
+                value={values.pictures}
+                onChange={(files) => handleSelectFile(files.target.files)} />
+                
+
+                {file && !url && (<>
+                    <Box>
+                        <Text ml='20px'>{file.name}</Text>
+                        <Text ml='20px'>size: {`${file.size} bytes`}</Text>
+                        <Button 
+                        mt='10px' ml='200px' 
+                        colorScheme='teal' size='md'
+                        onClick={() => handleUpload(file)}
+                        >Subir Fotos
+                        </Button>
+                        <Progress value={progresUpload} marginTop={3}/>
+                    </Box>
+                </>)}
+
+                {url &&
+                    (<><Img src={url} alt={url} w='100px' h='100px' /> <Text>{url}</Text></>)
+                }
+                <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
+
+
+
+            <Box>
+                {values.pictures.map((u: any) => {
+                    return <img src={u} />;
+                })}
+            </Box>
 
             <FormControl isRequired isInvalid={touched.brand && !values.brand} mb={5}>
                 <FormLabel>Marca</FormLabel>
@@ -264,7 +378,7 @@ export default function Addpublication() {
                     onChange={handleChange}
                     onBlur={onBlur}
                 />
-                {values.securityDeposit < (values.price*8) && values.securityDeposit > 0 && (<Text color="red.500" fontSize="sm" marginTop={2}>El precio debe ser mayor a ${values.price*8}</Text>)}
+                {values.securityDeposit < (values.price * 8) && values.securityDeposit > 0 && (<Text color="red.500" fontSize="sm" marginTop={2}>El precio debe ser mayor a ${values.price * 8}</Text>)}
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
@@ -284,17 +398,17 @@ export default function Addpublication() {
             </FormControl>
 
             <Center>
-            <Button
-                variant="outline"
-                colorScheme="blue"
-                isLoading={isLoading}
-                disabled={
-                    !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500
-                }
-                onClick={onSubmit}
-            >
-                Publicar
-            </Button>
+                <Button
+                    variant="outline"
+                    colorScheme="blue"
+                    isLoading={isLoading}
+                    disabled={
+                        !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500
+                    }
+                    onClick={onSubmit}
+                >
+                    Publicar
+                </Button>
             </Center>
         </Container>
     );
