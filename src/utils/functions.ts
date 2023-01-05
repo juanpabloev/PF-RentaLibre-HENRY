@@ -98,9 +98,9 @@ export function updateProduct () {
  updateR.mutate()
 }
 
-export function deleteUser () {
- deleteU.mutate()
-}
+// export function deleteUser () {
+//  deleteU.mutate()
+// }
 
 // export function addFavorite () {
 //  addF.mutate()
