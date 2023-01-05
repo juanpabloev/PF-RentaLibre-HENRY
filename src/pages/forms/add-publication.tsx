@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { RouterOutputs, trpc } from "../../utils/trpc";
-import ErrorPage from 'next/error';
+
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "../../../firebaseConfig";
 
 import {
     Button,
@@ -31,6 +33,7 @@ interface InitValues {
     brand: string;
     model: string;
     securityDeposit: any;
+    picture: string;
 }
 
 const initValues: InitValues = {
@@ -41,6 +44,7 @@ const initValues: InitValues = {
     brand: "",
     model: "",
     securityDeposit: "",
+    picture: "",
 };
 
 const initState = { isLoading: false, error: "", values: initValues };
@@ -63,6 +67,7 @@ export default function Addpublication() {
         brand: boolean,
         model: boolean,
         securityDeposit: boolean,
+        picture: boolean,
     }
     const [touched, setTouched] = useState<Touched>({
         title: false,
@@ -72,6 +77,7 @@ export default function Addpublication() {
         brand: false,
         model: false,
         securityDeposit: false,
+        picture: false,
     });
 
 
@@ -121,6 +127,7 @@ export default function Addpublication() {
                 brand: false,
                 model: false,
                 securityDeposit: false,
+                picture: false,
             });
             setState(initState);
             toast({
@@ -189,6 +196,19 @@ export default function Addpublication() {
                     onBlur={onBlur}
                 />
                 {values.title.length > 60 && (<Text color="red.500" fontSize="sm" marginTop={2}>Max 60 caracteres - {values.title.length} / 60</Text>)}
+                <FormErrorMessage>Obligatorio</FormErrorMessage>
+            </FormControl>
+
+            <FormControl isRequired isInvalid={touched.picture && !values.picture} mb={5}>
+                <FormLabel>Fotos</FormLabel>
+                <Input
+                    type="file"
+                    name="picture"
+                    errorBorderColor="red.300"
+                    value={values.picture}
+                    /* onClick={imageUpload} */
+                    onBlur={onBlur}
+                />
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
