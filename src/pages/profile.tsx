@@ -7,8 +7,8 @@ import { Select } from "@chakra-ui/react";
 import { Spinner } from "@chakra-ui/react";
 import DashboardRentedProducts from "../components/dashboardRentedProducts";
 import PhoneNumberInput from "../components/input-phoneNumber";
-import { provincias } from "../provincias-ciudades/provincias";
-import { localidades } from "../provincias-ciudades/localidades";
+import { provincias } from "../utils/provincias-ciudades/provincias";
+import { localidades } from "../utils/provincias-ciudades/localidades";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import {
   Menu,
