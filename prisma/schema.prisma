@@ -90,7 +90,7 @@ type Feature {
 model Rating {
   id                 String @id @default(auto()) @map("_id") @db.ObjectId
   comment            String?
-  stars              String
+  stars              Int
   userRater          User   @relation(fields: [userRaterId], references: [id],name: "userRater")
   userRaterId        String @db.ObjectId
   userRated          User?   @relation(fields: [userRatedId], references: [id], name: "userRated")

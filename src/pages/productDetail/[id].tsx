@@ -21,11 +21,14 @@ import {
   List,
   ListItem,
   Badge,
+  Textarea,
 } from "@chakra-ui/react";
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import React from "react";
+import React, { useState } from "react";
+import Style from "../../styles/id.module.css";
+
 // type Params = {
 //   params: {
 //     id: string;
@@ -62,56 +65,87 @@ import React from "react";
 //   product: RouterOutputs["product"]["getProductByID"];
 // };
 
+const validate = (input: any) => {
+  const errors = {
+    stars: false,
+    size: false,
+  };
+  if (input.rating > 5 || input.rating < 1) {
+    errors.stars = true;
+  }
+  if (input.comment.length < 5 || input.comment.length > 300) {
+    errors.size = true;
+  }
+  return errors;
+};
+
 export default function ProductDetail() {
   const router = useRouter();
   const session = useSession();
-  const { id }:any = router.query;
+  const { id }: any = router.query;
   //trae del back con id
   const product = trpc.product.getProductByID.useQuery({ id }).data;
+  const ratings = trpc.rating.getRatingsProduct.useQuery({
+    productId: id,
+    page: 1,
+  }).data;
+  const addComment = trpc.rating.createRatingProduct.useMutation();
   const addFavorite = trpc.user.addFavorite.useMutation();
-
+  const [ratingInput, setRatingInput] = useState({
+    rating: "0",
+    comment: "",
+  });
+  const [err, setErr] = useState({
+    stars: true,
+    size: true,
+  });
   const colorTxt = useColorModeValue("black", "gray.900");
   const colorBg = useColorModeValue("yellow.300", "orange.50");
 
+  const connected = session.status === "authenticated";
+
   async function handleSubmit() {
     try {
-      const res = await fetch("https://api.mercadopago.com/checkout/preferences", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer APP_USR-5672095275524228-121515-ef3e594e4fc515b3e4d7d98cff8d97e1-1263932815`
-        },
-        body: JSON.stringify({
-            payer:
-              {
-                email: session?.data?.user?.email,
-                phone: ""
-              },
+      const res = await fetch(
+        "https://api.mercadopago.com/checkout/preferences",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer APP_USR-5672095275524228-121515-ef3e594e4fc515b3e4d7d98cff8d97e1-1263932815`,
+          },
+          body: JSON.stringify({
+            payer: {
+              email: session?.data?.user?.email,
+              phone: "",
+            },
             items: [
               {
                 title: product?.title,
                 description: product?.description,
                 picture_url: product?.pictures[0],
                 category_id: product?.category,
-                quantity: 1,//AGREGAR PRODUCT?.QUANTITY a schema
-                unit_price: product?.price
-              }
+                quantity: 1, //AGREGAR PRODUCT?.QUANTITY a schema
+                unit_price: product?.price,
+              },
             ],
             back_urls: {
-              success: 'http://localhost:3000/success',
-              failure: 'http://localhost:3000/failure',
-              pending: 'http://localhost:3000/pending'
+              success: "http://localhost:3000/success",
+              failure: "http://localhost:3000/failure",
+              pending: "http://localhost:3000/pending",
             },
-            notification_url: 'https://04c5-191-97-97-69.sa.ngrok.io/api/notificar'
-          })
-      });
+            notification_url:
+              "https://04c5-191-97-97-69.sa.ngrok.io/api/notificar",
+          }),
+        }
+      );
       const json = await res.json();
-      console.log(json, session?.data?.user?.email)
-      router.push(json.init_point)
+      console.log(json, session?.data?.user?.email);
+      router.push(json.init_point);
     } catch (error) {
       console.error(error);
     }
-}
+  }
 
   const handleFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -119,6 +153,35 @@ export default function ProductDetail() {
 
     alert(`${product?.title} agregado a favoritos`);
   };
+  const handleRatingChange = (e: any) => {
+    e.preventDefault();
+    const name = e.target.name;
+    setRatingInput({
+      ...ratingInput,
+      [name]: e.target.value,
+    });
+
+    setErr(validate(ratingInput));
+  };
+  const handleRatingSubmit = (e: any) => {
+    e.preventDefault();
+
+    if (!err.size && !err.stars) {
+      addComment.mutate({
+        productId: id,
+        comment: ratingInput.comment,
+
+        stars: parseInt(ratingInput.rating),
+      });
+    }
+  };
+
+  let avarage = 0;
+  if (product?.rating && product?.rating.length > 0) {
+    let sum = 0;
+    product?.rating?.forEach((rating) => (sum += rating.stars));
+    avarage = sum / product?.rating.length;
+  }
 
   return (
     <Container maxW={"7xl"}>
@@ -155,7 +218,14 @@ export default function ProductDetail() {
               {"$ " + product?.price}
             </Text>
           </Box>
-          {session.status === "authenticated" ? (
+          <Text
+            color={useColorModeValue("gray.900", "gray.400")}
+            fontWeight={300}
+            fontSize={"2xl"}
+          >
+            {avarage + "/5  estrellas"}
+          </Text>
+          {connected ? (
             <Button
               rounded={"none"}
               w={"full"}
@@ -238,7 +308,7 @@ export default function ProductDetail() {
                   {/* <Text as={'span'} fontWeight={'bold'}>
                       Between lugs:
                     </Text>{' '} */}
-                  {product?.user?.userName}
+                  {product?.user?.name}
                 </ListItem>
                 {/* <ListItem>
                     <Text as={'span'} fontWeight={'bold'}>
@@ -280,7 +350,7 @@ export default function ProductDetail() {
               </List>
             </Box>
           </Stack>
-          
+
           <Button
             rounded={"none"}
             w={"full"}
@@ -313,6 +383,74 @@ export default function ProductDetail() {
           </Stack>
         </Stack>
       </SimpleGrid>
+      <hr></hr>
+      {ratings?.map((rating) => {
+        return (
+          <Box key={rating.id}>
+            <br />
+            <Text>{rating.userRater.name}</Text>
+            <Text>{rating.stars} stars</Text>
+            <Text>{rating.comment}</Text>
+            <br />
+          </Box>
+        );
+      })}
+      <hr />
+      {connected ? (
+        <Box>
+          <Stack spacing={{ base: 6, sm: 9 }} direction={"column"} margin="5">
+            <form onSubmit={(e) => handleRatingSubmit(e)}>
+              <fieldset>
+                <span className={Style.starRating}>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value={1}
+                    onChange={(e) => handleRatingChange(e)}
+                  />
+                  <i></i>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value={2}
+                    onChange={(e) => handleRatingChange(e)}
+                  />
+                  <i></i>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value={3}
+                    onChange={(e) => handleRatingChange(e)}
+                  />
+                  <i></i>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value={4}
+                    onChange={(e) => handleRatingChange(e)}
+                  />
+                  <i></i>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value={5}
+                    onChange={(e) => handleRatingChange(e)}
+                  />
+                  <i></i>
+                </span>
+              </fieldset>
+              <Textarea
+                name="comment"
+                value={ratingInput.comment}
+                onChange={(e) => handleRatingChange(e)}
+              />
+              <Button colorScheme={"red"} type="submit">
+                Commentar
+              </Button>
+            </form>
+          </Stack>
+        </Box>
+      ) : null}
     </Container>
   );
 }
