@@ -34,7 +34,6 @@ model User {
   phoneNumber    String?
   codigoPostal   String?
   role Role @default(USER)
-  createdAt      DateTime @default(now())
 }
 
 type Location {
