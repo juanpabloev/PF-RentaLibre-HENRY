@@ -21,18 +21,28 @@ model User {
   products       Product[]
   rater          Rating[] @relation(name: "userRater")
   rated          Rating[] @relation(name: "userRated")
-  userPicture    String?
   seller         Transanction[] @relation(name: "seller")
   buyer          Transanction[] @relation(name: "buyer") 
   emailVerified  DateTime?
-  image          String?
+  image          String @default("https://firebasestorage.googleapis.com/v0/b/rentalibre-fbbda.appspot.com/o/userPicture%2Fusuario.png?alt=media&token=9fa3eb31-e33e-429f-8af7-0519377d0e61")
   accounts       Account[]
   sessions       Session[]
   favorites      Favorito[]
   active         Boolean @default(true)
   feedback       String?
+  location       Location?
+  phoneNumber    String?
+  codigoPostal   String?
   role Role @default(USER)
+  createdAt      DateTime @default(now())
 }
+
+type Location {
+  country  String?
+  state    String?
+  city     String?
+}
+
 model Favorito {
   id                 String @id @default(auto()) @map("_id") @db.ObjectId
   user               User?   @relation(fields: [userId], references: [id])
@@ -40,7 +50,7 @@ model Favorito {
   product            Product?   @relation(fields: [productId], references: [id])
   productId          String? @db.ObjectId
   active             Boolean @default(true)  
-   detetedAt          DateTime?        
+  detetedAt          DateTime?        
 }
 model Product {
   id                 String @id @default(auto()) @map("_id") @db.ObjectId
