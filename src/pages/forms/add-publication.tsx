@@ -28,7 +28,9 @@ interface InitValues {
     category: string;
     description: string;
     price: any; // es any por que de lo contrario, en init state, me aparece un 0 en el campo.
-    email: string;
+    brand: string;
+    model: string;
+    securityDeposit: any;
 }
 
 const initValues: InitValues = {
@@ -36,7 +38,9 @@ const initValues: InitValues = {
     category: "",
     description: "",
     price: "",
-    email: "",
+    brand: "",
+    model: "",
+    securityDeposit: "",
 };
 
 const initState = { isLoading: false, error: "", values: initValues };
@@ -56,14 +60,18 @@ export default function Addpublication() {
         category: boolean,
         description: boolean,
         price: boolean,
-        email: boolean,
+        brand: boolean,
+        model: boolean,
+        securityDeposit: boolean,
     }
     const [touched, setTouched] = useState<Touched>({
         title: false,
         category: false,
         description: false,
         price: false,
-        email: false,
+        brand: false,
+        model: false,
+        securityDeposit: false,
     });
 
 
@@ -110,7 +118,9 @@ export default function Addpublication() {
                 category: false,
                 description: false,
                 price: false,
-                email: false,
+                brand: false,
+                model: false,
+                securityDeposit: false,
             });
             setState(initState);
             toast({
@@ -130,7 +140,7 @@ export default function Addpublication() {
 
     return (
         <Container maxW="450px" mt={12}>
-            <Heading marginBottom={30}>Publicar Artículo</Heading>
+            <Heading marginBottom={30} textAlign='center'>Publicar Artículo</Heading>
             {error && (
                 <Text color="red.300" my={4} fontSize="xl">
                     {error}
@@ -150,20 +160,6 @@ export default function Addpublication() {
                 </Button>
             </Center>
 
-            <FormControl isRequired isInvalid={touched.title && !values.title} mb={5}>
-                <FormLabel>Título</FormLabel>
-                <Input
-                    type="text"
-                    name="title"
-                    errorBorderColor="red.300"
-                    value={values.title}
-                    onChange={handleChange}
-                    onBlur={onBlur}
-                />
-                {values.title.length > 60 && (<Text color="red.500" fontSize="sm" >Max 60 caracteres - {values.title.length} / 60</Text>)}
-                <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl>
-
             <FormControl isRequired isInvalid={touched.category && !values.category} mb={5}>
                 <FormLabel>Categoría</FormLabel>
                 <Select
@@ -182,6 +178,48 @@ export default function Addpublication() {
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
+            <FormControl isRequired isInvalid={touched.title && !values.title} mb={5}>
+                <FormLabel>Título</FormLabel>
+                <Input
+                    type="text"
+                    name="title"
+                    errorBorderColor="red.300"
+                    value={values.title}
+                    onChange={handleChange}
+                    onBlur={onBlur}
+                />
+                {values.title.length > 60 && (<Text color="red.500" fontSize="sm" marginTop={2}>Max 60 caracteres - {values.title.length} / 60</Text>)}
+                <FormErrorMessage>Obligatorio</FormErrorMessage>
+            </FormControl>
+
+            <FormControl isRequired isInvalid={touched.brand && !values.brand} mb={5}>
+                <FormLabel>Marca</FormLabel>
+                <Input
+                    type="text"
+                    name="brand"
+                    errorBorderColor="red.300"
+                    value={values.brand}
+                    onChange={handleChange}
+                    onBlur={onBlur}
+                />
+                {values.brand.length > 30 && (<Text color="red.500" fontSize="sm" marginTop={2}>Max 30 caracteres - {values.brand.length} / 30</Text>)}
+                <FormErrorMessage>Obligatorio</FormErrorMessage>
+            </FormControl>
+
+            <FormControl isRequired isInvalid={touched.model && !values.model} mb={5}>
+                <FormLabel>Modelo</FormLabel>
+                <Input
+                    type="text"
+                    name="model"
+                    errorBorderColor="red.300"
+                    value={values.model}
+                    onChange={handleChange}
+                    onBlur={onBlur}
+                />
+                {values.model.length > 30 && (<Text color="red.500" fontSize="sm" marginTop={2}>Max 30 caracteres - {values.model.length} / 30</Text>)}
+                <FormErrorMessage>Obligatorio</FormErrorMessage>
+            </FormControl>
+
             <FormControl isRequired isInvalid={touched.price && !values.price} mb={5}>
                 <FormLabel>Precio</FormLabel>
                 <Input
@@ -192,7 +230,21 @@ export default function Addpublication() {
                     onChange={handleChange}
                     onBlur={onBlur}
                 />
-                {values.price < 80 && values.price > 0 && (<Text color="red.500" fontSize="sm" >El precio debe ser mayor a $80</Text>)}
+                {values.price < 80 && values.price > 0 && (<Text color="red.500" fontSize="sm" marginTop={2}>El precio debe ser mayor a $80</Text>)}
+                <FormErrorMessage>Obligatorio</FormErrorMessage>
+            </FormControl>
+
+            <FormControl isRequired isInvalid={touched.securityDeposit && !values.securityDeposit} mb={5}>
+                <FormLabel>Seña</FormLabel>
+                <Input
+                    type="number"
+                    name="securityDeposit"
+                    errorBorderColor="red.300"
+                    value={values.securityDeposit}
+                    onChange={handleChange}
+                    onBlur={onBlur}
+                />
+                {values.securityDeposit < (values.price*8) && values.securityDeposit > 0 && (<Text color="red.500" fontSize="sm" marginTop={2}>El precio debe ser mayor a ${values.price*8}</Text>)}
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
@@ -211,17 +263,19 @@ export default function Addpublication() {
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
+            <Center>
             <Button
                 variant="outline"
                 colorScheme="blue"
                 isLoading={isLoading}
                 disabled={
-                    !values.title || values.title.length > 60 || !values.description || !values.category || !values.price || values.price < 80
+                    !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500
                 }
                 onClick={onSubmit}
             >
                 Publicar
             </Button>
+            </Center>
         </Container>
     );
 

@@ -86,7 +86,7 @@ export default function Contact() {
 
   return (
     <Container maxW="450px" mt={12}>
-      <Heading marginBottom={30}>Contactanos</Heading>
+      <Heading marginBottom={30} textAlign='center'>Contactanos</Heading>
       {error && (
         <Text color="red.300" my={4} fontSize="xl">
           {error}
