@@ -155,7 +155,7 @@ export default function AddPublication() {
     // part 2 - <Esta FCN recibe muchos archivos
     const handleMultiple = async (evt: React.ChangeEvent<HTMLInputElement>) => {
         if (!evt.target.files || !evt.target.files.length) return;
-        setLoading(true);      
+        //setLoading(true);
 
         const files = Array.from(evt.target.files);
         const objects: StatusObjectType = {};
@@ -170,10 +170,43 @@ export default function AddPublication() {
             );
         });
         const ls = await Promise.all(promises); //ls - links
-        setLinks(ls);
-        setLoading(false);
-    };
+        //setLinks(ls);
+        //setLoading(false);
 
+        setLinks(prev => ({
+            ...prev,
+            links: links.push?.apply(links, ls)
+        }))
+
+       /*  setState((prev) => ({
+            ...prev,
+            values: {
+                ...prev.values,
+                [values.pictures]: values.pictures.push(...ls)
+            },    
+
+        })) */
+
+       /*  ls.map((l) => (
+            setState((prev) => ({
+                ...prev,
+                    [values.pictures]: values.pictures.push(l)
+
+            }))
+        )) */
+        console.log(links)
+
+        /* ls.map((l) => (
+            setState((prev) => ({
+                ...prev,
+                values: {
+                    ...prev.values,
+                    [values.pictures]: [values.pictures.push(l)]
+                },
+            }))
+        ))
+        console.log(values?.pictures) */
+    }
 
     const onSubmit = async () => {
         setState((prev) => ({
@@ -288,46 +321,14 @@ export default function AddPublication() {
             </FormControl> */}
 
 
-            {/* <FormControl isRequired isInvalid={touched.pictures && !values.pictures} mb={5}>
-            <FormLabel>Fotos</FormLabel>
-                <Input
-                variant='unstyled'
-                type='file'
-                name="pictures"
-                accept="image/x-png,image/gif,image/jpeg"
-                errorBorderColor="red.300"
-                onBlur={onBlur}
-                value={values.pictures}
-                onChange={(files) => handleSelectFile(files.target.files)} />
-                
 
-                {file && !url && (<>
-                    <Box>
-                        <Text ml='20px'>{file.name}</Text>
-                        <Text ml='20px'>size: {`${file.size} bytes`}</Text>
-                        <Button 
-                        mt='10px' ml='200px' 
-                        colorScheme='teal' size='md'
-                        onClick={() => handleUpload(file)}
-                        >Subir Fotos
-                        </Button>
-                        <Progress value={progresUpload} marginTop={3}/>
-                    </Box>
-                </>)}
-
-                {url &&
-                    (<><Img src={url} alt={url} w='100px' h='100px' /> <Text>{url}</Text></>)
-                }
-                <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl> */}
 
             <div className="App">
-                <h1>Upload files</h1>
                 <h2>Start with one:</h2>
                 <input accept="image/*" multiple onChange={handleMultiple} type="file" />
                 <h3>Links:</h3>
                 <ul>
-                    {links.map((li) => (
+                    {values.pictures.map((li: any) => (
                         <li key={li}>{li}</li>
                     ))}
                 </ul>
@@ -354,14 +355,6 @@ export default function AddPublication() {
                     />
                 )}
             </div>
-
-
-
-            {/* <Box>
-                {values.pictures.map((u: any) => {
-                    return <img src={u} />;
-                })}
-            </Box> */}
 
             <FormControl isRequired isInvalid={touched.brand && !values.brand} mb={5}>
                 <FormLabel>Marca</FormLabel>
