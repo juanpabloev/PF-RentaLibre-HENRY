@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Text, Input, Img, Button, Flex } from "@chakra-ui/react";
 import { any } from "zod";
-import { trpc } from "../utils/trpc";
+import { trpc } from "../../utils/trpc";
 import { signOut } from "next-auth/react";
 
 interface Props {

@@ -228,5 +228,24 @@ export const userRouter = router({
       }
     })
     return updateUser
-  })
+  }), 
+  getAllUsers: publicProcedure
+    .query(async ({ ctx}) => {
+      const users = await ctx.prisma.user.findMany({
+        include: {
+          seller: {
+            include:{
+              product: true
+            }
+          },
+          buyer: {
+            include:{
+              product: true
+            }
+          },
+          products: true
+        }
+      });
+      return users;
+    }),
 });

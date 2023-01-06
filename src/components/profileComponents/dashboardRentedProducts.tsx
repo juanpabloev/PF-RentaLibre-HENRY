@@ -7,7 +7,7 @@ import {
   AccordionIcon,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { trpc } from "../utils/trpc";
+import { trpc } from "../../utils/trpc";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 
 export default function DashboardRentedProducts() {
