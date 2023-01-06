@@ -79,7 +79,7 @@ export default function ProductDetail() {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer APP_USR-5672095275524228-121515-ef3e594e4fc515b3e4d7d98cff8d97e1-1263932815`
+            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`
         },
         body: JSON.stringify({
             payer:
