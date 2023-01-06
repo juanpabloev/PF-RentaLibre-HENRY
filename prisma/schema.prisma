@@ -31,10 +31,12 @@ model User {
   favorites      Favorito[]
   active         Boolean @default(true)
   feedback       String?
-  role Role @default(USER)
+  role           Role @default(USER)
   location       Location?
   phoneNumber    String?
   codigoPostal   String?
+  user           Notification[] @relation(name: "user")
+  userAction     Notification[] @relation(name: "userAction")
 }
 
 type Location {
@@ -98,6 +100,21 @@ model Rating {
   product            Product?   @relation(fields: [productId], references: [id])
   productId          String? @db.ObjectId
   createdAt          DateTime @default(now())
+}
+
+model Notification {
+  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  user               User @relation(fields: [userId], references: [id], name:"user")
+  userAction         User @relation(fields: [userActionId], references: [id], name: "userAction")
+  userId             String @db.ObjectId
+  userActionId       String @db.ObjectId
+  notificationType   notificationType[]
+}
+
+type notificationType {
+  id                 Int[]
+  type               String
+  message            String
 }
 
 model PaymentMethod {

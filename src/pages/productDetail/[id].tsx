@@ -1,9 +1,3 @@
-//import articulos from '../../productListScratchData/articulos.json';
-
-//FALTA ACTIVAR CARD !!
-
-//FALTA PASAR A TSX !!
-
 import { trpc } from "../../utils/trpc";
 import {
   Box,
@@ -22,12 +16,14 @@ import {
   ListItem,
   Badge,
   Textarea,
+  IconButton,
 } from "@chakra-ui/react";
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import Style from "../../styles/id.module.css";
+
 
 // type Params = {
 //   params: {
@@ -135,7 +131,7 @@ export default function ProductDetail() {
               pending: "http://localhost:3000/pending",
             },
             notification_url:
-              "https://04c5-191-97-97-69.sa.ngrok.io/api/notificar",
+              "https://04c5-191-97-97-69.sa.ngrok.io/api/payments",
           }),
         }
       );
