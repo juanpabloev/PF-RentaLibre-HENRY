@@ -285,7 +285,7 @@ export default function AddPublication() {
                     onBlur={onBlur}
                 >
                     {categories?.sort().map((c) => (
-                        <option value={c.name}>{c.name}</option>
+                        <option value={c.name} key={c.id}>{c.name}</option>
                     ))}
                 </Select>
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
@@ -339,7 +339,7 @@ export default function AddPublication() {
                                 <img
                                     width="180"
                                     src={ob.preview}
-                                    key={ob.preview}
+                                    key={v4()}
                                     alt="preview"
                                 />
                                 <p>{ob.progress}%</p>
