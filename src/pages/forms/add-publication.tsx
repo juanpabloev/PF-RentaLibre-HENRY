@@ -5,6 +5,8 @@ import { RouterOutputs, trpc } from "../../utils/trpc";
 import { storage } from "../../../firebaseConfig";
 import { UploadTaskSnapshot } from "firebase/storage";
 
+import styles from "../../styles/productList.module.css"
+
 import { v4 } from "uuid"; //crea random UUID- se le suma al nombre del archivo
 
 import {
@@ -21,7 +23,10 @@ import {
     Center,
     Select,
     Box,
-    Img,
+    Image,
+    Stack,
+    Link,
+    VStack,
     Progress,
 
 } from "@chakra-ui/react";
@@ -127,6 +132,20 @@ export default function AddPublication() {
     const [links, setLinks] = useState<string[]>([]);//para resultado
     const [loading, setLoading] = useState<boolean>(false);
     const [statusObject, setStatusObject] = useState<StatusObjectType>({}); //guarda el preview de las imagenes
+
+    const handleResetPictures = () => {
+        setLinks([]);
+        setLoading(false);
+        setStatusObject({});
+        setState((prev) => ({
+            ...prev,
+            values: {
+                ...prev.values,
+                [values.pictures]: values.pictures.pop()
+            },
+        }))
+    }
+
     ///------------------------------------
 
     //Genera preview de la imagen en memoria
@@ -150,7 +169,10 @@ export default function AddPublication() {
             ...ob,
             [filename]: { ...ob[filename], progress }
         }));
+        console.log(statusObject)
     };
+
+
 
     // part 2 - <Esta FCN recibe muchos archivos
     const handleMultiple = async (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,6 +184,7 @@ export default function AddPublication() {
         for (let file of files) {
             const preview = (await getPreview(file)) as string;
             objects[file.name] = { preview };
+            //console.log(preview)
         }
         setStatusObject(objects);
         const promises = files.map((file) => {
@@ -173,28 +196,28 @@ export default function AddPublication() {
         //setLinks(ls);
         //setLoading(false);
 
-        setLinks(prev => ({
+        /* setLinks(prev => ({
             ...prev,
             links: links.push?.apply(links, ls)
-        }))
+        })) */
 
-       /*  setState((prev) => ({
+        setState((prev) => ({
             ...prev,
             values: {
                 ...prev.values,
                 [values.pictures]: values.pictures.push(...ls)
-            },    
+            },
 
-        })) */
+        }))
 
-       /*  ls.map((l) => (
-            setState((prev) => ({
-                ...prev,
-                    [values.pictures]: values.pictures.push(l)
-
-            }))
-        )) */
-        console.log(links)
+        /*  ls.map((l) => (
+             setState((prev) => ({
+                 ...prev,
+                     [values.pictures]: values.pictures.push(l)
+ 
+             }))
+         )) */
+        //console.log(values.pictures)
 
         /* ls.map((l) => (
             setState((prev) => ({
@@ -221,7 +244,7 @@ export default function AddPublication() {
 
             //ACA AGREGAR LO QUE ADONDE QUERRAMOS ENVIAR LA INFO !!!!!!
 
-            //** links, es el arreglo donde se guardan las url que se envían a la db - sacar de ahi la info
+            // ¡¡ ** values.pictures, es un arreglo de strings de URL en firebase.. puede haber strings repetidos. si hay, hay que filtrar y eliminar antes de enviar a la BD ** !!
 
             ////////////////////////////////////////////////////
 
@@ -262,15 +285,17 @@ export default function AddPublication() {
 
             <FormLabel marginBottom={5}>Nombre: {session?.userDB.name}</FormLabel>
             <FormLabel marginBottom={5}>E-mail: {session?.userDB.email}</FormLabel>
-            <FormLabel marginBottom={5}>Teléfono: CHEQUEAR TELEFONO EN DB  !!!!</FormLabel>
+            <FormLabel marginBottom={5}>Teléfono: {session?.userDB.phoneNumber}</FormLabel>
             <FormLabel marginBottom={5}>¿Datos Correctos?</FormLabel>
             <Center marginBottom={10}>
-                <Button
-                    colorScheme='teal'
-                    size='md'
-                    /* onClick={() => signOut()} */>
-                    Editar Perfil
-                </Button>
+                <Link href={"/profile"} text-decoration='none'>
+                    <Button
+                        colorScheme='teal'
+                        size='md'
+                    >
+                        Editar Perfil
+                    </Button>
+                </Link>
             </Center>
 
             <FormControl isRequired isInvalid={touched.category && !values.category} mb={5}>
@@ -305,26 +330,61 @@ export default function AddPublication() {
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
-            {/* <FormControl isRequired isInvalid={touched.pictures && !values.pictures} mb={5}>
-                <FormLabel>Fotos</FormLabel>
-                <Input
+            <FormControl isRequired isInvalid={touched.pictures && !values.pictures} mb={5}>
+
+                {values?.pictures.length < 100 && (
+                    <FormLabel marginBottom={3} fontWeight='semibold'>Seleccione entre 1 y 4 fotos</FormLabel>)}
+
+                {values?.pictures.length !== 0 && (
+                    <Text marginBottom={3} fontWeight='semibold'>Cantidad Fotos: {values.pictures.length}</Text>)}
+
+                {values?.pictures.length > 4 && (
+                    <Text marginBottom={3} fontWeight='semibold' color="red.300">
+                        ¡NO PUEDE SELECCIONAR MAS DE 4 FOTOS!</Text>)}
+
+                <input
+                    accept="image/*"
+                    multiple
+                    onChange={handleMultiple}
                     type="file"
-                    name="pictures"
-                    accept="image/x-png,image/gif,image/jpeg"
-                    errorBorderColor="red.300"
-                    value={values.pictures}
-                    onChange={handleImageChange}
-                    onClick={handleUploadPictures}
-                    onBlur={onBlur}
+                    className={styles.customFinput}
                 />
+                <Center>
+                    <Stack direction='row' marginTop={7}>
+                        {Object.values(statusObject).map((ob: any) => {
+                            return (
+                                <Box key={v4()}>
+                                    <Image
+                                        boxSize='150px'
+                                        borderRadius={8}
+                                        objectFit='cover'
+                                        src={ob.preview}
+                                        key={v4()}
+                                        alt="preview"
+                                    />
+                                    <p>{ob.progress}%</p>
+                                </Box>
+                            );
+                        })}
+                    </Stack>
+                </Center>
+
+                <Center>
+                    <Button
+                        marginBottom={4}
+                        marginTop={7}
+                        colorScheme='teal'
+                        size='md'
+                        onClick={(handleResetPictures)}>
+                        Eliminar Fotos
+                    </Button>
+                </Center>
+
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl> */}
+            </FormControl>
 
-
-
-
-            <div className="App">
-                <h2>Start with one:</h2>
+            <div className="Spinner">
+                {/*            <h2>Start with one:</h2>
                 <input accept="image/*" multiple onChange={handleMultiple} type="file" />
                 <h3>Links:</h3>
                 <ul>
@@ -335,18 +395,21 @@ export default function AddPublication() {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
                     {Object.values(statusObject).map((ob) => {
                         return (
-                            <div key={v4()}>
-                                <img
+                            <Box key={v4()}>
+
+
+
+                                <Image
                                     width="180"
                                     src={ob.preview}
                                     key={v4()}
                                     alt="preview"
                                 />
                                 <p>{ob.progress}%</p>
-                            </div>
+                            </Box>
                         );
                     })}
-                </div>
+                </div> */}
                 {loading && (
                     <img
                         alt="spinner"
@@ -433,9 +496,10 @@ export default function AddPublication() {
                     colorScheme="blue"
                     isLoading={isLoading}
                     disabled={
-                        !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500
+                        !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500 || !values.pictures || values.pictures.length > 4
                     }
                     onClick={onSubmit}
+                    marginBottom={10}
                 >
                     Publicar
                 </Button>
