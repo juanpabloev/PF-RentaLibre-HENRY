@@ -17,12 +17,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const payment = await fetch("https://api.mercadopago.com/v1/payments/"+payment_id, {
           method: 'GET',
           headers: {
-            Authorization: `${process.env.MERCADOLIBRE_AUTHORIZATION}`
+            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`
         }}).then(res => res.json());
         merchant_order = await fetch("https://api.mercadopago.com/merchant_orders/"+payment.order.id, {
           method: 'GET',
           headers: {
-            Authorization: `${process.env.MERCADOLIBRE_AUTHORIZATION}`
+            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`
         }}).then(res => res.json());
         console.log(merchant_order)
         break
@@ -31,7 +31,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         merchant_order = await fetch("https://api.mercadopago.com/merchant_orders/"+order_id, {
           method: 'GET',
           headers: {
-            Authorization: `${process.env.MERCADOLIBRE_AUTHORIZATION}`
+            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`
         }}).then(res => res.json());
         console.log(merchant_order)
         break

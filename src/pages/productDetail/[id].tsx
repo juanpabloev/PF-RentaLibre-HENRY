@@ -79,7 +79,7 @@ export default function ProductDetail() {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `${process.env.MERCADOLIBRE_AUTHORIZATION}`
+            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`
         },
         body: JSON.stringify({
             payer:
