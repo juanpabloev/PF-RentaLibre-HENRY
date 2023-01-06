@@ -335,7 +335,7 @@ export default function AddPublication() {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
                     {Object.values(statusObject).map((ob) => {
                         return (
-                            <div>
+                            <div key={v4()}>
                                 <img
                                     width="180"
                                     src={ob.preview}
