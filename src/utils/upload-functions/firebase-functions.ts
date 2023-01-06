@@ -1,80 +1,53 @@
-import { useState } from "react";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  UploadTaskSnapshot,
+} from "firebase/storage";
 
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebaseConfig";
 
 import { v4 } from "uuid"; //crea random UUID- se le suma al nombre del archivo
 
-//*********************************** */
-//****NO LOGRO MODULARIZARLA!!! ******
-//******************************* */
 
+/// EJ: usageOfFirebaseStorage-3.tsx /// - misma carpeta
 
-//En el componente://////////////////////////////////
+// methods
 
-// const [upload, setUpload] = useState<any>(null);
+//se ejecuta on change
 
-// --> setUpload en onchange // se lo pasamos a handleSubmit
+// Recibe parametros obligatorios:
+/* 
+- URL para upload
+- archivo a subir
+- prefijo del archivo (string)
 
-/* EJ DE COMPONENTE
+OPCIONALES: UPDATE CALL BACK
 
-return (
-  <div className="App">
-    <input
-      type="file"
-      onChange={(event) => {
-        setUpload(event.target.files[0]);
-      }}
-    />
-    <button onClick={uploadFile}> Upload Image</button>
-    {imageUrls.map((url: any) => {
-      return <img src={url} />;
-    })}
-  </div>
-); */
+--> retorna url archivo en firebase
 
+ */
 
-// Recibe archivo, URL de firebase --> retorna url archivo en firebase
-
-const handleSubmitFirebase = (uploadToURL: string, fileUpload: any)  => {
-  const [url, setUrl] = useState<any>(null);
-  let fileURL: string = "";
-
-  const fileRef = ref(storage, `${uploadToURL}/${fileUpload.name + v4()}`);
-
-  uploadBytes(fileRef, fileUpload)
-    .then(() => {
-      getDownloadURL(fileRef)
-        .then((url) => {
-          setUrl(url);
-        })
-        .catch((error) => {
-          console.log(error.message, "error getting the file url");
+export const uploadFile = (
+  uploadToURL: string,
+  file: File,
+  filePrefix: string,
+  updateCb: (snapshot: UploadTaskSnapshot) => void = () => false
+): Promise<string> => {
+  const path = `${uploadToURL}/${filePrefix + v4() + file.name}`; // direccion donde se guarda - inc filename
+  const storageRef = ref(storage, path);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+  return new Promise((res, rej) => {
+    return uploadTask.on( //metodo de firebase que da actualizacion de la subida --> AQUI SE RESUELVE O RECHAZA LA PROMESA
+      "state_changed", //esto observa on
+      updateCb, // cb de actualizacion
+      () => rej(null), //si regect - nada por ahora - pero aqui se pasaria la accion
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL: string) => { //obtenemos URL subida
+          res(downloadURL); // retornamo el URL resuelto
         });
-    })
-    .catch((error) => {
-      console.log(error.message);
-    });
-    console.log(fileURL)
-  return url;
+      }
+    );
+  });
 };
-
-export default handleSubmitFirebase;
-
-/* /---------------------------/
- EJ DE COMPONENTE
-
-  return (
-    <div className="App">
-      <input
-        type="file"
-        onChange={(event) => {
-          setImageUpload(event.target.files[0]);
-        }}
-      />
-      <button onClick={uploadFile}> Upload Image</button>
-      {imageUrls.map((url: any) => {
-        return <img src={url} />;
-      })}
-    </div>
-  ); */

@@ -3,7 +3,7 @@ import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { RouterOutputs, trpc } from "../../utils/trpc";
 
 import { storage } from "../../../firebaseConfig";
-import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { UploadTaskSnapshot } from "firebase/storage";
 
 import { v4 } from "uuid"; //crea random UUID- se le suma al nombre del archivo
 
@@ -27,6 +27,7 @@ import {
 } from "@chakra-ui/react";
 import { string } from "zod";
 
+import { uploadFile } from "../../utils/upload-functions/firebase-functions";
 
 //import sendEmail from "../utils/contact-functions/contact-Email";
 
@@ -110,68 +111,68 @@ export default function AddPublication() {
         }));
 
 
-
-    /*  const handleClickPictures = (e: any) => {
- 
-         const uploadedimageURL = handleSubmitFirebase("publicationPicture/", upload)
- 
-         setState((prev) => ({
-             ...prev,
-             values: {
-                 ...prev.values,
-                 [e.target.name]: [...values.pictures, uploadedimageURL]
-             },
-         }));
- 
-         console.log(values.pictures)
-     } */
+    ///*********************************** */
     //********IMAGE UPLOADS*********************************** */
-    const [url, setUrl] = useState<any>("");
-    const [file, setFile] = useState<any>();
-    const [progresUpload, setProgresUpload] = useState(0);
 
-    function handleSelectFile(file: any) {
-        file ? setFile(file[0]) : "";
-    }
+    type UploadObjectType = {
+        preview: string;
+        progress?: number;
+    };
 
-    function handleUpload(file: any) {
-        const name = file.name;
-        const storageRef = ref(storage, `publicationPicture/${'RL-Publication-Picture-' +v4() + name}`);
-        const uploadTask = uploadBytesResumable(storageRef, file);
+    type StatusObjectType = {
+        [key: string]: UploadObjectType;
+    };
 
-        uploadTask.on(
-            "state_changed",
-            .then((snapshot:any) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setProgresUpload(progress);
-                switch (snapshot.state) {
-                    case "paused":
-                        console.log("Upload is paused");
-                        break;
-                    case "running":
-                        console.log("Upload is running");
-                        break;
-                }
-            },
-            (error:any) => {
-                // Handle unsuccessful uploads
-                console.log(error)
-            },
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref)
-                    .then((url) => {
-                        setState((prev) => ({
-                            ...prev,
-                            values: {
-                                ...prev.values,
-                                [values.pictures]: [...values.pictures, url]
-                            },
-                        }));
-                    })
-            }
-        ));
-    }
+    ///ESTADOS IMAGENES--------------
+    const [links, setLinks] = useState<string[]>([]);//para resultado
+    const [loading, setLoading] = useState<boolean>(false);
+    const [statusObject, setStatusObject] = useState<StatusObjectType>({}); //guarda el preview de las imagenes
+    ///------------------------------------
 
+    //Genera preview de la imagen en memoria
+    const getPreview = (file: File): Promise<string | ArrayBuffer | null> => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+        return new Promise((res, rej) => {
+            fileReader.onload = () => {
+                res(fileReader.result);
+            };
+        });
+    };
+
+    //callBack que recibe las actualizaciones de las imagenes
+    const onUpdateUpload = async (
+        snapshot: UploadTaskSnapshot,
+        filename: string
+    ) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100; // -> (en %)
+        setStatusObject((ob: any) => ({
+            ...ob,
+            [filename]: { ...ob[filename], progress }
+        }));
+    };
+
+    // part 2 - <Esta FCN recibe muchos archivos
+    const handleMultiple = async (evt: React.ChangeEvent<HTMLInputElement>) => {
+        if (!evt.target.files || !evt.target.files.length) return;
+        setLoading(true);      
+
+        const files = Array.from(evt.target.files);
+        const objects: StatusObjectType = {};
+        for (let file of files) {
+            const preview = (await getPreview(file)) as string;
+            objects[file.name] = { preview };
+        }
+        setStatusObject(objects);
+        const promises = files.map((file) => {
+            return uploadFile('publicationPicture/', file, 'RL-Publication-Picture-', (snapshot) =>
+                onUpdateUpload(snapshot, file.name)
+            );
+        });
+        const ls = await Promise.all(promises); //ls - links
+        setLinks(ls);
+        setLoading(false);
+    };
 
 
     const onSubmit = async () => {
@@ -186,6 +187,8 @@ export default function AddPublication() {
             //77777777777777777777777777777777777
 
             //ACA AGREGAR LO QUE ADONDE QUERRAMOS ENVIAR LA INFO !!!!!!
+
+            //** links, es el arreglo donde se guardan las url que se envían a la db - sacar de ahi la info
 
             ////////////////////////////////////////////////////
 
@@ -285,7 +288,7 @@ export default function AddPublication() {
             </FormControl> */}
 
 
-            <FormControl isRequired isInvalid={touched.pictures && !values.pictures} mb={5}>
+            {/* <FormControl isRequired isInvalid={touched.pictures && !values.pictures} mb={5}>
             <FormLabel>Fotos</FormLabel>
                 <Input
                 variant='unstyled'
@@ -316,15 +319,49 @@ export default function AddPublication() {
                     (<><Img src={url} alt={url} w='100px' h='100px' /> <Text>{url}</Text></>)
                 }
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl>
+            </FormControl> */}
+
+            <div className="App">
+                <h1>Upload files</h1>
+                <h2>Start with one:</h2>
+                <input accept="image/*" multiple onChange={handleMultiple} type="file" />
+                <h3>Links:</h3>
+                <ul>
+                    {links.map((li) => (
+                        <li key={li}>{li}</li>
+                    ))}
+                </ul>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                    {Object.values(statusObject).map((ob) => {
+                        return (
+                            <div>
+                                <img
+                                    width="180"
+                                    src={ob.preview}
+                                    key={ob.preview}
+                                    alt="preview"
+                                />
+                                <p>{ob.progress}%</p>
+                            </div>
+                        );
+                    })}
+                </div>
+                {loading && (
+                    <img
+                        alt="spinner"
+                        width="200"
+                        src="https://c.tenor.com/I6kN-6X7nhAAAAAi/loading-buffering.gif"
+                    />
+                )}
+            </div>
 
 
 
-            <Box>
+            {/* <Box>
                 {values.pictures.map((u: any) => {
                     return <img src={u} />;
                 })}
-            </Box>
+            </Box> */}
 
             <FormControl isRequired isInvalid={touched.brand && !values.brand} mb={5}>
                 <FormLabel>Marca</FormLabel>

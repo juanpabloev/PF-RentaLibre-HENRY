@@ -1,5 +1,5 @@
 import "./App.css";
-import Avatar from "@mui/material/Avatar";
+/* import Avatar from "@mui/material/Avatar";
 import { useState } from "react";
 import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -42,4 +42,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; */
