@@ -26,7 +26,7 @@ import {
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Style from "../../styles/id.module.css";
 
 // type Params = {
@@ -89,20 +89,47 @@ export default function ProductDetail() {
     productId: id,
     page: 1,
   }).data;
-  const addComment = trpc.rating.createRatingProduct.useMutation();
+  const utils = trpc.useContext();
+  const addComment = trpc.rating.createRatingProduct.useMutation({
+    onSuccess() {
+      utils.rating.getRatingsProduct.invalidate();
+    },
+  });
+  const updateComment = trpc.rating.updateRating.useMutation({
+    onSuccess() {
+      utils.rating.getRatingsProduct.invalidate();
+    },
+  });
+  const deleteComment = trpc.rating.deleteRating.useMutation({
+    onSuccess() {
+      utils.rating.getRatingsProduct.invalidate();
+    },
+  });
   const addFavorite = trpc.user.addFavorite.useMutation();
+
   const [ratingInput, setRatingInput] = useState({
-    rating: "0",
+    rating: "3",
     comment: "",
   });
   const [err, setErr] = useState({
-    stars: true,
+    stars: false,
     size: true,
   });
-  const colorTxt = useColorModeValue("black", "gray.900");
-  const colorBg = useColorModeValue("yellow.300", "orange.50");
+  const [edit, setEdit] = useState(false);
+  const [adminPostId, setadminPostId] = useState("");
 
   const connected = session.status === "authenticated";
+  let alredyCommented = false;
+  const userComment = ratings?.find(
+    (rating) => rating.userRater.id === session.data?.user?.id
+  );
+  if (userComment) alredyCommented = true;
+  useEffect(() => {}, [alredyCommented]);
+
+  const authorized = session.data?.userDB?.role === "ADMIN";
+
+  const colorTxt = useColorModeValue("black", "gray.900");
+  const colorBg = useColorModeValue("yellow.300", "orange.50");
 
   async function handleSubmit() {
     try {
@@ -165,7 +192,6 @@ export default function ProductDetail() {
   };
   const handleRatingSubmit = (e: any) => {
     e.preventDefault();
-
     if (!err.size && !err.stars) {
       addComment.mutate({
         productId: id,
@@ -179,9 +205,65 @@ export default function ProductDetail() {
   let avarage = 0;
   if (product?.rating && product?.rating.length > 0) {
     let sum = 0;
-    product?.rating?.forEach((rating) => (sum += rating.stars));
+    product?.rating?.forEach((rating: any) => (sum += rating.stars));
     avarage = sum / product?.rating.length;
   }
+
+  const handleDelete = (e: any) => {
+    if (userComment) deleteComment.mutate({ ratingId: userComment.id });
+    if (authorized) deleteComment.mutate({ ratingId: e.target.value });
+    setRatingInput({
+      ...ratingInput,
+      rating: "3",
+      comment: "",
+    });
+
+    setErr({
+      ...err,
+      stars: false,
+      size: false,
+    });
+  };
+
+  const handleConfirmEdit = (e: any) => {
+    if (authorized) {
+      updateComment.mutate({
+        comment: ratingInput.comment,
+        stars: parseInt(ratingInput.rating),
+        ratingId: e.target.value,
+      });
+      setEdit(false);
+    } else {
+      if (!userComment) return;
+      if (!userComment.comment) return;
+      updateComment.mutate({
+        comment: ratingInput.comment,
+        stars: parseInt(ratingInput.rating),
+        ratingId: userComment.id,
+      });
+
+      setEdit(false);
+    }
+  };
+  const handleEdit = (e: any) => {
+    if (authorized) {
+      const values = e.target.value.split(",");
+      setadminPostId(values[0]);
+      setRatingInput({
+        rating: values[1],
+        comment: values[2],
+      });
+      setEdit(true);
+    } else {
+      if (!userComment) return;
+      if (!userComment.comment) return;
+      setRatingInput({
+        rating: userComment.stars.toString(),
+        comment: userComment.comment,
+      });
+      setEdit(true);
+    }
+  };
 
   return (
     <Container maxW={"7xl"}>
@@ -388,15 +470,49 @@ export default function ProductDetail() {
         return (
           <Box key={rating.id}>
             <br />
-            <Text>{rating.userRater.name}</Text>
-            <Text>{rating.stars} stars</Text>
-            <Text>{rating.comment}</Text>
+            {edit ? null : (
+              <>
+                {!userComment && !authorized ? (
+                  <>
+                    <Text>{rating.userRater.name}</Text>
+                    <Text>{rating.stars} stars</Text>
+                    <Text>{rating.comment}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text>{rating.userRater.name}</Text>
+                    <Text>{rating.stars} stars</Text>
+                    <Text>{rating.comment}</Text>
+                    <Button
+                      colorScheme={"blue"}
+                      onClick={(e) => handleEdit(e)}
+                      value={[
+                        rating.id,
+                        rating.stars.toString(),
+                        rating.comment,
+                      ]}
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      colorScheme={"red"}
+                      onClick={(e) => handleDelete(e)}
+                      value={rating.id}
+                    >
+                      X
+                    </Button>
+                    <br />
+                  </>
+                )}
+              </>
+            )}
+
             <br />
           </Box>
         );
       })}
       <hr />
-      {connected ? (
+      {(connected && (!alredyCommented || edit)) || (authorized && edit) ? (
         <Box>
           <Stack spacing={{ base: 6, sm: 9 }} direction={"column"} margin="5">
             <form onSubmit={(e) => handleRatingSubmit(e)}>
@@ -407,6 +523,7 @@ export default function ProductDetail() {
                     name="rating"
                     value={1}
                     onChange={(e) => handleRatingChange(e)}
+                    checked={1 === parseInt(ratingInput.rating)}
                   />
                   <i></i>
                   <input
@@ -414,6 +531,7 @@ export default function ProductDetail() {
                     name="rating"
                     value={2}
                     onChange={(e) => handleRatingChange(e)}
+                    checked={2 === parseInt(ratingInput.rating)}
                   />
                   <i></i>
                   <input
@@ -421,6 +539,7 @@ export default function ProductDetail() {
                     name="rating"
                     value={3}
                     onChange={(e) => handleRatingChange(e)}
+                    checked={3 === parseInt(ratingInput.rating)}
                   />
                   <i></i>
                   <input
@@ -428,6 +547,7 @@ export default function ProductDetail() {
                     name="rating"
                     value={4}
                     onChange={(e) => handleRatingChange(e)}
+                    checked={4 === parseInt(ratingInput.rating)}
                   />
                   <i></i>
                   <input
@@ -435,6 +555,7 @@ export default function ProductDetail() {
                     name="rating"
                     value={5}
                     onChange={(e) => handleRatingChange(e)}
+                    checked={5 === parseInt(ratingInput.rating)}
                   />
                   <i></i>
                 </span>
@@ -444,9 +565,19 @@ export default function ProductDetail() {
                 value={ratingInput.comment}
                 onChange={(e) => handleRatingChange(e)}
               />
-              <Button colorScheme={"red"} type="submit">
-                Commentar
-              </Button>
+              {userComment || authorized ? (
+                <Button
+                  colorScheme={"blue"}
+                  onClick={(e) => handleConfirmEdit(e)}
+                >
+                  {" "}
+                  Confirmar
+                </Button>
+              ) : (
+                <Button colorScheme={"red"} type="submit">
+                  Commentar
+                </Button>
+              )}
             </form>
           </Stack>
         </Box>
