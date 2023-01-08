@@ -5,8 +5,8 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../firebaseConfig";
 import { Select } from "@chakra-ui/react";
 import { Spinner } from "@chakra-ui/react";
-import DashboardRentedProducts from "../components/dashboardRentedProducts";
-import PhoneNumberInput from "../components/input-phoneNumber";
+import DashboardRentedProducts from "../components/profileComponents/dashboardRentedProducts";
+import PhoneNumberInput from "../components/profileComponents/input-phoneNumber";
 import { provincias } from "../utils/provincias-ciudades/provincias";
 import { localidades } from "../utils/provincias-ciudades/localidades";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
@@ -20,7 +20,7 @@ import {
   MenuOptionGroup,
   MenuDivider,
 } from '@chakra-ui/react'
-import Confirmation from "../components/confirmation-of-delete";
+import Confirmation from "../components/profileComponents/confirmation-of-delete";
 
 
 export default function Profile() {
@@ -555,7 +555,7 @@ export default function Profile() {
               Transacciones
             </Button>
           </Flex>
-          {editShow.seeTransactions ? <DashboardRentedProducts /> : null}
+          {editShow.seeTransactions ? <DashboardRentedProducts user={user}/> : null}
         </Flex>
       </Flex>
     </Box>
