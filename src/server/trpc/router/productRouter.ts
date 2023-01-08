@@ -17,6 +17,7 @@ export const productRouter = router({
         skip: page * limit - limit,
         take: limit,
         include: {
+          rating: true,
           category: true,
           user: true,
         },
@@ -38,6 +39,7 @@ export const productRouter = router({
           id,
         },
         include: {
+          rating: true,
           category: true,
           user: true,
         },
@@ -82,6 +84,7 @@ export const productRouter = router({
 
       const productsByTittleAndCategory = await ctx.prisma.product.findMany({
         include: {
+          rating: true,
           category: true,
           user: true,
         },
@@ -114,6 +117,7 @@ export const productRouter = router({
       if (title == " ") {
         productByCategory = await ctx.prisma.product.findMany({
           include: {
+            rating: true,
             category: true,
             user: true,
           },
@@ -128,6 +132,7 @@ export const productRouter = router({
       } else {
         productByCategory = await ctx.prisma.product.findMany({
           include: {
+            rating: true,
             category: true,
             user: true,
           },
@@ -204,7 +209,7 @@ export const productRouter = router({
             },
             data: {
               title: "Moto Voladora",
-              price: 5.50,
+              price: 5.5,
             },
           },
         },

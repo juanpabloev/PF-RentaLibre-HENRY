@@ -24,6 +24,12 @@ export default function CardProductList({
   productPrice,
   rating,
 }) {
+  let avarage = 0;
+  if (rating && rating.length > 0) {
+    let sum = 0;
+    rating?.forEach((rating) => (sum += rating.stars));
+    avarage = sum / rating.length;
+  }
   return (
     <Center py={6}>
       <Link href={`/productDetail/${id}`}>
@@ -38,7 +44,6 @@ export default function CardProductList({
           bg={useColorModeValue("white", "gray.900")}
           boxShadow={"xl"}
           padding={4}
-      
         >
           <Flex flex={0.4} /* bg="blue.400" */ align="center">
             <Box w="170px" /* bg="red.500" */>
@@ -65,7 +70,7 @@ export default function CardProductList({
               {productName}
             </Heading>
             <Text fontWeight={600} color={"gray.500"} size="sm" mb={4}>
-              {"Valoraciones: " + rating + " *"}
+              {"Valoraciones: " + avarage + "/5  estrellas" + " *"}
             </Text>
             <Text fontWeight={600} fontSize={"xl"}>
               {"$ " + productPrice}
