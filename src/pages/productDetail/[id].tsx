@@ -21,11 +21,14 @@ import {
   List,
   ListItem,
   Badge,
+  Textarea,
 } from "@chakra-ui/react";
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Style from "../../styles/id.module.css";
+
 // type Params = {
 //   params: {
 //     id: string;
@@ -62,13 +65,68 @@ import React from "react";
 //   product: RouterOutputs["product"]["getProductByID"];
 // };
 
+const validate = (input: any) => {
+  const errors = {
+    stars: false,
+    size: false,
+  };
+  if (input.rating > 5 || input.rating < 1) {
+    errors.stars = true;
+  }
+  if (input.comment.length < 5 || input.comment.length > 300) {
+    errors.size = true;
+  }
+  return errors;
+};
+
 export default function ProductDetail() {
   const router = useRouter();
   const session = useSession();
-  const { id }:any = router.query;
+  const { id }: any = router.query;
   //trae del back con id
   const product = trpc.product.getProductByID.useQuery({ id }).data;
+  const ratings = trpc.rating.getRatingsProduct.useQuery({
+    productId: id,
+    page: 1,
+  }).data;
+  const utils = trpc.useContext();
+  const addComment = trpc.rating.createRatingProduct.useMutation({
+    onSuccess() {
+      utils.rating.getRatingsProduct.invalidate();
+    },
+  });
+  const updateComment = trpc.rating.updateRating.useMutation({
+    onSuccess() {
+      utils.rating.getRatingsProduct.invalidate();
+    },
+  });
+  const deleteComment = trpc.rating.deleteRating.useMutation({
+    onSuccess() {
+      utils.rating.getRatingsProduct.invalidate();
+    },
+  });
   const addFavorite = trpc.user.addFavorite.useMutation();
+
+  const [ratingInput, setRatingInput] = useState({
+    rating: "3",
+    comment: "",
+  });
+  const [err, setErr] = useState({
+    stars: false,
+    size: true,
+  });
+  const [edit, setEdit] = useState(false);
+  const [adminPostId, setadminPostId] = useState("");
+
+  const connected = session.status === "authenticated";
+  let alredyCommented = false;
+  const userComment = ratings?.find(
+    (rating) => rating.userRater.id === session.data?.user?.id
+  );
+  if (userComment) alredyCommented = true;
+  useEffect(() => {}, [alredyCommented]);
+
+  const authorized = session.data?.userDB?.role === "ADMIN";
 
   const colorTxt = useColorModeValue("black", "gray.900");
   const colorBg = useColorModeValue("yellow.300", "orange.50");
@@ -93,31 +151,117 @@ export default function ProductDetail() {
                 description: product?.description,
                 picture_url: product?.pictures[0],
                 category_id: product?.category,
-                quantity: 1,//AGREGAR PRODUCT?.QUANTITY a schema
-                unit_price: product?.price
-              }
+                quantity: 1, //AGREGAR PRODUCT?.QUANTITY a schema
+                unit_price: product?.price,
+              },
             ],
             back_urls: {
-              success: 'http://localhost:3000/success',
-              failure: 'http://localhost:3000/failure',
-              pending: 'http://localhost:3000/pending'
+              success: "http://localhost:3000/success",
+              failure: "http://localhost:3000/failure",
+              pending: "http://localhost:3000/pending",
             },
-            notification_url: 'https://04c5-191-97-97-69.sa.ngrok.io/api/notificar'
-          })
-      });
+            notification_url:
+              "https://04c5-191-97-97-69.sa.ngrok.io/api/notificar",
+          }),
+        }
+      );
       const json = await res.json();
-      console.log(json, session?.data?.user?.email)
-      router.push(json.init_point)
+      console.log(json, session?.data?.user?.email);
+      router.push(json.init_point);
     } catch (error) {
       console.error(error);
     }
-}
+  }
 
   const handleFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     addFavorite.mutate({ productId: id });
 
     alert(`${product?.title} agregado a favoritos`);
+  };
+  const handleRatingChange = (e: any) => {
+    e.preventDefault();
+    const name = e.target.name;
+    setRatingInput({
+      ...ratingInput,
+      [name]: e.target.value,
+    });
+
+    setErr(validate(ratingInput));
+  };
+  const handleRatingSubmit = (e: any) => {
+    e.preventDefault();
+    if (!err.size && !err.stars) {
+      addComment.mutate({
+        productId: id,
+        comment: ratingInput.comment,
+
+        stars: parseInt(ratingInput.rating),
+      });
+    }
+  };
+
+  let avarage = 0;
+  if (product?.rating && product?.rating.length > 0) {
+    let sum = 0;
+    product?.rating?.forEach((rating: any) => (sum += rating.stars));
+    avarage = sum / product?.rating.length;
+  }
+
+  const handleDelete = (e: any) => {
+    if (userComment) deleteComment.mutate({ ratingId: userComment.id });
+    if (authorized) deleteComment.mutate({ ratingId: e.target.value });
+    setRatingInput({
+      ...ratingInput,
+      rating: "3",
+      comment: "",
+    });
+
+    setErr({
+      ...err,
+      stars: false,
+      size: false,
+    });
+  };
+
+  const handleConfirmEdit = (e: any) => {
+    if (authorized) {
+      updateComment.mutate({
+        comment: ratingInput.comment,
+        stars: parseInt(ratingInput.rating),
+        ratingId: e.target.value,
+      });
+      setEdit(false);
+    } else {
+      if (!userComment) return;
+      if (!userComment.comment) return;
+      updateComment.mutate({
+        comment: ratingInput.comment,
+        stars: parseInt(ratingInput.rating),
+        ratingId: userComment.id,
+      });
+
+      setEdit(false);
+    }
+  };
+  const handleEdit = (e: any) => {
+    if (authorized) {
+      const values = e.target.value.split(",");
+      setadminPostId(values[0]);
+      setRatingInput({
+        rating: values[1],
+        comment: values[2],
+      });
+      setEdit(true);
+    } else {
+      if (!userComment) return;
+      if (!userComment.comment) return;
+      setRatingInput({
+        rating: userComment.stars.toString(),
+        comment: userComment.comment,
+      });
+      setEdit(true);
+    }
   };
 
   return (
@@ -155,7 +299,14 @@ export default function ProductDetail() {
               {"$ " + product?.price}
             </Text>
           </Box>
-          {session.status === "authenticated" ? (
+          <Text
+            color={useColorModeValue("gray.900", "gray.400")}
+            fontWeight={300}
+            fontSize={"2xl"}
+          >
+            {avarage + "/5  estrellas"}
+          </Text>
+          {connected ? (
             <Button
               rounded={"none"}
               w={"full"}
@@ -238,7 +389,7 @@ export default function ProductDetail() {
                   {/* <Text as={'span'} fontWeight={'bold'}>
                       Between lugs:
                     </Text>{' '} */}
-                  {product?.user?.userName}
+                  {product?.user?.name}
                 </ListItem>
                 {/* <ListItem>
                     <Text as={'span'} fontWeight={'bold'}>
@@ -280,7 +431,7 @@ export default function ProductDetail() {
               </List>
             </Box>
           </Stack>
-          
+
           <Button
             rounded={"none"}
             w={"full"}
@@ -313,6 +464,123 @@ export default function ProductDetail() {
           </Stack>
         </Stack>
       </SimpleGrid>
+      <hr></hr>
+      {ratings?.map((rating) => {
+        return (
+          <Box key={rating.id}>
+            <br />
+            {edit ? null : (
+              <>
+                {!userComment && !authorized ? (
+                  <>
+                    <Text>{rating.userRater.name}</Text>
+                    <Text>{rating.stars} stars</Text>
+                    <Text>{rating.comment}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text>{rating.userRater.name}</Text>
+                    <Text>{rating.stars} stars</Text>
+                    <Text>{rating.comment}</Text>
+                    <Button
+                      colorScheme={"blue"}
+                      onClick={(e) => handleEdit(e)}
+                      value={[
+                        rating.id,
+                        rating.stars.toString(),
+                        rating.comment,
+                      ]}
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      colorScheme={"red"}
+                      onClick={(e) => handleDelete(e)}
+                      value={rating.id}
+                    >
+                      X
+                    </Button>
+                    <br />
+                  </>
+                )}
+              </>
+            )}
+
+            <br />
+          </Box>
+        );
+      })}
+      <hr />
+      {(connected && (!alredyCommented || edit)) || (authorized && edit) ? (
+        <Box>
+          <Stack spacing={{ base: 6, sm: 9 }} direction={"column"} margin="5">
+            <form onSubmit={(e) => handleRatingSubmit(e)}>
+              <fieldset>
+                <span className={Style.starRating}>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value={1}
+                    onChange={(e) => handleRatingChange(e)}
+                    checked={1 === parseInt(ratingInput.rating)}
+                  />
+                  <i></i>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value={2}
+                    onChange={(e) => handleRatingChange(e)}
+                    checked={2 === parseInt(ratingInput.rating)}
+                  />
+                  <i></i>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value={3}
+                    onChange={(e) => handleRatingChange(e)}
+                    checked={3 === parseInt(ratingInput.rating)}
+                  />
+                  <i></i>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value={4}
+                    onChange={(e) => handleRatingChange(e)}
+                    checked={4 === parseInt(ratingInput.rating)}
+                  />
+                  <i></i>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value={5}
+                    onChange={(e) => handleRatingChange(e)}
+                    checked={5 === parseInt(ratingInput.rating)}
+                  />
+                  <i></i>
+                </span>
+              </fieldset>
+              <Textarea
+                name="comment"
+                value={ratingInput.comment}
+                onChange={(e) => handleRatingChange(e)}
+              />
+              {userComment || authorized ? (
+                <Button
+                  colorScheme={"blue"}
+                  onClick={(e) => handleConfirmEdit(e)}
+                >
+                  {" "}
+                  Confirmar
+                </Button>
+              ) : (
+                <Button colorScheme={"red"} type="submit">
+                  Commentar
+                </Button>
+              )}
+            </form>
+          </Stack>
+        </Box>
+      ) : null}
     </Container>
   );
 }
