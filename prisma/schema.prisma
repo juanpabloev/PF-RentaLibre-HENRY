@@ -34,9 +34,6 @@ model User {
   phoneNumber    String?
   codigoPostal   String?
   role Role @default(USER)
-  location       Location?
-  phoneNumber    String?
-  codigoPostal   String?
 }
 
 type Location {
