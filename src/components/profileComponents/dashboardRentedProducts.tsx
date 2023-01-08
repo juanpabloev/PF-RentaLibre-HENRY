@@ -66,58 +66,58 @@ export default function DashboardRentedProducts({user}:Props) {
                       </h2>
                       <AccordionPanel pb={4}>
                         <Text
-                          fontWeight="bold"
+                          fontWeight="semibold"
                           fontSize="16px"
-                          color="black"
+                          color='blackAlpha.900'
                           display="flex"
                         >
                           Pricio del producto:{" "}
-                          <Text ml="5px" color="blue" fontWeight="bold">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.product.price}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="black"
-                          display="flex"
+                           fontWeight="semibold"
+                           fontSize="16px"
+                           color='blackAlpha.900'
+                           display="flex"
                         >
                           TransactionID:
-                          <Text ml="5px" color="blue" fontWeight="bold">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {" "}
                             {trans.transactionID}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="black"
-                          display="flex"
+                           fontWeight="semibold"
+                           fontSize="16px"
+                           color='blackAlpha.900'
+                           display="flex"
                         >
                           Rentado a:{" "}
-                          <Text ml="5px" color="blue" fontWeight="bold">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {`${trans.buyer.name ? trans.buyer.name : ''} ${trans.buyer.lastName ? trans.buyer.lastName : ''}`} 
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="black"
-                          display="flex"
+                            fontWeight="semibold"
+                            fontSize="16px"
+                            color='blackAlpha.900'
+                            display="flex"
                         >
                           Metodo de Pago:{" "}
-                          <Text ml="5px" color="blue" fontWeight="bold">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.methodName}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="black"
-                          display="flex"
+                            fontWeight="semibold"
+                            fontSize="16px"
+                            color='blackAlpha.900'
+                            display="flex"
                         >
                           Fecha y hora:{" "}
-                          <Text ml="5px" color="blue" fontWeight="bold">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.createdAt.toString()}
                           </Text>
                         </Text>
@@ -150,58 +150,58 @@ export default function DashboardRentedProducts({user}:Props) {
                       </h2>
                       <AccordionPanel pb={4}>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="black"
-                          display="flex"
+                             fontWeight="semibold"
+                             fontSize="16px"
+                             color='blackAlpha.900'
+                             display="flex"
                         >
                           Pricio del producto:{" "}
-                          <Text ml="5px" color="blue" fontWeight="semibold">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.product.price}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="black"
-                          display="flex"
+                            fontWeight="semibold"
+                            fontSize="16px"
+                            color='blackAlpha.900'
+                            display="flex"
                         >
                           TransactionID:
-                          <Text ml="5px" color="blue" fontWeight="semibold">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {" "}
                             {trans.transactionID}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="black"
-                          display="flex"
+                           fontWeight="semibold"
+                           fontSize="16px"
+                           color='blackAlpha.900'
+                           display="flex"
                         >
                           Rentador:{" "}
-                          <Text ml="5px" color="blue" fontWeight="semibold">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                           {`${trans.seller?.name ? trans.seller.name : ''} ${trans.seller?.lastName ? trans.seller.lastName : ''}`}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="black"
-                          display="flex"
+                           fontWeight="semibold"
+                           fontSize="16px"
+                           color='blackAlpha.900'
+                           display="flex"
                         >
                           Metodo de Pago:{" "}
-                          <Text ml="5px" color="blue" fontWeight="semibold">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.methodName}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="black"
-                          display="flex"
+                             fontWeight="semibold"
+                             fontSize="16px"
+                             color='blackAlpha.900'
+                             display="flex"
                         >
                           Fecha y hora:{" "}
-                          <Text ml="5px" color="blue" fontWeight="semibold">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.createdAt.toString()}
                           </Text>
                         </Text>
