@@ -45,6 +45,8 @@ interface InitValues {
     model: string;
     securityDeposit: any;
     pictures: any;
+    availability: { available: boolean; dateAvailable: string[] }
+
 }
 
 const initValues: InitValues = {
@@ -56,6 +58,7 @@ const initValues: InitValues = {
     model: "",
     securityDeposit: "",
     pictures: [],
+    availability: { available: false, dateAvailable: [''] }
 };
 
 const initState = { isLoading: false, error: "", values: initValues };
@@ -231,20 +234,51 @@ export default function AddPublication() {
         console.log(values?.pictures) */
     }
 
+    const productPublication = trpc.product.createProducts.useMutation()
+
     const onSubmit = async () => {
+
+        const sendValues = {
+            title: state.values.title,
+            category: state.values.category,
+            description: state.values.category,
+            price: parseInt(state.values.price),
+            brand: state.values.brand,
+            model: state.values.model,
+            securityDeposit: parseInt(state.values.securityDeposit),
+            pictures: state.values.pictures,
+            availability: { available: false, dateAvailable: [] }
+
+        }
+    
         setState((prev) => ({
             ...prev,
             isLoading: true,
         }));
         try {
-            console.log(values);
+            console.log(sendValues);
             //sendEmail(values);
 
-            //77777777777777777777777777777777777
+            //FALTA AGREAGAR USER ID!!!
 
             //ACA AGREGAR LO QUE ADONDE QUERRAMOS ENVIAR LA INFO !!!!!!
 
             // ¡¡ ** values.pictures, es un arreglo de strings de URL en firebase.. puede haber strings repetidos. si hay, hay que filtrar y eliminar antes de enviar a la BD ** !!
+
+            productPublication.mutateAsync(
+                sendValues
+            ).then((data: any) => { console.log(data) })
+
+            /* const initValues: InitValues = {
+                -title: "",
+                category: "",
+                -description: "",
+                -price: "",
+                *brand: "",
+                model: "",
+                -securityDeposit: "",
+                -pictures: [],
+            }; */
 
             ////////////////////////////////////////////////////
 
@@ -289,10 +323,7 @@ export default function AddPublication() {
             <FormLabel marginBottom={5}>¿Datos Correctos?</FormLabel>
             <Center marginBottom={10}>
                 <Link href={"/profile"} text-decoration='none'>
-                    <Button
-                        colorScheme='teal'
-                        size='md'
-                    >
+                    <Button colorScheme='teal' size='md'>
                         Editar Perfil
                     </Button>
                 </Link>

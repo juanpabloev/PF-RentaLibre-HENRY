@@ -149,8 +149,12 @@ export const productRouter = router({
       z.object({
         title: z.string(),
         price: z.number(),
+        securityDeposit: z.number(),
         category: z.any(),
         description: z.string(),
+        brand: z.string(),
+        model: z.string(),
+        pictures: z.array(string()),
         availability: z.object({
           available: z.boolean(),
           dateAvailable: z.array(z.string(), z.string()),
@@ -158,13 +162,17 @@ export const productRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { title, price, category, description, availability } = input;
+      const { title, brand, model, pictures, securityDeposit, price, category, description, availability } = input;
       const product = await ctx.prisma.product.create({
         data: {
           title,
           price,
           category, //category Id???
           description,
+          brand,
+          model,
+          pictures,
+          securityDeposit,
           availability,
           user: {
             connect: {

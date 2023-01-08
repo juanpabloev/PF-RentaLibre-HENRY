@@ -254,7 +254,7 @@ export default function WithSubnavigation() {
             fontWeight={600}
             color={"#404c5a"}
             variant={"link"}
-            href={"/login"}
+            href={"/forms/add-publication"}
           >
             Publicar
           </Button>
