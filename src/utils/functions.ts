@@ -105,16 +105,16 @@ export function createPaymentmethod() {
 
 export function deleteProduct() {
   deleteP.mutate();
-  deleteR.mutate();
+  // deleteR.mutate();
 }
 
 export function updateProduct() {
   updateP.mutate();
-  updateR.mutate();
+  //updateR.mutate();
 }
 
 export function deleteUser() {
-  deleteU.mutate();
+  // deleteU.mutate();
 }
 
 // export function addFavorite () {
