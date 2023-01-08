@@ -10,7 +10,7 @@ const Admin = () => {
     filterdUsers: [],
     search: "",
   });
-
+  const transaction = trpc.user.makeTransaction.useMutation()
   const allUsers = trpc.user.getAllUsers.useQuery().data;
   const sdk = new ChartsEmbedSDK({
     baseUrl: "https://charts.mongodb.com/charts-proyect-ryksx",

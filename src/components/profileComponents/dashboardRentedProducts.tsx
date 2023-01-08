@@ -7,18 +7,17 @@ import {
   AccordionIcon,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { trpc } from "../../utils/trpc";
-import { useSession, signIn, signOut, getSession } from "next-auth/react";
+import Link from 'next/link';
 
-export default function DashboardRentedProducts() {
-  const { data: session } = useSession();
-  const user = trpc.user.getUser.useQuery({
-    userId: session?.userDB.id,
-  }).data;
+interface Props {
+  user: any;
+}
+
+export default function DashboardRentedProducts({user}:Props) {
   const [seller, setSeller] = useState(true);
 
   return (
-    <Box ml='1%' mt='3%'>
+    <Box ml='1%' mb='1%'>
       <Flex mt="10px" justifyContent='center'>
         <Button
         _hover={{bg:"#404c5a",color: 'white'}}
@@ -26,7 +25,7 @@ export default function DashboardRentedProducts() {
           color={seller ? "blue" : "black"}
           fontWeight="semibold"
         >
-          Articulos Que Renté
+         {user.admin ? 'Articulos Que Rentó el usuario' : 'Articulos Que Renté'}
         </Button>
         <Button
         _hover={{bg:"#404c5a",color: 'white'}}
@@ -35,13 +34,13 @@ export default function DashboardRentedProducts() {
           color={!seller ? "blue" : "black"}
           fontWeight="semibold"
         >
-          Articulos Rentados
+          {user.admin ? 'Articulos Que se le rentó al usuario' : 'Articulos Rentados'} 
         </Button>
       </Flex>
 
       <Box mt="20px" ml='5%'>
         {user && seller
-          ? user.seller.map((trans) => {
+          ? user.seller.map((trans:any) => {
               return (
                 <Box key={trans.transactionID}>
                   <Accordion allowToggle w="85%">
@@ -56,8 +55,12 @@ export default function DashboardRentedProducts() {
                             fontWeight="bold"
                             color="#F7C331"
                           >
-                            {trans.product.title}
+                             <Link href={`/productDetail/${trans.product.id}`}>
+                             {trans.product.title}
+                             </Link>
+                          
                           </Box>
+
                           <AccordionIcon />
                         </AccordionButton>
                       </h2>
@@ -93,7 +96,7 @@ export default function DashboardRentedProducts() {
                         >
                           Rentado a:{" "}
                           <Text ml="5px" color="blue" fontWeight="bold">
-                            {trans.buyer.userName}
+                            {`${trans.buyer.name ? trans.buyer.name : ''} ${trans.buyer.lastName ? trans.buyer.lastName : ''}`} 
                           </Text>
                         </Text>
                         <Text
@@ -125,7 +128,7 @@ export default function DashboardRentedProducts() {
               );
             })
           : user &&
-            user.buyer.map((trans) => {
+            user.buyer.map((trans:any) => {
               return (
                 <Box key={trans.transactionID}>
                   <Accordion allowToggle w="85%">
@@ -177,7 +180,7 @@ export default function DashboardRentedProducts() {
                         >
                           Rentador:{" "}
                           <Text ml="5px" color="blue" fontWeight="semibold">
-                            {trans.seller.userName}
+                          {`${trans.seller?.name ? trans.seller.name : ''} ${trans.seller?.lastName ? trans.seller.lastName : ''}`}
                           </Text>
                         </Text>
                         <Text
