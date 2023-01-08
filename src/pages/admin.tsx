@@ -69,7 +69,7 @@ const Admin = () => {
         mt="1%"
       />
       {state.search.length !== 0 &&
-        state.filterdUsers?.slice(0, 5).map((u: any) => <UserCard user={u} />)}
+        state.filterdUsers?.slice(0, 5).map((u: any) => <UserCard key={u.id} user={u}/>)}
       <Flex justifyContent="space-around" wrap="wrap">
         <Flex
           flexDirection="column"

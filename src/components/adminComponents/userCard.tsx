@@ -160,7 +160,7 @@ const UserCard = ({ user }: Props) => {
           </Flex>
           {state.viewProducts && (
             <Box>
-              {user.products.map((p: any)=> <Product product={p}/>)}
+              {user.products.map((p: any)=> <Product key={p.id} product={p}/>)}
             </Box>
           )}
           <Box>
