@@ -37,8 +37,10 @@ import { uploadFile } from "../../utils/upload-functions/firebase-functions";
 //import sendEmail from "../utils/contact-functions/contact-Email";
 
 interface InitValues {
+    userId?: string;
     title: string;
-    category: any; //recibe un onbjete {name, id}
+    category?: any; //recibe un onbjete {name, id}
+    categoryId?: string;
     description: string;
     price: any; // es any por que de lo contrario, en init state, me aparece un 0 en el campo.
     brand: string;
@@ -50,8 +52,10 @@ interface InitValues {
 }
 
 const initValues: InitValues = {
+    userId: "",
     title: "",
     category: "",
+    categoryId: "",
     description: "",
     price: "",
     brand: "",
@@ -238,10 +242,24 @@ export default function AddPublication() {
 
     const onSubmit = async () => {
 
+       /*  interface Sendvalues {
+            UserId?: any;
+            title: string;
+            categoryId: string;
+            description: string;
+            price: number;
+            brand: string;
+            model: string;
+            securityDeposit: number;
+            pictures: string[];
+            availability: { available: boolean; dateAvailable: string[] }
+        } */
+
         const sendValues = {
+            UserId: session?.userDB.id,
             title: state.values.title,
-            category: state.values.category,
-            description: state.values.description ,
+            categoryId: state.values.category,
+            description: state.values.description,
             price: parseInt(state.values.price),
             brand: state.values.brand,
             model: state.values.model,
@@ -250,7 +268,7 @@ export default function AddPublication() {
             availability: { available: false, dateAvailable: [] }
 
         }
-    
+
         setState((prev) => ({
             ...prev,
             isLoading: true,
@@ -322,11 +340,11 @@ export default function AddPublication() {
             <FormLabel marginBottom={5}>Teléfono: {session?.userDB.phoneNumber}</FormLabel>
             <FormLabel marginBottom={5}>¿Datos Correctos?</FormLabel>
             <Center marginBottom={10}>
-                <Link href={"/profile"} text-decoration='none'>
+                <a href={"/profile"}>
                     <Button colorScheme='teal' size='md'>
                         Editar Perfil
                     </Button>
-                </Link>
+                </a>
             </Center>
 
             <FormControl isRequired isInvalid={touched.category && !values.category} mb={5}>

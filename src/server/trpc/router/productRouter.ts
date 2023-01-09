@@ -147,10 +147,11 @@ export const productRouter = router({
   createProducts: publicProcedure
     .input(
       z.object({
+        userId: z.string().optional(),
         title: z.string(),
         price: z.number(),
         securityDeposit: z.number(),
-        category: z.any(),
+        categoryId: z.any(),
         description: z.string(),
         brand: z.string(),
         model: z.string(),
@@ -162,26 +163,26 @@ export const productRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { title, brand, model, pictures, securityDeposit, price, category, description, availability } = input;
+      const { userId, title, brand, model, pictures, securityDeposit, price, categoryId, description, availability } = input;
       const product = await ctx.prisma.product.create({
         data: {
           title,
           price,
-          category, //category Id???
           description,
           brand,
           model,
           pictures,
           securityDeposit,
+          category: {connect: {id: categoryId}},
           availability,
           user: {
             connect: {
-              id: "639640531a4b6c6f07111635",
+              id: userId,
             },
           },
           paymentMethod: {
             connect: {
-              paymentName: "Reba",
+              paymentName: "Mercado Pago",
             },
           },
         },
