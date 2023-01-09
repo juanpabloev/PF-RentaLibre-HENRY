@@ -61,18 +61,18 @@ export const userRouter = router({
   }),
 
   userDelete: publicProcedure
-  .input(z.object({userId: z.string()}))
-  .mutation(async ({ ctx,input }) => {
-    const {userId} = input;
-    const deleteUser = await ctx.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        active: false,
-      },
-    });
-  }),
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = input;
+      const deleteUser = await ctx.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          active: false,
+        },
+      });
+    }),
   createPaymentMethod: publicProcedure.mutation(async ({ ctx }) => {
     const paymentMethod = await ctx.prisma.paymentMethod.create({
       data: {
@@ -195,38 +195,49 @@ export const userRouter = router({
       });
       return favorites;
     }),
-    userUpdate: publicProcedure
-    .input(z.object({
-      userId:z.string().optional(),
-      name:z.string().optional(),
-      userPicture: z.string().optional(),
-      lastName: z.string().optional(),
-      codigoPostal: z.string().optional(),
-      countryName:z.string().optional(),
-      stateName:z.string().optional(),
-      cityName:z.string().optional(),
-      phoneNumber: z.string().optional()
-    }))
-    .mutation(async ({ctx,input})=>{
-      const {name, userPicture, lastName,codigoPostal,
-        countryName,stateName,cityName, phoneNumber,userId} = input
+  userUpdate: publicProcedure
+    .input(
+      z.object({
+        userId: z.string().optional(),
+        name: z.string().optional(),
+        userPicture: z.string().optional(),
+        lastName: z.string().optional(),
+        codigoPostal: z.string().optional(),
+        countryName: z.string().optional(),
+        stateName: z.string().optional(),
+        cityName: z.string().optional(),
+        phoneNumber: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const {
+        name,
+        userPicture,
+        lastName,
+        codigoPostal,
+        countryName,
+        stateName,
+        cityName,
+        phoneNumber,
+        userId,
+      } = input;
       const updateUser = await ctx.prisma.user.update({
-      where: {
-        id:userId
-      },
-      data: {
-      phoneNumber,
-      name,
-      image:userPicture,
-      lastName,
-      codigoPostal,
-      location: {
-        country:countryName,
-        state:stateName,
-        city:cityName
-      },
-      }
-    })
-    return updateUser
-  })
+        where: {
+          id: userId,
+        },
+        data: {
+          phoneNumber,
+          name,
+          image: userPicture,
+          lastName,
+          codigoPostal,
+          location: {
+            country: countryName,
+            state: stateName,
+            city: cityName,
+          },
+        },
+      });
+      return updateUser;
+    }),
 });

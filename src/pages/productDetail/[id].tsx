@@ -22,6 +22,7 @@ import {
   ListItem,
   Badge,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
@@ -80,6 +81,7 @@ const validate = (input: any) => {
 };
 
 export default function ProductDetail() {
+  const toast = useToast();
   const router = useRouter();
   const session = useSession();
   const { id }: any = router.query;
@@ -133,18 +135,19 @@ export default function ProductDetail() {
 
   async function handleSubmit() {
     try {
-      const res = await fetch("https://api.mercadopago.com/checkout/preferences", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`
-        },
-        body: JSON.stringify({
-            payer:
-              {
-                email: session?.data?.user?.email,
-                phone: ""
-              },
+      const res = await fetch(
+        "https://api.mercadopago.com/checkout/preferences",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`,
+          },
+          body: JSON.stringify({
+            payer: {
+              email: session?.data?.user?.email,
+              phone: "",
+            },
             items: [
               {
                 title: product?.title,
@@ -177,7 +180,12 @@ export default function ProductDetail() {
     e.preventDefault();
     addFavorite.mutate({ productId: id });
 
-    alert(`${product?.title} agregado a favoritos`);
+    toast({
+      title: "Agregado a favoritos.",
+      status: "success",
+      duration: 2000,
+      position: "top",
+    });
   };
   const handleRatingChange = (e: any) => {
     e.preventDefault();
