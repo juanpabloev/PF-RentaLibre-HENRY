@@ -23,7 +23,7 @@ function Footer() {
         color={useColorModeValue("white", "#404c5a")}
       >
         <Stack direction={"row"} spacing={6}>
-          <Link as={NextLink} href={"contacto"}>
+          <Link as={NextLink} href={"/contact"}>
             Contacto
           </Link>
           <Link as={NextLink} href={"faq"}>

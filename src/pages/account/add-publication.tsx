@@ -31,11 +31,10 @@ import {
     Progress,
 
 } from "@chakra-ui/react";
-import { string } from "zod";
 
 import { uploadFile } from "../../utils/upload-functions/firebase-functions";
 
-//import sendEmail from "../utils/contact-functions/contact-Email";
+import sendEmail from "../../utils/contact-functions/contact-Email";
 
 interface InitValues {
     userId?: string;
@@ -243,6 +242,8 @@ export default function AddPublication() {
 
     const onSubmit = async (e: any) => {
 
+        let publicationResponse: any = 0;
+
         e.preventDefault()
 
         const sendValues = {
@@ -264,31 +265,32 @@ export default function AddPublication() {
             isLoading: true,
         }));
         try {
-            console.log(sendValues);
-            //sendEmail(values);
+            //console.log(sendValues);
 
-            //FALTA AGREAGAR USER ID!!!
-
-            //ACA AGREGAR LO QUE ADONDE QUERRAMOS ENVIAR LA INFO !!!!!!
-
-            // ¡¡ ** values.pictures, es un arreglo de strings de URL en firebase.. puede haber strings repetidos. si hay, hay que filtrar y eliminar antes de enviar a la BD ** !!
-
-            productPublication.mutateAsync(
+            await productPublication.mutateAsync(
                 sendValues
-            ).then((data: any) => { console.log(data) })
+            ).then((data: any) => {
+                publicationResponse = data;
+            })
 
-            /* const initValues: InitValues = {
-                -title: "",
-                category: "",
-                -description: "",
-                -price: "",
-                *brand: "",
-                model: "",
-                -securityDeposit: "",
-                -pictures: [],
-            }; */
+            //envio notificaciond e email - si publicacon ok:
 
-            ////////////////////////////////////////////////////
+            const values = {
+                name: session?.userDB?.name,
+                email: session?.userDB?.email,
+                subject: 'Su publicación ha sido exitosa',
+                message: 'Estimado ' + session?.userDB.name + '. Su artículo ' + sendValues.title + ' ha sido publicado correctamente. Usted puede administrar sus publicaciones desde https://rentalibre.vercel.app/account/my-publications. Saudos, El equipo de rentalibre.'
+            };
+
+            //console.log(values);
+
+            if (true) {
+                sendEmail(values);
+            } else {
+                console.log('No Data response from publication');
+            };
+
+            //********************************** */
 
             setTouched({
                 title: false,
