@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { RouterOutputs, trpc } from "../../utils/trpc";
+import { useRouter } from "next/router";
 
 import { storage } from "../../../firebaseConfig";
 import { UploadTaskSnapshot } from "firebase/storage";
@@ -46,7 +47,7 @@ interface InitValues {
     brand: string;
     model: string;
     securityDeposit: any;
-    pictures: any;
+    pictures: any; //si pongo string[] falla
     availability: { available: boolean; dateAvailable: string[] }
 
 }
@@ -67,10 +68,10 @@ const initValues: InitValues = {
 
 const initState = { isLoading: false, error: "", values: initValues };
 
-
 export default function AddPublication() {
     const toast = useToast();
     const { data: session, status } = useSession({ required: true });
+    const router = useRouter()
 
     const categoriesDB = trpc.category.getCategories.useQuery().data;
     //console.log(categoriesDB) // array con objetos: : id, name
@@ -240,20 +241,9 @@ export default function AddPublication() {
 
     const productPublication = trpc.product.createProducts.useMutation()
 
-    const onSubmit = async () => {
+    const onSubmit = async (e: any) => {
 
-       /*  interface Sendvalues {
-            UserId?: any;
-            title: string;
-            categoryId: string;
-            description: string;
-            price: number;
-            brand: string;
-            model: string;
-            securityDeposit: number;
-            pictures: string[];
-            availability: { available: boolean; dateAvailable: string[] }
-        } */
+        e.preventDefault()
 
         const sendValues = {
             //UserId: session?.userDB.id,
@@ -311,12 +301,16 @@ export default function AddPublication() {
                 pictures: false,
             });
             setState(initState);
+            setStatusObject({});
             toast({
                 title: "¡Artículo Publicado!",
                 status: "success",
                 duration: 2000,
                 position: "top",
             });
+
+            router.push("/");
+
         } catch (error: any) {
             setState((prev) => ({
                 ...prev,
@@ -445,9 +439,6 @@ export default function AddPublication() {
                     {Object.values(statusObject).map((ob) => {
                         return (
                             <Box key={v4()}>
-
-
-
                                 <Image
                                     width="180"
                                     src={ob.preview}
@@ -545,7 +536,7 @@ export default function AddPublication() {
                     colorScheme="blue"
                     isLoading={isLoading}
                     disabled={
-                        !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500 || !values.pictures || values.pictures.length > 4 || values.pictures === ''
+                        !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500 || !values.pictures || values.pictures.length > 4 || values.pictures.length === 0
                     }
                     onClick={onSubmit}
                     marginBottom={10}
