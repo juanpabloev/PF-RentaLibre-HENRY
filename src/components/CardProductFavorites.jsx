@@ -25,52 +25,50 @@ export default function CardProductList({
   photo,
   productName,
   productPrice,
-  rating,
+  // rating,
 }) {
   return (
     <Center py={6}>
       {" "}
       {/* {`/productDetail/$id}`} */}
-      
-        {/* <CloseButton
+      {/* <CloseButton
           size="sm"
           background="gray.100"
           value={id}
           onClick={(e) => handleDelete(e)}
         /> */}
-        <Flex flex={0.4} /* bg="blue.400" */ align="center">
-          <Box w="170px" /* bg="red.500" */>
-            <Image
-              objectFit="contain"
-              boxSize="180px"
-              src={photo}
-              maxW={{ base: "100%", sm: "200px" }}
-              height="160px"
-            />
-          </Box>
-        </Flex>
-        <Link href={`/productDetail/${id}`}>
-          <Stack
-            flex={1}
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="left"
-            p={1}
-            pt={2}
-            pl={10}
-          >
-            <Heading fontSize={"xl"} fontFamily={"body"}>
-              {productName}
-            </Heading>
-            <Text fontWeight={600} color={"gray.500"} size="sm" mb={4}>
+      <Flex flex={0.4} /* bg="blue.400" */ align="center">
+        <Box w="170px" /* bg="red.500" */>
+          <Image
+            objectFit="contain"
+            boxSize="180px"
+            src={photo}
+            maxW={{ base: "100%", sm: "200px" }}
+            height="160px"
+          />
+        </Box>
+      </Flex>
+      <Link href={`/productDetail/${id}`}>
+        <Stack
+          flex={1}
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="left"
+          p={1}
+          pt={2}
+          pl={10}
+        >
+          <Heading fontSize={"xl"} fontFamily={"body"}>
+            {productName}
+          </Heading>
+          {/* <Text fontWeight={600} color={"gray.500"} size="sm" mb={4}>
               {"Valoraciones: " + rating + " *"}
-            </Text>
-            <Text fontWeight={600} fontSize={"xl"}>
-              {"$ " + productPrice}
-            </Text>
-          </Stack>
-        </Link>
-      
+            </Text> */}
+          <Text fontWeight={600} fontSize={"xl"}>
+            {"$ " + productPrice}
+          </Text>
+        </Stack>
+      </Link>
     </Center>
   );
 }
