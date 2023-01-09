@@ -1,6 +1,6 @@
 import { title } from "process";
 import { string, z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 export const productRouter = router({
   getProducts: publicProcedure
@@ -144,10 +144,9 @@ export const productRouter = router({
 
       return productByCategory;
     }),
-  createProducts: publicProcedure
+  createProducts: protectedProcedure
     .input(
       z.object({
-        userId: z.string().optional(),
         title: z.string(),
         price: z.number(),
         securityDeposit: z.number(),
@@ -163,7 +162,7 @@ export const productRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { userId, title, brand, model, pictures, securityDeposit, price, categoryId, description, availability } = input;
+      const { title, brand, model, pictures, securityDeposit, price, categoryId, description, availability } = input;
       const product = await ctx.prisma.product.create({
         data: {
           title,
@@ -177,7 +176,7 @@ export const productRouter = router({
           availability,
           user: {
             connect: {
-              id: userId,
+              id: ctx.session.user.id,
             },
           },
           paymentMethod: {

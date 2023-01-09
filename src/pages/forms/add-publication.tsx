@@ -256,7 +256,7 @@ export default function AddPublication() {
         } */
 
         const sendValues = {
-            UserId: session?.userDB.id,
+            //UserId: session?.userDB.id,
             title: state.values.title,
             categoryId: state.values.category,
             description: state.values.description,
