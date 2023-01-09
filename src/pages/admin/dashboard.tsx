@@ -14,14 +14,14 @@ const Dashboard = () => {
   
   const { data: session, status } = useSession({ required: true })
   const router = useRouter()
+  const [state, setState] = useState<any>({
+    filterdUsers: [],
+    search: "",
+  });
 
   //console.log(session); //me va a dar  objeto con la info de la sesion
 
   if (status === "authenticated" && session?.userDB.role === 'ADMIN') {
-    const [state, setState] = useState<any>({
-      filterdUsers: [],
-      search: "",
-    });
     const transaction = trpc.user.makeTransaction.useMutation()
     const allUsers = trpc.user.getAllUsers.useQuery().data;
     const sdk = new ChartsEmbedSDK({
