@@ -38,7 +38,7 @@ import { uploadFile } from "../../utils/upload-functions/firebase-functions";
 
 interface InitValues {
     title: string;
-    category: string;
+    category: any; //recibe un onbjete {name, id}
     description: string;
     price: any; // es any por que de lo contrario, en init state, me aparece un 0 en el campo.
     brand: string;
@@ -68,8 +68,8 @@ export default function AddPublication() {
     const toast = useToast();
     const { data: session, status } = useSession({ required: true });
 
-    const categories = trpc.category.getCategories.useQuery().data;
-    //console.log(categories) // array - [id, name]
+    const categoriesDB = trpc.category.getCategories.useQuery().data;
+    //console.log(categoriesDB) // array con objetos: : id, name
 
     const [state, setState] = useState(initState);
 
@@ -172,7 +172,7 @@ export default function AddPublication() {
             ...ob,
             [filename]: { ...ob[filename], progress }
         }));
-        console.log(statusObject)
+        //console.log(statusObject)
     };
 
 
@@ -241,7 +241,7 @@ export default function AddPublication() {
         const sendValues = {
             title: state.values.title,
             category: state.values.category,
-            description: state.values.category,
+            description: state.values.description ,
             price: parseInt(state.values.price),
             brand: state.values.brand,
             model: state.values.model,
@@ -340,8 +340,8 @@ export default function AddPublication() {
                     onChange={handleSelect}
                     onBlur={onBlur}
                 >
-                    {categories?.sort().map((c) => (
-                        <option value={c.name} key={c.id}>{c.name}</option>
+                    {categoriesDB?.sort().map((c: any) => (
+                        <option value={c.id} key={c.id}>{c.name}</option>
                     ))}
                 </Select>
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
@@ -527,7 +527,7 @@ export default function AddPublication() {
                     colorScheme="blue"
                     isLoading={isLoading}
                     disabled={
-                        !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500 || !values.pictures || values.pictures.length > 4
+                        !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500 || !values.pictures || values.pictures.length > 4 || values.pictures === ''
                     }
                     onClick={onSubmit}
                     marginBottom={10}
