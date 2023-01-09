@@ -7,7 +7,7 @@ import { UploadTaskSnapshot } from "firebase/storage";
 
 import styles from "../../styles/productList.module.css"
 
-import { v4 } from "uuid"; //crea random UUID- se le suma al nombre del archivo
+import { v4 } from "uuid"; //crea random UUID- se le suma al nombre del archivo //
 
 import {
     Button,
