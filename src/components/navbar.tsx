@@ -104,7 +104,8 @@ export default function WithSubnavigation() {
             fontFamily={"heading"}
             fontSize={"32px"}
             fontWeight={"bold"}
-            color={useColorModeValue("#F7882F", "white")}
+            color={useColorModeValue("#F7C331", "white")}
+            /* color={useColorModeValue("#F7882F", "white")} */
             cursor={"pointer"}
             onClick={() => {
               router.push("/");
