@@ -17,9 +17,13 @@ import { trpc } from "../utils/trpc";
 
 export default function notification ()  {
     const session = useSession();
+    if(session.status === "loading") return <h1> Loading... </h1>
+    if(session.status === "unauthenticated") return <h1> No estas logueado </h1>
     const notification = trpc.notification.getNotification.useQuery({
         userId: session?.data?.userDB?.id,
         }).data;
+
+        console.log(notification)
     return(
         notification && notification[0]?.user.length === 0 ? <h1> No tienes notificaciones todavia </h1> :
         notification && notification![0]?.user.map((notification) => (

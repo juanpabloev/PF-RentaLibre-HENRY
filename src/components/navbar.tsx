@@ -263,6 +263,7 @@ export default function WithSubnavigation() {
           direction={"row"}
           spacing={6}
         >
+          {status === "authenticated" ? (
           <Menu>
             <MenuButton
               py={2}
@@ -274,6 +275,7 @@ export default function WithSubnavigation() {
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2">
+                  
                   <IconButton
                     size="md"
                     variant="ghost"
@@ -320,6 +322,7 @@ export default function WithSubnavigation() {
               </Link>
             </MenuList>
           </Menu>
+          ): null}
           <Button
             as={"a"}
             fontSize={"sm"}
