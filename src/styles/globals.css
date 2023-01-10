@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+input.inputBox {
+    font-size: 15px;
+    padding: 5px 8px 4px 8px;
+    border-radius: 5px;
+    background-color: teal;
+    color: white;
+    width: 35%;
+    height: 40px;
+
+    /* border: 1px solid teal; */
+  }
+  
