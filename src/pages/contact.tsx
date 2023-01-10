@@ -86,7 +86,7 @@ export default function Contact() {
 
   return (
     <Container maxW="450px" mt={12}>
-      <Heading marginBottom={30}>Contactanos</Heading>
+      <Heading marginBottom={30} textAlign='center'>Contactanos</Heading>
       {error && (
         <Text color="red.300" my={4} fontSize="xl">
           {error}
@@ -103,7 +103,7 @@ export default function Contact() {
           onChange={handleChange}
           onBlur={onBlur}
         />
-        <FormErrorMessage>Required</FormErrorMessage>
+        <FormErrorMessage>Obligatorio</FormErrorMessage>
       </FormControl>
 
       <FormControl isRequired isInvalid={touched.email && !values.email} mb={5}>
@@ -116,7 +116,7 @@ export default function Contact() {
           onChange={handleChange}
           onBlur={onBlur}
         />
-        <FormErrorMessage>Required</FormErrorMessage>
+        <FormErrorMessage>Obligatorio</FormErrorMessage>
       </FormControl>
 
       <FormControl
@@ -133,7 +133,7 @@ export default function Contact() {
           onChange={handleChange}
           onBlur={onBlur}
         />
-        <FormErrorMessage>Required</FormErrorMessage>
+        <FormErrorMessage>Obligatorio</FormErrorMessage>
       </FormControl>
 
       <FormControl
@@ -150,7 +150,7 @@ export default function Contact() {
           onChange={handleChange}
           onBlur={onBlur}
         />
-        <FormErrorMessage>Required</FormErrorMessage>
+        <FormErrorMessage>Obligatorio</FormErrorMessage>
       </FormControl>
 
       <Button
@@ -162,7 +162,7 @@ export default function Contact() {
         }
         onClick={onSubmit}
       >
-        Submit
+        Enviar
       </Button>
     </Container>
   );
