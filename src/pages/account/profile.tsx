@@ -1,12 +1,12 @@
-import { Box, Text, Input, Img, Button, Flex, VStack } from "@chakra-ui/react";
+import { Box, Text, Input, Img, Button, Flex } from "@chakra-ui/react";
 import { trpc } from "../../utils/trpc";
 import React, { useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebaseConfig";
 import { Select } from "@chakra-ui/react";
 import { Spinner } from "@chakra-ui/react";
-import DashboardRentedProducts from "../../components/dashboardRentedProducts";
-import PhoneNumberInput from "../../components/input-phoneNumber";
+import DashboardRentedProducts from "../../components/profileComponents/dashboardRentedProducts";
+import PhoneNumberInput from "../../components/profileComponents/input-phoneNumber";
 import { provincias } from "../../utils/provincias-ciudades/provincias";
 import { localidades } from "../../utils/provincias-ciudades/localidades";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
@@ -20,9 +20,11 @@ import {
   MenuGroup,
   MenuOptionGroup,
   MenuDivider,
-  HStack
 } from '@chakra-ui/react'
-import Confirmation from "../../components/confirmation-of-delete";
+import Confirmation from "../../components/profileComponents/confirmation-of-delete";
+import PopUpModification from "../../components/profileComponents/popUpModification";
+
+
 
 export default function Profile() {
   const router = useRouter();
@@ -36,6 +38,7 @@ export default function Profile() {
     stateName: "",
     cityName: "",
     phoneNumber: "",
+    saveButton: false,
   });
 
   const [editShow, setEditShow] = useState({
@@ -46,6 +49,7 @@ export default function Profile() {
     changeLocation: false,
     seeTransactions: false,
     confirmationOfDeleteUser: false,
+    confirmationOfUpdateUser: false,
   });
 
   const [error, setError] = useState({
@@ -96,7 +100,7 @@ export default function Profile() {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          setEditUser({ ...editUser, userPicture: url });
+          setEditUser({ ...editUser, userPicture: url, saveButton: true });
           setEditShow({ ...editShow, changePhoto: false });
         });
       }
@@ -108,18 +112,22 @@ export default function Profile() {
       setEditUser((prevState: any) => {
         return {
           ...prevState,
-          countryName: e.target.value
+          countryName: e.target.value,
+          saveButton: true
         };
       });
     }
     if (e.target.name === "state") {
       setEditUser((prevState: any) => {
-        return { ...prevState, stateName: e.target.value };
+        return {
+          ...prevState, stateName: e.target.value,
+          saveButton: true
+        };
       });
     }
     if (e.target.name === "city") {
       setEditUser((prevState: any) => {
-        return { ...prevState, cityName: e.target.value };
+        return { ...prevState, cityName: e.target.value, saveButton: true };
       });
     }
   }
@@ -134,7 +142,7 @@ export default function Profile() {
       cityName,
       phoneNumber,
     } = editUser;
-    userUpdate.mutate({
+    userUpdate.mutateAsync({
       userId: session?.userDB.id,
       name: name ? name : user?.name,
       userPicture: userPicture ? userPicture : user?.image ? user.image : "",
@@ -164,7 +172,11 @@ export default function Profile() {
         : user?.phoneNumber
           ? user.phoneNumber
           : "",
-    });
+    }).then(() => {
+      setEditShow((prevState) => { return { ...prevState, confirmationOfUpdateUser: true } });
+      setEditUser((prevState) => { return { ...prevState, saveButton: true } })
+    })
+
     setEditShow({
       inputName: false,
       inputPostal: false,
@@ -173,8 +185,8 @@ export default function Profile() {
       changeLocation: false,
       seeTransactions: false,
       confirmationOfDeleteUser: false,
+      confirmationOfUpdateUser: false
     });
-
   }
 
   function handleDismissClick() {
@@ -187,22 +199,32 @@ export default function Profile() {
       stateName: "",
       cityName: "",
       phoneNumber: "",
+      saveButton: false,
     });
     setError({ ...error, inputPhone: false })
+  }
 
+  if (editShow.confirmationOfUpdateUser) {
+    setTimeout(() => {
+      setEditShow(prevState => { return { ...prevState, confirmationOfUpdateUser: false } })
+      setEditUser((prevState) => { return { ...prevState, saveButton: false } })
+    }, 2000)
   }
   if (session) {
     return (
       <Box>
+        {editShow.confirmationOfUpdateUser ?
+          <PopUpModification toggle={editShow.confirmationOfUpdateUser} />
+          : null}
         {editShow.confirmationOfDeleteUser && (
           <Confirmation setState={setEditShow} state={editShow} userId={session.userDB.id} />
         )}
         <Menu>
-          <MenuButton as={Button} colorScheme='teal' marginTop={8}>
+          <MenuButton as={Button} position='inherit' colorScheme='teal' ml='1%' mt='1%' h='30px'>
             Opciones
           </MenuButton>
           <MenuList>
-            <MenuGroup title='Profile'>
+            <MenuGroup title='Perfil'>
               <MenuItem as={Button} onClick={() => setEditShow({ ...editShow, confirmationOfDeleteUser: true })}>Eliminar cuenta</MenuItem>
               <MenuItem as={Button} onClick={() => router.push('/account/my-publications')}>Mis Publicaciones</MenuItem>
               <MenuItem as={Button} onClick={() => router.push('/forms/claim')}>Abrir Reclamo</MenuItem>
@@ -210,7 +232,6 @@ export default function Profile() {
             <MenuDivider />
           </MenuList>
         </Menu>
-
         <Text textAlign="center" color="grey" fontSize="25px">
           {user?.userName}{" "}
         </Text>
@@ -250,6 +271,7 @@ export default function Profile() {
             mt="10px"
             bgColor={editShow.confirmationOfDeleteUser ? 'blackAlpha.900' : 'whitesmoke'}
             _hover={{ bg: "#404c5a", color: "white" }}
+            position='inherit'
           >
             cambiar foto
           </Button>
@@ -306,7 +328,7 @@ export default function Profile() {
                   ml="2%"
                   value={editUser.name}
                   onChange={(e) =>
-                    setEditUser({ ...editUser, name: e.target.value })
+                    setEditUser({ ...editUser, name: e.target.value, saveButton: true })
                   }
                 />
                 <Input
@@ -315,7 +337,7 @@ export default function Profile() {
                   ml="2%"
                   value={editUser.lastName}
                   onChange={(e) =>
-                    setEditUser({ ...editUser, lastName: e.target.value })
+                    setEditUser({ ...editUser, lastName: e.target.value, saveButton: true })
                   }
                 />
               </Flex>
@@ -374,7 +396,7 @@ export default function Profile() {
                   ml="2%"
                   value={editUser.codigoPostal}
                   onChange={(e) =>
-                    setEditUser({ ...editUser, codigoPostal: e.target.value })
+                    setEditUser({ ...editUser, codigoPostal: e.target.value, saveButton: true })
                   }
                 />
               </Flex>
@@ -482,7 +504,15 @@ export default function Profile() {
                 ml="2%"
                 onChange={(e) => handleSelect(e)}
               >
-                {provincias().map((s: any) => (
+                {provincias().sort(function (a, b) {
+                  if (a.nombre > b.nombre) {
+                    return 1;
+                  }
+                  if (a.nombre < b.nombre) {
+                    return -1;
+                  }
+                  return 0;
+                }).map((s: any) => (
                   <option key={s.id} value={s.nombre}>{s.nombre}</option>
                 ))}
               </Select>
@@ -499,6 +529,15 @@ export default function Profile() {
               >
                 {localidades()
                   .filter((ci: any) => ci.provincia.nombre === editUser.stateName)
+                  .sort(function (a, b) {
+                    if (a.nombre > b.nombre) {
+                      return 1;
+                    }
+                    if (a.nombre < b.nombre) {
+                      return -1;
+                    }
+                    return 0;
+                  })
                   .map((ci: any) => (
                     <option key={ci.id} value={ci.municipio.nombre}>{ci.municipio.nombre}</option>
                   ))}
@@ -506,35 +545,36 @@ export default function Profile() {
             ) : null}
 
             {
-              editUser.userPicture ||
-                editUser.stateName ||
-                editUser.phoneNumber ||
-                editUser.name ||
-                editUser.lastName ||
-                editUser.codigoPostal ||
-                editUser.cityName ||
-                editUser.countryName ? (
-                <Flex mb="2%">
-                  {!error.inputPhone && (
+              editUser.saveButton ?
+                editUser.userPicture ||
+                  editUser.stateName ||
+                  editUser.phoneNumber ||
+                  editUser.name ||
+                  editUser.lastName ||
+                  editUser.codigoPostal ||
+                  editUser.cityName ||
+                  editUser.countryName ? (
+                  <Flex mb="2%">
+                    {!error.inputPhone && (
+                      <Button
+                        _hover={{ bg: "#404c5a", color: "white" }}
+                        onClick={handleSaveClick}
+                        ml="3%"
+                        mt="3%"
+                      >
+                        Guardar cambios
+                      </Button>
+                    )}
                     <Button
                       _hover={{ bg: "#404c5a", color: "white" }}
-                      onClick={handleSaveClick}
+                      onClick={handleDismissClick}
                       ml="3%"
                       mt="3%"
                     >
-                      Guardar cambios
+                      Descartar cambios
                     </Button>
-                  )}
-                  <Button
-                    _hover={{ bg: "#404c5a", color: "white" }}
-                    onClick={handleDismissClick}
-                    ml="3%"
-                    mt="3%"
-                  >
-                    Descartar cambios
-                  </Button>
-                </Flex>
-              ) : null}
+                  </Flex>
+                ) : null : null}
 
             <Input
               type="file"
@@ -560,19 +600,16 @@ export default function Profile() {
                 Transacciones
               </Button>
             </Flex>
-            {editShow.seeTransactions ? <DashboardRentedProducts /> : null}
+            {editShow.seeTransactions ? <DashboardRentedProducts user={user} /> : null}
           </Flex>
         </Flex>
-
       </Box>
-
-
     );
   }
   else {
     return (
       <div>
-        <button onClick={() => signIn()}>Iniciar Sesión</button>
+        <Button onClick={() => signIn()}>Iniciar Sesión</Button>
       </div>
     );
   }
