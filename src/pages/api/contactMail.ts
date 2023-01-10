@@ -36,7 +36,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       subject: subject,
       html: `
         <p><strong>Hola, </strong> ${name}</p><br>
-        <p>${message}</p><br>
+        <p>${message}</p>
       `,
     });
   } catch (error) {

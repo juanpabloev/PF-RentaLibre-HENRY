@@ -13,6 +13,7 @@ import {
   Image,
   Flex,
   VStack,
+  HStack,
   Button,
   Heading,
   SimpleGrid,
@@ -23,7 +24,11 @@ import {
   Badge,
   Textarea,
   useToast,
+  Input,
 } from "@chakra-ui/react";
+
+import DateRangeComp from '../../components/calendar-range-picker/DateRangeComp';
+
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
@@ -126,7 +131,7 @@ export default function ProductDetail() {
     (rating) => rating.userRater.id === session.data?.user?.id
   );
   if (userComment) alredyCommented = true;
-  useEffect(() => {}, [alredyCommented]);
+  useEffect(() => { }, [alredyCommented]);
 
   const authorized = session.data?.userDB?.role === "ADMIN";
 
@@ -281,7 +286,7 @@ export default function ProductDetail() {
       >
         <Flex>
           <Image
-            rounded={"md"}
+            rounded={10}
             alt={"product image"}
             src={product?.pictures[0]}
             fit={"cover"}
@@ -316,7 +321,7 @@ export default function ProductDetail() {
           </Text>
           {connected ? (
             <Button
-              rounded={"none"}
+              rounded={10}
               w={"full"}
               mt={8}
               size={"lg"}
@@ -440,31 +445,63 @@ export default function ProductDetail() {
             </Box>
           </Stack>
 
-          <Button
-            rounded={"none"}
-            w={"full"}
-            mt={8}
-            size={"lg"}
-            py={"7"}
-            bg={useColorModeValue("gray.900", "gray.50")}
-            color={useColorModeValue("white", "gray.900")}
-            textTransform={"uppercase"}
-            _hover={{
-              transform: "translateY(2px)",
-              boxShadow: "lg",
-            }}
-            onClick={handleSubmit}
-          >
-            {product?.availability ? (
-              <Badge ml={2} colorScheme="green">
-                Disponible para renta!
-              </Badge>
-            ) : (
-              <Badge ml={2} colorScheme="red">
-                No disponible
-              </Badge>
-            )}
-          </Button>
+
+          {/* <HStack spacing={75} justifyContent={"left"}> */}
+
+            <Box>
+
+              {/* AGRAGAR ACA CALENDARIO session?.data?.user?.email */}
+
+
+              <div className="datePicker">
+              <Text
+                fontSize={{ base: "16px", lg: "18px" }}
+                color={useColorModeValue("yellow.500", "yellow.300")}
+                fontWeight={"500"}
+                textTransform={"uppercase"}
+                mb={"2"}
+              >Consultar Fechas
+              </Text>
+                <DateRangeComp
+                /* userId={session?.data?.user?.id}
+                userEmail={session?.data?.user?.email}
+                userName={session?.data?.user?.name} */
+                productPhoto={product?.pictures[0]}
+                productName={product?.title}
+                productPrice={product?.price}
+                productId={product?.id}
+                />
+              </div>
+            </Box>
+
+            <HStack spacing={75} justifyContent={"center"}></HStack>
+            <Button
+              rounded={10}
+              w={250}
+              mt={8}
+              size={"lg"}
+              py={"7"}
+              bg={useColorModeValue("teal", "gray.50")}
+              color={useColorModeValue("white", "teal")}
+              textTransform={"uppercase"}
+              _hover={{
+                transform: "translateY(2px)",
+                boxShadow: "lg",
+              }}
+              onClick={handleSubmit}
+            >
+              {product?.availability ? (
+                <Badge ml={2} colorScheme="green">
+                  Disponible para renta!
+                </Badge>
+              ) : (
+                <Badge ml={2} colorScheme="red">
+                  No disponible
+                </Badge>
+              )}
+            </Button>
+            
+          
 
           <Stack direction="row" alignItems="center" justifyContent={"center"}>
             <MdLocalShipping />
@@ -570,7 +607,7 @@ export default function ProductDetail() {
               <Textarea
                 name="comment"
                 value={ratingInput.comment}
-                onChange={(e) => handleRatingChange(e)}
+                onChange={(e: any) => handleRatingChange(e)}
               />
               {userComment || authorized ? (
                 <Button
