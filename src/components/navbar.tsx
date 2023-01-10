@@ -290,9 +290,9 @@ export default function WithSubnavigation() {
                         <Badge colorScheme="red" borderRadius="full" px="2">
                           {notification![0]?.user?.filter(
     (notification) => notification.read === false
-  ).length}
+  ).length}            
                         </Badge>
-                      </div> : null}
+                      </div> : null} 
                   </Text>
                 </Box>
               </HStack>
@@ -308,9 +308,18 @@ export default function WithSubnavigation() {
                           Nuevo
                           </Badge> : null}
                     <Text>{n.notificationType[0]?.message} de el usuario: </Text>
+                    
                   </MenuItem>
                 </Link>
               )) }
+              <hr></hr>
+              <MenuItem>
+              <Badge>
+                <Link href='/notification'>
+                  Ver todas las notificaciones
+                </Link>
+                </Badge>
+              </MenuItem>
             </MenuList>
           </Menu>
           <Button
