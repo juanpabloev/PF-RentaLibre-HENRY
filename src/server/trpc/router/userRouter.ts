@@ -28,27 +28,36 @@ export const userRouter = router({
         console.log(error);
       }
     }),
-  makeTransaction: publicProcedure.mutation(async ({ ctx, input }) => {
-    const ratingProduct = await ctx.prisma.transanction.create({
+  makeTransaction: publicProcedure
+  .input(z.object({
+    mercadoPagoID: z.string(),
+    sellerId: z.string(),
+    buyerId: z.string(),
+    productId: z.string()
+  }))
+  .mutation(async ({ ctx, input }) => {
+    const { mercadoPagoID, sellerId, buyerId, productId } = input;
+    const createTransaction = await ctx.prisma.transanction.create({
       data: {
         paymentMethod: {
           connect: {
-            paymentName: "Reba",
+            paymentName: "Mercado Pago",
           },
         },
+        mercadoPagoID,
         product: {
           connect: {
-            id: "639640531a4b6c6f07111635",
+            id: productId,
           },
         },
         buyer: {
           connect: {
-            id: "639ba56718b33ca641acd28f",
+            id: buyerId,
           },
         },
         seller: {
           connect: {
-            id: "639640531a4b6c6f07111635",
+            id: sellerId,
           },
         },
       },
@@ -58,6 +67,7 @@ export const userRouter = router({
         product: true,
       },
     });
+    return createTransaction;
   }),
 
   userDelete: publicProcedure.mutation(async ({ ctx }) => {

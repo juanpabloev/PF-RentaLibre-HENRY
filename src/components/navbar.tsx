@@ -46,6 +46,7 @@ import {
   RxMagnifyingGlass as SearchIcon,
 } from "react-icons/rx";
 import { FiBell } from "react-icons/fi";
+import { MdReviews } from "react-icons/md";
 
 export default function WithSubnavigation() {
   const router = useRouter();
@@ -53,36 +54,23 @@ export default function WithSubnavigation() {
   const product = trpc.product.getProductByID.useQuery({ id }).data;
   const categories = trpc.category.getCategories.useQuery().data;
   const { data: session, status } = useSession();
+  const sessionId = session?.userDB?.id;
+  const notification = trpc.notification.getNotification.useQuery({
+    userId: sessionId
+  }).data;
+  const updateNotification = trpc.notification.readNotification.useMutation()
   const { isOpen, onToggle } = useDisclosure();
   const [inputSearch, setInputSearch] = useState("");
   const [selectCategory, setSelectCategory] = useState(
     router.query.category ?? ""
   );
-  const typeNotification = ["Has recibido un mensaje", "Has recibido una review", "Has recibido un pago"]
-  const [notification, setNotification] = useState([
-    {
-      id: 1,
-      typeNotification: typeNotification[0],
-      idAction: "Facundo",
-      idUser: session?.user?.id,
-      idProduct: "639ba2c7fdc1f955b25ebd45",
-      viewed: false
-    },{
-      id: 2,
-      typeNotification: typeNotification[1],
-      idAction: "Lautaro",
-      idUser: session?.user?.id,
-      idProduct: "639ba27efdc1f955b25ebd3f",
-      viewed: false
-    },{
-      id: 3,
-      typeNotification: typeNotification[2],
-      idAction: "Jose",
-      idUser: session?.user?.id,
-      idProduct: "639ba215fdc1f955b25ebd39",
-      viewed: false
-    }]);
-
+  
+  const handleRead = (id: any, idP:any) => {
+    updateNotification.mutate({ id });
+    setTimeout(() => {
+      router.push(`/productDetail/${idP}`);
+    }, 1000);
+  };
   const handleChange = (event: any) =>
     setInputSearch(event.currentTarget.value);
   const handleSubmit = (inputText: any) => {
@@ -295,13 +283,14 @@ export default function WithSubnavigation() {
                     color={useColorModeValue('gray.600', 'gray.200')}
                     icon={<FiBell />}
                   /> 
-    
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
                   <Text>
-                      {notification.length > 0 ? <div>
+                      {notification && notification![0]!.user?.filter((notification) => notification.read === false).length > 0 ? <div>
                         <Badge colorScheme="red" borderRadius="full" px="2">
-                          {notification.length}
+                          {notification![0]?.user?.filter(
+    (notification) => notification.read === false
+  ).length}
                         </Badge>
                       </div> : null}
                   </Text>
@@ -310,14 +299,18 @@ export default function WithSubnavigation() {
             </MenuButton>
             <MenuList
               bg={useColorModeValue('white', 'gray.900')}
-              borderColor={useColorModeValue('gray.200', 'gray.700')}>
-               {notification.map(n => (
-                <Link href={`/productDetail/${n.idProduct}`} key={n.idProduct}>
+              borderColor={useColorModeValue('gray.200', 'gray.700')}
+              >
+               {notification &&notification![0]!.user.map(n => (
+                <Link key={n.id} onClick={() => handleRead(n.id, n.notificationType[0]?.productId)}>
                   <MenuItem>
-                    <Text>{n.typeNotification} de {n.idAction}</Text>
+                  {n.read === false ? <Badge colorScheme="red" borderRadius="full" px="2">
+                          Nuevo
+                          </Badge> : null}
+                    <Text>{n.notificationType[0]?.message} de el usuario: </Text>
                   </MenuItem>
                 </Link>
-              ))}
+              )) }
             </MenuList>
           </Menu>
           <Button

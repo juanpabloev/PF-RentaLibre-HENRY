@@ -3,22 +3,32 @@ import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 export const notificationRouter = router({
   createNotification: publicProcedure
-    .mutation(async ({ ctx }) => {
+  .input(
+    z.object({
+      type: z.string(),
+      message: z.string(),
+      productId: z.string(),
+      id: z.string(),
+    })
+  )
+    .mutation(async ({ input, ctx }:any) => {
+      const { type, message, productId, id } = input;
       const notification = await ctx.prisma.notification.create({
         data: {
           notificationType: {
             id: 1,
-            message: "Hola",
-            type: "message",
+            message: message,
+            type: type,
+            productId: productId,
           },
           user: {
             connect: {
-              id: "639ba56718b33ca641acd28f"
+              id: id
             }
           },
           userAction: {
             connect: {
-              id: "639ba58e18b33ca641acd290"
+              id: ctx.session.user.id
             }
           }
         },
@@ -26,7 +36,47 @@ export const notificationRouter = router({
           user: true,
           userAction: true,
     }});
+    return notification;
   }),
+  getNotification: publicProcedure
+    .input(
+      z.object({
+        userId: z.any()
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const notifications = ctx.prisma.user.findMany({
+        where:{
+          id: input.userId
+        },
+        include: {
+          user:{
+            include:{
+              userAction:true
+          }},
+          userAction:{
+            include:{
+              user:true
+          }
+        },
+      }});
+      return notifications;
+    }),
+    readNotification: publicProcedure
+    .input(
+      z.object({
+        id: z.string()
+    })).mutation(async ({ ctx, input }) => {
+      const notification = await ctx.prisma.notification.update({
+        where: {
+          id: input.id
+        },
+        data: {
+          read: true
+        }
+      })
+      return notification
+    }),
   /* createRatingProduct: protectedProcedure
     .input(
       z.object({
