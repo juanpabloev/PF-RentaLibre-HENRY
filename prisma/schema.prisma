@@ -116,7 +116,9 @@ type notificationType {
   id                 Int[]
   type               String
   message            String
-  productId          String? @db.ObjectId
+  productId          String @db.ObjectId
+  productName        String
+  productImage       String
 }
 
 model PaymentMethod {

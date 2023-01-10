@@ -64,12 +64,11 @@ export default function WithSubnavigation() {
   const [selectCategory, setSelectCategory] = useState(
     router.query.category ?? ""
   );
+  console.log(notification)
   
   const handleRead = (id: any, idP:any) => {
     updateNotification.mutate({ id });
-    setTimeout(() => {
-      router.push(`/productDetail/${idP}`);
-    }, 1000);
+    router.push(`/productDetail/${idP}`);
   };
   const handleChange = (event: any) =>
     setInputSearch(event.currentTarget.value);
@@ -301,8 +300,8 @@ export default function WithSubnavigation() {
               bg={useColorModeValue('white', 'gray.900')}
               borderColor={useColorModeValue('gray.200', 'gray.700')}
               >
-               {notification &&notification![0]!.user.map(n => (
-                <Link key={n.id} onClick={() => handleRead(n.id, n.notificationType[0]?.productId)}>
+               {notification &&notification![0]!.user.filter((notification) => notification.read === false).map(n =>
+                <Link href={`/productDetail/${n.notificationType[0]?.productId}`} key={n.id} onClick={() => handleRead(n.id, n.notificationType[0]?.productId)}>
                   <MenuItem>
                   {n.read === false ? <Badge colorScheme="red" borderRadius="full" px="2">
                           Nuevo
@@ -311,15 +310,15 @@ export default function WithSubnavigation() {
                     
                   </MenuItem>
                 </Link>
-              )) }
-              <hr></hr>
-              <MenuItem>
-              <Badge>
-                <Link href='/notification'>
-                  Ver todas las notificaciones
-                </Link>
-                </Badge>
-              </MenuItem>
+              )}
+              {notification &&notification![0]!.user.filter((notification) => notification.read === false).length === 0 ? null : <hr></hr>}
+              <Link href='/notification'>
+                <MenuItem>
+                  <Badge>
+                    Ver todas las notificaciones
+                  </Badge>
+                </MenuItem>
+              </Link>
             </MenuList>
           </Menu>
           <Button

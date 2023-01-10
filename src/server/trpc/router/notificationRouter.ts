@@ -9,6 +9,8 @@ export const notificationRouter = router({
       message: z.string(),
       productId: z.string(),
       id: z.string(),
+      productName: z.string(),
+      productImage: z.string()
     })
   )
     .mutation(async ({ input, ctx }:any) => {
@@ -20,6 +22,8 @@ export const notificationRouter = router({
             message: message,
             type: type,
             productId: productId,
+            productName: input.productName,
+            productImage: input.productImage
           },
           user: {
             connect: {

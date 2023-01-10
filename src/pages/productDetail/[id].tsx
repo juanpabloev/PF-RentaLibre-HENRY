@@ -176,6 +176,8 @@ export default function ProductDetail() {
         message: `Tu producto ha recibido un review: "`+ratingInput.comment+`"`,
         productId: id,
         id: product?.userId!,
+        productName: product?.title!,
+        productImage: product?.pictures[0]!,
       });
     }
   };
