@@ -33,8 +33,10 @@ model User {
   location       Location?
   phoneNumber    String?
   codigoPostal   String?
-  role Role @default(USER)
+  role           Role @default(USER)
+  banned         Boolean @default(false)
 }
+
 
 type Location {
   country  String?
@@ -72,6 +74,7 @@ model Product {
   paymentMethod      PaymentMethod?  @relation(fields: [methodName], references: [paymentName])
   methodName         String?
   securityDeposit    Float?
+  disabled           Boolean @default(false)
 
 }
 

@@ -4,7 +4,7 @@ import { Box, Text, Input, Img, Button, Flex } from "@chakra-ui/react";
 const PhoneNumberInput = ({ setState, setStateError, stateError, state }) => {
   function verifyNum(e, setStateError) {
     setState((prevState) => {
-      return { ...prevState, phoneNumber: e.target.value };
+      return { ...prevState, phoneNumber: e.target.value,saveButton:true};
     });
 
     let verify = /^\d+$/.test(e.target.value);

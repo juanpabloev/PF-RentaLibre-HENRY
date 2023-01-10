@@ -224,4 +224,21 @@ export const productRouter = router({
       },
     });
   }),
+  disableProduct: publicProcedure
+  .input(z.object({
+    disabled: z.boolean(),
+    productId: z.string()
+  }))
+  .mutation(async ({ctx,input})=>{
+    const {disabled,productId} = input
+    const disabledProduct = await ctx.prisma.product.update({
+      where: {
+        id: productId
+      },
+      data: {
+        disabled,
+      }
+    })
+  return disabledProduct
+}),
 });

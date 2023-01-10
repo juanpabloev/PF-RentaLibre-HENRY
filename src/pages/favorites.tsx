@@ -12,10 +12,15 @@ import {
   Stack,
   useColorModeValue,
   Center,
+  useToast,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { AiOutlineCloseCircle, AiFillCloseSquare, AiOutlineCloseSquare } from "react-icons/ai";
-import CardProductFavorites from '../components/CardProductFavorites';
+import {
+  AiOutlineCloseCircle,
+  AiFillCloseSquare,
+  AiOutlineCloseSquare,
+} from "react-icons/ai";
+import CardProductFavorites from "../components/CardProductFavorites";
 import styles from "../styles/productList.module.css";
 
 function Favorites() {
@@ -27,7 +32,11 @@ function Favorites() {
   const [lenght, setLenght] = useState(favorites?.data?.length);
   const utils = trpc.useContext();
 
-  const removeFavorite = trpc.user.deleteFavorite.useMutation();
+  const removeFavorite = trpc.user.deleteFavorite.useMutation({
+    onSuccess() {
+      utils.user.getFavorites.invalidate({ userId: session?.user?.id });
+    },
+  });
 
   const coloBG = useColorModeValue("white", "gray.900");
 
@@ -41,16 +50,13 @@ function Favorites() {
   if (status === "loading") return <div>Loading...</div>;
 
   if (status === "authenticated") {
-    utils.user.getFavorites.invalidate({ userId: session.user?.id });
     if (favorites.isLoading) return <div>Loading...</div>;
     if (favorites.data?.length === 0) return <div>No hay Favoritos</div>;
 
     return (
-
       <div className={styles.cardsDivProdHome}>
         <List>
           {favorites?.data?.map((favorite, index) => (
-
             <ListItem key={index}>
               <Center py={6}>
                 <Stack
@@ -76,7 +82,6 @@ function Favorites() {
                     productName={favorite.product?.title}
                     photo={favorite.product?.pictures[0]}
                     productPrice={favorite.product?.price}
-                    rating='TRAER DE BASE DE DATOS!!!'
                     id={favorite.product?.id}
                     key={index}
                   />
