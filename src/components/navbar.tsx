@@ -64,7 +64,6 @@ export default function WithSubnavigation() {
   const [selectCategory, setSelectCategory] = useState(
     router.query.category ?? ""
   );
-  console.log(notification)
   
   const handleRead = (id: any, idP:any) => {
     updateNotification.mutate({ id });

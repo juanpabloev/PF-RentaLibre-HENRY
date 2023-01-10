@@ -20,10 +20,8 @@ export default function notification ()  {
     const notification = trpc.notification.getNotification.useQuery({
         userId: session?.data?.userDB?.id,
         }).data;
-    
-    console.log(notification)
-
     return(
+        notification && notification[0]?.user.length === 0 ? <h1> No tienes notificaciones todavia </h1> :
         notification && notification![0]?.user.map((notification) => (
             <Center py={6}>
                 <Link href={`/productDetail/${notification.notificationType[0]?.productId}`}>
