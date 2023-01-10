@@ -98,14 +98,12 @@ export function handleChangeRatingProduct(
   });
 }
 
-export function createPaymentmethod() {
-  createPayment.mutate();
-  makeTransaction.mutate();
+export function createPaymentmethod (){
+  createPayment.mutate()
 }
 
-export function deleteProduct() {
-  deleteP.mutate();
-  // deleteR.mutate();
+export function deleteProduct () {
+  deleteP.mutate()
 }
 
 export function updateProduct() {

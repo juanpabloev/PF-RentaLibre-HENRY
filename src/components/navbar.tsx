@@ -2,7 +2,7 @@ import { Session } from "inspector";
 import { getSession, signIn, signOut, useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import styles from "../styles/navbar.module.css";
 import { RouterOutputs, trpc } from "../utils/trpc";
@@ -33,6 +33,9 @@ import {
   useBreakpointValue,
   useColorModeValue,
   useDisclosure,
+  HStack,
+  VStack,
+  Badge
 } from "@chakra-ui/react";
 
 import {
@@ -42,17 +45,30 @@ import {
   RxHamburgerMenu as HamburgerIcon,
   RxMagnifyingGlass as SearchIcon,
 } from "react-icons/rx";
+import { FiBell } from "react-icons/fi";
+import { MdReviews } from "react-icons/md";
 
 export default function WithSubnavigation() {
+  const router = useRouter();
+  const { id }: any = router.query;
+  const product = trpc.product.getProductByID.useQuery({ id }).data;
   const categories = trpc.category.getCategories.useQuery().data;
   const { data: session, status } = useSession();
-  const router = useRouter();
+  const sessionId = session?.userDB?.id;
+  const notification = trpc.notification.getNotification.useQuery({
+    userId: sessionId
+  }).data;
+  const updateNotification = trpc.notification.readNotification.useMutation()
   const { isOpen, onToggle } = useDisclosure();
   const [inputSearch, setInputSearch] = useState("");
   const [selectCategory, setSelectCategory] = useState(
     router.query.category ?? ""
   );
-
+  
+  const handleRead = (id: any, idP:any) => {
+    updateNotification.mutate({ id });
+    router.push(`/productDetail/${idP}`);
+  };
   const handleChange = (event: any) =>
     setInputSearch(event.currentTarget.value);
   const handleSubmit = (inputText: any) => {
@@ -74,7 +90,6 @@ export default function WithSubnavigation() {
     // if (category) inputText += `&category=${category}`;
     // router.push(`/productList?q=${inputText}`);
   };
-
   return (
     <Box>
       <Flex
@@ -252,6 +267,66 @@ export default function WithSubnavigation() {
           direction={"row"}
           spacing={6}
         >
+          {status === "authenticated" ? (
+          <Menu>
+            <MenuButton
+              py={2}
+              transition="all 0.3s"
+              _focus={{ boxShadow: 'none' }}>
+              <HStack>
+                <VStack
+                  display={{ base: 'none', md: 'flex' }}
+                  alignItems="flex-start"
+                  spacing="1px"
+                  ml="2">
+                  
+                  <IconButton
+                    size="md"
+                    variant="ghost"
+                    aria-label="open menu"
+                    color='gray.600'
+                    icon={<FiBell />}
+                  /> 
+                </VStack>
+                <Box display={{ base: 'none', md: 'flex' }}>
+                  <Text>
+                      {notification && notification![0]!.user?.filter((notification) => notification.read === false).length > 0 ? <div>
+                        <Badge colorScheme="red" borderRadius="full" px="2">
+                          {notification![0]?.user?.filter(
+    (notification) => notification.read === false
+  ).length}            
+                        </Badge>
+                      </div> : null} 
+                  </Text>
+                </Box>
+              </HStack>
+            </MenuButton>
+            <MenuList
+              bg='white'
+              borderColor='gray.200'
+              >
+               {notification &&notification![0]!.user.filter((notification) => notification.read === false).map(n =>
+                <Link href={`/productDetail/${n.notificationType[0]?.productId}`} key={n.id} onClick={() => handleRead(n.id, n.notificationType[0]?.productId)}>
+                  <MenuItem>
+                  {n.read === false ? <Badge colorScheme="red" borderRadius="full" px="2">
+                          Nuevo
+                          </Badge> : null}
+                    <Text>{n.notificationType[0]?.message} de el usuario: </Text>
+                    
+                  </MenuItem>
+                </Link>
+              )}
+              {notification &&notification![0]!.user.filter((notification) => notification.read === false).length === 0 ? null : <hr></hr>}
+              <Link href='/notification'>
+                <MenuItem>
+                  <Badge>
+                    Ver todas las notificaciones
+                  </Badge>
+                </MenuItem>
+              </Link>
+            </MenuList>
+          </Menu>
+          ): null}
           <Button
             as={"a"}
             fontSize={"sm"}

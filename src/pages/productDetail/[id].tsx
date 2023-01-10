@@ -1,9 +1,3 @@
-//import articulos from '../../productListScratchData/articulos.json';
-
-//FALTA ACTIVAR CARD !!
-
-//FALTA PASAR A TSX !!
-
 import { trpc } from "../../utils/trpc";
 import {
   Box,
@@ -23,6 +17,7 @@ import {
   ListItem,
   Badge,
   Textarea,
+  IconButton,
   useToast,
   Input,
 } from "@chakra-ui/react";
@@ -34,6 +29,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Style from "../../styles/id.module.css";
+
 
 // type Params = {
 //   params: {
@@ -113,7 +109,7 @@ export default function ProductDetail() {
     },
   });
   const addFavorite = trpc.user.addFavorite.useMutation();
-
+  const addTypeNotification = trpc.notification.createNotification.useMutation();
   const [ratingInput, setRatingInput] = useState({
     rating: "3",
     comment: "",
@@ -152,29 +148,32 @@ export default function ProductDetail() {
             payer: {
               email: session?.data?.user?.email,
               phone: "",
+              name: session?.data?.user?.name,
             },
+            product_id: id,
             items: [
               {
                 title: product?.title,
                 description: product?.description,
                 picture_url: product?.pictures[0],
                 category_id: product?.category,
+                id: product?.id,
                 quantity: 1, //AGREGAR PRODUCT?.QUANTITY a schema
                 unit_price: product?.price,
               },
             ],
             back_urls: {
-              success: "http://localhost:3000/success",
-              failure: "http://localhost:3000/failure",
-              pending: "http://localhost:3000/pending",
+              success: `http://localhost:3000/success/${id}`,
+              failure: `http://localhost:3000/failure/${id}`,
+              pending: `http://localhost:3000/pending/${id}`,
             },
             notification_url:
-              "https://04c5-191-97-97-69.sa.ngrok.io/api/notificar",
+              `https://rentalibre.vercel.app/success/${id}`,
           }),
         }
       );
+      console.log(id)
       const json = await res.json();
-      console.log(json, session?.data?.user?.email);
       router.push(json.init_point);
     } catch (error) {
       console.error(error);
@@ -208,8 +207,15 @@ export default function ProductDetail() {
       addComment.mutate({
         productId: id,
         comment: ratingInput.comment,
-
         stars: parseInt(ratingInput.rating),
+      });
+      addTypeNotification.mutate({
+        type: "Review",
+        message: `Tu producto ha recibido un review: "`+ratingInput.comment+`"`,
+        productId: id,
+        id: product?.userId!,
+        productName: product?.title!,
+        productImage: product?.pictures[0]!,
       });
     }
   };

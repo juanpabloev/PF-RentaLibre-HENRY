@@ -30,11 +30,13 @@ model User {
   favorites      Favorito[]
   active         Boolean @default(true)
   feedback       String?
+  role           Role @default(USER)
   location       Location?
   phoneNumber    String?
   codigoPostal   String?
-  role           Role @default(USER)
   banned         Boolean @default(false)
+  user           Notification[] @relation(name: "user")
+  userAction     Notification[] @relation(name: "userAction")
 }
 
 
@@ -106,6 +108,25 @@ model Rating {
   createdAt          DateTime @default(now())
 }
 
+model Notification {
+  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  user               User @relation(fields: [userId], references: [id], name:"user")
+  userAction         User @relation(fields: [userActionId], references: [id], name: "userAction")
+  userId             String @db.ObjectId
+  userActionId       String @db.ObjectId
+  notificationType   notificationType[]
+  read               Boolean @default(false)
+}
+
+type notificationType {
+  id                 Int[]
+  type               String
+  message            String
+  productId          String @db.ObjectId
+  productName        String
+  productImage       String
+}
+
 model PaymentMethod {
   id              String @id @default(auto()) @map("_id") @db.ObjectId
   paymentName     String @unique
@@ -125,7 +146,7 @@ model Transanction {
   buyer         User @relation(fields: [buyerId], references: [id], name: "buyer")
   sellerId      String @db.ObjectId
   buyerId       String @db.ObjectId
-
+  mercadoPagoID String 
 }
 
 model Account {
