@@ -104,7 +104,8 @@ export default function WithSubnavigation() {
             fontFamily={"heading"}
             fontSize={"32px"}
             fontWeight={"bold"}
-            color={useColorModeValue("#F7882F", "white")}
+            color={useColorModeValue("#F7C331", "white")}
+            /* color={useColorModeValue("#F7882F", "white")} */
             cursor={"pointer"}
             onClick={() => {
               router.push("/");
@@ -186,10 +187,13 @@ export default function WithSubnavigation() {
           )}
           {session && (
             <>
+              
               <Flex minWidth="max-content" alignItems="center" gap="2">
+                <Link href={`/account/profile`}>
                 <Text fontSize={"lg"} fontWeight={600} color={"white"}>
                   Hola, {session.user?.name}
                 </Text>
+                </Link>
               </Flex>
 
               <Button
