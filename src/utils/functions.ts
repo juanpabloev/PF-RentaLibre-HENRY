@@ -85,12 +85,10 @@ export function handleChangeRatingProduct (e: ChangeEvent<HTMLInputElement>,chan
 
 export function createPaymentmethod (){
   createPayment.mutate()
- makeTransaction.mutate()
 }
 
 export function deleteProduct () {
   deleteP.mutate()
-  deleteR.mutate()
 }
 
 export function updateProduct () {

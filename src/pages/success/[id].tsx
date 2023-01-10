@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { trpc } from "../../utils/trpc";
 import sendEmail from "../../utils/contact-functions/contact-Email";
 
-export default function success () {
+const Success = () => {
     const session = useSession();
     const router = useRouter();
     const { payment_id, id }: any = router.query;
@@ -74,3 +74,5 @@ useEffect(() => {
     </Box>
   );
 }    
+
+export default Success;

@@ -280,7 +280,7 @@ export default function WithSubnavigation() {
                     size="md"
                     variant="ghost"
                     aria-label="open menu"
-                    color={useColorModeValue('gray.600', 'gray.200')}
+                    color='gray.600'
                     icon={<FiBell />}
                   /> 
                 </VStack>
@@ -298,8 +298,8 @@ export default function WithSubnavigation() {
               </HStack>
             </MenuButton>
             <MenuList
-              bg={useColorModeValue('white', 'gray.900')}
-              borderColor={useColorModeValue('gray.200', 'gray.700')}
+              bg='white'
+              borderColor='gray.200'
               >
                {notification &&notification![0]!.user.filter((notification) => notification.read === false).map(n =>
                 <Link href={`/productDetail/${n.notificationType[0]?.productId}`} key={n.id} onClick={() => handleRead(n.id, n.notificationType[0]?.productId)}>

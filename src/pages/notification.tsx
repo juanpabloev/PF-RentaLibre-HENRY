@@ -15,7 +15,7 @@ import {
 import { useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 
-export default function notification ()  {
+const Notification = () => {
     const session = useSession();
     if(session.status === "loading") return <h1> Loading... </h1>
     if(session.status === "unauthenticated") return <h1> No estas logueado </h1>
@@ -27,7 +27,7 @@ export default function notification ()  {
     return(
         notification && notification[0]?.user.length === 0 ? <h1> No tienes notificaciones todavia </h1> :
         notification && notification![0]?.user.map((notification) => (
-            <Center py={6}>
+            <Center key={notification.notificationType[0]?.productId} py={6}>
                 <Link href={`/productDetail/${notification.notificationType[0]?.productId}`}>
                 <Stack
                 //borderWidth="1px"
@@ -35,7 +35,7 @@ export default function notification ()  {
                 w={{ sm: "100%", md: "700px" }}
                 height={{ sm: "476px", md: "10rem" }}
                 direction={{ base: "column", md: "row" }}
-                bg={useColorModeValue("white", "gray.900")}
+                bg="white"
                 boxShadow={"xl"}
                 padding={4}
             
@@ -77,3 +77,5 @@ export default function notification ()  {
             ))    
     )
 }
+
+export default Notification;
