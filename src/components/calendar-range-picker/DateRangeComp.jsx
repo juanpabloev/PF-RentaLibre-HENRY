@@ -16,12 +16,17 @@ export default function DateRangeComp({
   productId,
   productPhoto,
   productName,
+  productUserEmail,
+  productUserName,
   productPrice,
 }) {
   //console.log(productId, productName, productPhoto, productPrice);
 
   const toast = useToast();
   const session = useSession();
+
+  //const url = process.env.NEXTAUTH_URL
+  const url = 'http://localhost:3000'
 
   //console.log(session);
 
@@ -72,21 +77,36 @@ export default function DateRangeComp({
 
       const differenceDays = range[0].endDate.getTime() - range[0].startDate.getTime();
       const totalDays = Math.ceil(differenceDays / (1000 * 3600 * 24));
+      const totalPrice = productPrice*totalDays;
+      const startDate = format(range[0].startDate, "dd/MM/yyyy");
+      const endDate = format(range[0].endDate, "dd/MM//yyyy");
+
+      const urlRentReq = `${url}/account/rent-request/${productId}/?totalDays=${totalDays}&totalPrice=${totalPrice}&startDate=${startDate}&endDate=${endDate}`
+
+      /* 
+      //DAtos a eviar por url: 
+        - totalDays
+        - totalPrice
+        - startDate
+        - endDate
+        - userID (U)
+       */
+
 
       const values = {
-        name: session?.data?.user?.name,
-        email: session?.data?.user?.email,
+        name: productUserName,
+        email: productUserEmail,
         subject: `Consulta sobre su artículo ${productName}`,
         message: `
         <h3>¿Está su artículo ${productName} disponible entre las siguientes fechas?</h3><br>
-        <h4>Desde el: ${format(range[0].startDate, "dd/MM/yyyy")}</h4>
-        <h4>Desde el:  ${format(range[0].endDate, "dd/MM//yyyy")}</h4>
+        <h4>Desde el: ${startDate}</h4>
+        <h4>Desde el:  ${endDate}</h4>
         <h4>Condiciones alquiler:</h4>
         <p>Precio alquiler diario: ${productPrice}</p>
         <p>- Cantidad de dias de alquiler:${totalDays}</p>
-        <p>- Total a cobrar: $${productPrice*totalDays}</p>
+        <p>- Total a cobrar: $${totalPrice}</p>
         <p>Si usted está de acuerdo con las condiciones del sitio, las fechas y el precio, por favor haga click en el siguiente link para confirmar:</p>
-        <p> https://rentalibre.vercel.app//productDetail/${productId} </p><br>
+        <p> ${urlRentReq}</p><br>
         <p> Saudos, El equipo de rentalibre.</p>
       `,
       };
