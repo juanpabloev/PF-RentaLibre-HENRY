@@ -1,4 +1,4 @@
-import { Box, Text, Button } from "@chakra-ui/react";
+import { Box, Text, Button, Flex } from "@chakra-ui/react";
 import {
   Accordion,
   AccordionItem,
@@ -7,42 +7,43 @@ import {
   AccordionIcon,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { trpc } from "../utils/trpc";
+import Link from 'next/link';
 
-export default function DashboardRentedProducts() {
-  const user = trpc.user.getUser.useQuery({
-    userId: "639640531a4b6c6f07111635",
-  }).data;
-  console.log(user);
+interface Props {
+  user: any;
+}
+
+export default function DashboardRentedProducts({user}:Props) {
   const [seller, setSeller] = useState(true);
 
   return (
-    <Box ml="300px">
-      <Box mt="50px">
+    <Box ml='1%' mb='1%'>
+      <Flex mt="10px" justifyContent='center'>
         <Button
-          ml="100px"
+        _hover={{bg:"#404c5a",color: 'white'}}
           onClick={() => setSeller(true)}
           color={seller ? "blue" : "black"}
           fontWeight="semibold"
         >
-          Articulos Que Renté
+         {user.admin ? 'Articulos Que Rentó el usuario' : 'Articulos Que Renté'}
         </Button>
         <Button
-          ml="100px"
+        _hover={{bg:"#404c5a",color: 'white'}}
           onClick={() => setSeller(false)}
+          ml='2%'
           color={!seller ? "blue" : "black"}
           fontWeight="semibold"
         >
-          Articulos Rentados
+          {user.admin ? 'Articulos Que se le rentó al usuario' : 'Articulos Rentados'} 
         </Button>
-      </Box>
+      </Flex>
 
-      <Box mt="20px">
+      <Box mt="20px" ml='5%'>
         {user && seller
-          ? user.seller.map((trans) => {
+          ? user.seller.map((trans:any) => {
               return (
                 <Box key={trans.transactionID}>
-                  <Accordion allowToggle w="650px">
+                  <Accordion allowToggle w="85%">
                     <AccordionItem>
                       <h2>
                         <AccordionButton>
@@ -51,67 +52,72 @@ export default function DashboardRentedProducts() {
                             flex="1"
                             textAlign="left"
                             fontSize="17px"
-                            fontWeight="semibold"
+                            fontWeight="bold"
+                            color="#F7C331"
                           >
-                            {trans.product.title}
+                             <Link href={`/productDetail/${trans.product.id}`}>
+                             {trans.product.title}
+                             </Link>
+                          
                           </Box>
+
                           <AccordionIcon />
                         </AccordionButton>
                       </h2>
                       <AccordionPanel pb={4}>
                         <Text
-                          fontWeight="bold"
+                          fontWeight="semibold"
                           fontSize="16px"
-                          color="#F7C331"
+                          color='blackAlpha.900'
                           display="flex"
                         >
                           Pricio del producto:{" "}
-                          <Text ml="5px" color="black" fontWeight="light">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.product.price}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="#F7C331"
-                          display="flex"
+                           fontWeight="semibold"
+                           fontSize="16px"
+                           color='blackAlpha.900'
+                           display="flex"
                         >
                           TransactionID:
-                          <Text ml="5px" color="black" fontWeight="light">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {" "}
                             {trans.transactionID}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="#F7C331"
-                          display="flex"
+                           fontWeight="semibold"
+                           fontSize="16px"
+                           color='blackAlpha.900'
+                           display="flex"
                         >
                           Rentado a:{" "}
-                          <Text ml="5px" color="black" fontWeight="light">
-                            {trans.buyer.userName}
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
+                            {`${trans.buyer.name ? trans.buyer.name : ''} ${trans.buyer.lastName ? trans.buyer.lastName : ''}`} 
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="#F7C331"
-                          display="flex"
+                            fontWeight="semibold"
+                            fontSize="16px"
+                            color='blackAlpha.900'
+                            display="flex"
                         >
                           Metodo de Pago:{" "}
-                          <Text ml="5px" color="black" fontWeight="light">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.methodName}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="#F7C331"
-                          display="flex"
+                            fontWeight="semibold"
+                            fontSize="16px"
+                            color='blackAlpha.900'
+                            display="flex"
                         >
                           Fecha y hora:{" "}
-                          <Text ml="5px" color="black" fontWeight="light">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.createdAt.toString()}
                           </Text>
                         </Text>
@@ -122,10 +128,10 @@ export default function DashboardRentedProducts() {
               );
             })
           : user &&
-            user.buyer.map((trans) => {
+            user.buyer.map((trans:any) => {
               return (
                 <Box key={trans.transactionID}>
-                  <Accordion allowToggle w="650px">
+                  <Accordion allowToggle w="85%">
                     <AccordionItem>
                       <h2>
                         <AccordionButton>
@@ -134,7 +140,8 @@ export default function DashboardRentedProducts() {
                             flex="1"
                             textAlign="left"
                             fontSize="17px"
-                            fontWeight="semibold"
+                            fontWeight="bold"
+                            color="#F7C331"
                           >
                             {trans.product.title}
                           </Box>
@@ -143,58 +150,58 @@ export default function DashboardRentedProducts() {
                       </h2>
                       <AccordionPanel pb={4}>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="#F7C331"
-                          display="flex"
+                             fontWeight="semibold"
+                             fontSize="16px"
+                             color='blackAlpha.900'
+                             display="flex"
                         >
                           Pricio del producto:{" "}
-                          <Text ml="5px" color="black" fontWeight="light">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.product.price}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="#F7C331"
-                          display="flex"
+                            fontWeight="semibold"
+                            fontSize="16px"
+                            color='blackAlpha.900'
+                            display="flex"
                         >
                           TransactionID:
-                          <Text ml="5px" color="black" fontWeight="light">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {" "}
                             {trans.transactionID}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="#F7C331"
-                          display="flex"
+                           fontWeight="semibold"
+                           fontSize="16px"
+                           color='blackAlpha.900'
+                           display="flex"
                         >
                           Rentador:{" "}
-                          <Text ml="5px" color="black" fontWeight="light">
-                            {trans.seller.userName}
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
+                          {`${trans.seller?.name ? trans.seller.name : ''} ${trans.seller?.lastName ? trans.seller.lastName : ''}`}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="#F7C331"
-                          display="flex"
+                           fontWeight="semibold"
+                           fontSize="16px"
+                           color='blackAlpha.900'
+                           display="flex"
                         >
                           Metodo de Pago:{" "}
-                          <Text ml="5px" color="black" fontWeight="light">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.methodName}
                           </Text>
                         </Text>
                         <Text
-                          fontWeight="bold"
-                          fontSize="16px"
-                          color="#F7C331"
-                          display="flex"
+                             fontWeight="semibold"
+                             fontSize="16px"
+                             color='blackAlpha.900'
+                             display="flex"
                         >
                           Fecha y hora:{" "}
-                          <Text ml="5px" color="black" fontWeight="light">
+                          <Text fontSize="16px" ml="5px" color='blue.500' fontWeight="semibold">
                             {trans.createdAt.toString()}
                           </Text>
                         </Text>

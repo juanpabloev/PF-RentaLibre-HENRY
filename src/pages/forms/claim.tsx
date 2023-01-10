@@ -119,7 +119,7 @@ export default function Claim() {
                     onChange={handleChange}
                     onBlur={onBlur}
                 />
-                <FormErrorMessage>Required</FormErrorMessage>
+                <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
             <FormControl
@@ -134,7 +134,7 @@ export default function Claim() {
                     onChange={handleChange}
                     onBlur={onBlur}
                 />
-                <FormErrorMessage>Required</FormErrorMessage>
+                <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
 
             <Button
@@ -146,7 +146,7 @@ export default function Claim() {
                 }
                 onClick={onSubmit}
             >
-                Submit
+                Enviar
             </Button>
         </Container>
     );

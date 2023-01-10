@@ -6,7 +6,7 @@ export const ratingRouter = router({
     .input(
       z.object({
         comment: z.string(),
-        stars: z.number(),
+        stars: z.number().min(1).max(5),
         userRatedId: z.string(),
       })
     )
@@ -64,39 +64,32 @@ export const ratingRouter = router({
         },
       });
     }),
-  updateRating: publicProcedure.mutation(async ({ ctx }) => {
-    const updateRatingProduct = await ctx.prisma.user.update({
-      where: {
-        id: "6394a5be1e24d6de9fe2bdee",
-      },
-      data: {
-        rater: {
-          update: {
-            where: {
-              id: "6394bf336c039e7ceaade1e4",
-            },
-            data: {
-              comment: "prueba a comentario",
-              stars: 2,
-            },
-          },
+  updateRating: protectedProcedure
+    .input(
+      z.object({
+        ratingId: z.string(),
+        comment: z.string().min(5).max(300),
+        stars: z.number().min(1).max(5),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { ratingId, comment, stars } = input;
+      const updateRatingProduct = await ctx.prisma.rating.update({
+        where: {
+          id: ratingId,
         },
-      },
-    });
-  }),
+        data: {
+          stars,
+          comment,
+        },
+      });
+    }),
   deleteRating: protectedProcedure
     .input(z.object({ ratingId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const deleteRatingProduct = await ctx.prisma.user.update({
+      const deleteRatingProduct = await ctx.prisma.rating.delete({
         where: {
-          id: ctx.session.user.id,
-        },
-        data: {
-          rater: {
-            delete: {
-              id: input.ratingId,
-            },
-          },
+          id: input.ratingId,
         },
       });
     }),

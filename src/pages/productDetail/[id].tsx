@@ -7,6 +7,7 @@ import {
   Image,
   Flex,
   VStack,
+  HStack,
   Button,
   Heading,
   SimpleGrid,
@@ -17,11 +18,16 @@ import {
   Badge,
   Textarea,
   IconButton,
+  useToast,
+  Input,
 } from "@chakra-ui/react";
+
+import DateRangeComp from '../../components/calendar-range-picker/DateRangeComp';
+
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Style from "../../styles/id.module.css";
 
 
@@ -76,6 +82,7 @@ const validate = (input: any) => {
 };
 
 export default function ProductDetail() {
+  const toast = useToast();
   const router = useRouter();
   const session = useSession();
   const { id }: any = router.query;
@@ -85,21 +92,47 @@ export default function ProductDetail() {
     productId: id,
     page: 1,
   }).data;
-  const addComment = trpc.rating.createRatingProduct.useMutation();
+  const utils = trpc.useContext();
+  const addComment = trpc.rating.createRatingProduct.useMutation({
+    onSuccess() {
+      utils.rating.getRatingsProduct.invalidate();
+    },
+  });
+  const updateComment = trpc.rating.updateRating.useMutation({
+    onSuccess() {
+      utils.rating.getRatingsProduct.invalidate();
+    },
+  });
+  const deleteComment = trpc.rating.deleteRating.useMutation({
+    onSuccess() {
+      utils.rating.getRatingsProduct.invalidate();
+    },
+  });
   const addFavorite = trpc.user.addFavorite.useMutation();
   const addTypeNotification = trpc.notification.createNotification.useMutation();
   const [ratingInput, setRatingInput] = useState({
-    rating: "0",
+    rating: "3",
     comment: "",
   });
   const [err, setErr] = useState({
-    stars: true,
+    stars: false,
     size: true,
   });
-  const colorTxt = useColorModeValue("black", "gray.900");
-  const colorBg = useColorModeValue("yellow.300", "orange.50");
+  const [edit, setEdit] = useState(false);
+  const [adminPostId, setadminPostId] = useState("");
 
   const connected = session.status === "authenticated";
+  let alredyCommented = false;
+  const userComment = ratings?.find(
+    (rating) => rating.userRater.id === session.data?.user?.id
+  );
+  if (userComment) alredyCommented = true;
+  useEffect(() => { }, [alredyCommented]);
+
+  const authorized = session.data?.userDB?.role === "ADMIN";
+
+  const colorTxt = useColorModeValue("black", "gray.900");
+  const colorBg = useColorModeValue("yellow.300", "orange.50");
 
   async function handleSubmit() {
     try {
@@ -109,7 +142,7 @@ export default function ProductDetail() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer APP_USR-5672095275524228-121515-ef3e594e4fc515b3e4d7d98cff8d97e1-1263932815`,
+            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`,
           },
           body: JSON.stringify({
             payer: {
@@ -150,7 +183,13 @@ export default function ProductDetail() {
   const handleFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     addFavorite.mutate({ productId: id });
-    alert(`${product?.title} agregado a favoritos`);
+
+    toast({
+      title: "Agregado a favoritos.",
+      status: "success",
+      duration: 2000,
+      position: "top",
+    });
   };
   const handleRatingChange = (e: any) => {
     e.preventDefault();
@@ -164,7 +203,6 @@ export default function ProductDetail() {
   };
   const handleRatingSubmit = (e: any) => {
     e.preventDefault();
-
     if (!err.size && !err.stars) {
       addComment.mutate({
         productId: id,
@@ -185,9 +223,65 @@ export default function ProductDetail() {
   let avarage = 0;
   if (product?.rating && product?.rating.length > 0) {
     let sum = 0;
-    product?.rating?.forEach((rating) => (sum += rating.stars));
+    product?.rating?.forEach((rating: any) => (sum += rating.stars));
     avarage = sum / product?.rating.length;
   }
+
+  const handleDelete = (e: any) => {
+    if (userComment) deleteComment.mutate({ ratingId: userComment.id });
+    if (authorized) deleteComment.mutate({ ratingId: e.target.value });
+    setRatingInput({
+      ...ratingInput,
+      rating: "3",
+      comment: "",
+    });
+
+    setErr({
+      ...err,
+      stars: false,
+      size: false,
+    });
+  };
+
+  const handleConfirmEdit = (e: any) => {
+    if (authorized) {
+      updateComment.mutate({
+        comment: ratingInput.comment,
+        stars: parseInt(ratingInput.rating),
+        ratingId: e.target.value,
+      });
+      setEdit(false);
+    } else {
+      if (!userComment) return;
+      if (!userComment.comment) return;
+      updateComment.mutate({
+        comment: ratingInput.comment,
+        stars: parseInt(ratingInput.rating),
+        ratingId: userComment.id,
+      });
+
+      setEdit(false);
+    }
+  };
+  const handleEdit = (e: any) => {
+    if (authorized) {
+      const values = e.target.value.split(",");
+      setadminPostId(values[0]);
+      setRatingInput({
+        rating: values[1],
+        comment: values[2],
+      });
+      setEdit(true);
+    } else {
+      if (!userComment) return;
+      if (!userComment.comment) return;
+      setRatingInput({
+        rating: userComment.stars.toString(),
+        comment: userComment.comment,
+      });
+      setEdit(true);
+    }
+  };
 
   return (
     <Container maxW={"7xl"}>
@@ -198,7 +292,7 @@ export default function ProductDetail() {
       >
         <Flex>
           <Image
-            rounded={"md"}
+            rounded={10}
             alt={"product image"}
             src={product?.pictures[0]}
             fit={"cover"}
@@ -233,7 +327,7 @@ export default function ProductDetail() {
           </Text>
           {connected ? (
             <Button
-              rounded={"none"}
+              rounded={10}
               w={"full"}
               mt={8}
               size={"lg"}
@@ -357,31 +451,63 @@ export default function ProductDetail() {
             </Box>
           </Stack>
 
-          <Button
-            rounded={"none"}
-            w={"full"}
-            mt={8}
-            size={"lg"}
-            py={"7"}
-            bg={useColorModeValue("gray.900", "gray.50")}
-            color={useColorModeValue("white", "gray.900")}
-            textTransform={"uppercase"}
-            _hover={{
-              transform: "translateY(2px)",
-              boxShadow: "lg",
-            }}
-            onClick={handleSubmit}
-          >
-            {product?.availability ? (
-              <Badge ml={2} colorScheme="green">
-                Disponible para renta!
-              </Badge>
-            ) : (
-              <Badge ml={2} colorScheme="red">
-                No disponible
-              </Badge>
-            )}
-          </Button>
+
+          {/* <HStack spacing={75} justifyContent={"left"}> */}
+
+            <Box>
+
+              {/* AGRAGAR ACA CALENDARIO session?.data?.user?.email */}
+
+
+              <div className="datePicker">
+              <Text
+                fontSize={{ base: "16px", lg: "18px" }}
+                color={useColorModeValue("yellow.500", "yellow.300")}
+                fontWeight={"500"}
+                textTransform={"uppercase"}
+                mb={"2"}
+              >Consultar Fechas
+              </Text>
+                <DateRangeComp
+                /* userId={session?.data?.user?.id}
+                userEmail={session?.data?.user?.email}
+                userName={session?.data?.user?.name} */
+                productPhoto={product?.pictures[0]}
+                productName={product?.title}
+                productPrice={product?.price}
+                productId={product?.id}
+                />
+              </div>
+            </Box>
+
+            <HStack spacing={75} justifyContent={"center"}></HStack>
+            <Button
+              rounded={10}
+              w={250}
+              mt={8}
+              size={"lg"}
+              py={"7"}
+              bg={useColorModeValue("teal", "gray.50")}
+              color={useColorModeValue("white", "teal")}
+              textTransform={"uppercase"}
+              _hover={{
+                transform: "translateY(2px)",
+                boxShadow: "lg",
+              }}
+              onClick={handleSubmit}
+            >
+              {product?.availability ? (
+                <Badge ml={2} colorScheme="green">
+                  Disponible para renta!
+                </Badge>
+              ) : (
+                <Badge ml={2} colorScheme="red">
+                  No disponible
+                </Badge>
+              )}
+            </Button>
+            
+          
 
           <Stack direction="row" alignItems="center" justifyContent={"center"}>
             <MdLocalShipping />
@@ -394,15 +520,49 @@ export default function ProductDetail() {
         return (
           <Box key={rating.id}>
             <br />
-            <Text>{rating.userRater.name}</Text>
-            <Text>{rating.stars} stars</Text>
-            <Text>{rating.comment}</Text>
+            {edit ? null : (
+              <>
+                {!userComment && !authorized ? (
+                  <>
+                    <Text>{rating.userRater.name}</Text>
+                    <Text>{rating.stars} stars</Text>
+                    <Text>{rating.comment}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text>{rating.userRater.name}</Text>
+                    <Text>{rating.stars} stars</Text>
+                    <Text>{rating.comment}</Text>
+                    <Button
+                      colorScheme={"blue"}
+                      onClick={(e) => handleEdit(e)}
+                      value={[
+                        rating.id,
+                        rating.stars.toString(),
+                        rating.comment,
+                      ]}
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      colorScheme={"red"}
+                      onClick={(e) => handleDelete(e)}
+                      value={rating.id}
+                    >
+                      X
+                    </Button>
+                    <br />
+                  </>
+                )}
+              </>
+            )}
+
             <br />
           </Box>
         );
       })}
       <hr />
-      {connected ? (
+      {(connected && (!alredyCommented || edit)) || (authorized && edit) ? (
         <Box>
           <Stack spacing={{ base: 6, sm: 9 }} direction={"column"} margin="5">
             <form onSubmit={(e) => handleRatingSubmit(e)}>
@@ -413,6 +573,7 @@ export default function ProductDetail() {
                     name="rating"
                     value={1}
                     onChange={(e) => handleRatingChange(e)}
+                    checked={1 === parseInt(ratingInput.rating)}
                   />
                   <i></i>
                   <input
@@ -420,6 +581,7 @@ export default function ProductDetail() {
                     name="rating"
                     value={2}
                     onChange={(e) => handleRatingChange(e)}
+                    checked={2 === parseInt(ratingInput.rating)}
                   />
                   <i></i>
                   <input
@@ -427,6 +589,7 @@ export default function ProductDetail() {
                     name="rating"
                     value={3}
                     onChange={(e) => handleRatingChange(e)}
+                    checked={3 === parseInt(ratingInput.rating)}
                   />
                   <i></i>
                   <input
@@ -434,6 +597,7 @@ export default function ProductDetail() {
                     name="rating"
                     value={4}
                     onChange={(e) => handleRatingChange(e)}
+                    checked={4 === parseInt(ratingInput.rating)}
                   />
                   <i></i>
                   <input
@@ -441,6 +605,7 @@ export default function ProductDetail() {
                     name="rating"
                     value={5}
                     onChange={(e) => handleRatingChange(e)}
+                    checked={5 === parseInt(ratingInput.rating)}
                   />
                   <i></i>
                 </span>
@@ -448,11 +613,21 @@ export default function ProductDetail() {
               <Textarea
                 name="comment"
                 value={ratingInput.comment}
-                onChange={(e) => handleRatingChange(e)}
+                onChange={(e: any) => handleRatingChange(e)}
               />
-              <Button colorScheme={"red"} type="submit">
-                Commentar
-              </Button>
+              {userComment || authorized ? (
+                <Button
+                  colorScheme={"blue"}
+                  onClick={(e) => handleConfirmEdit(e)}
+                >
+                  {" "}
+                  Confirmar
+                </Button>
+              ) : (
+                <Button colorScheme={"red"} type="submit">
+                  Commentar
+                </Button>
+              )}
             </form>
           </Stack>
         </Box>

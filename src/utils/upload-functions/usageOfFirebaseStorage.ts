@@ -1,7 +1,7 @@
 import { Input, Img, Box, Text, Button } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "../../firebaseConfig";
+import { storage } from "../../../firebaseConfig";
 import { Progress } from "@chakra-ui/react";
 
 // const [url, setUrl] = useState("");
