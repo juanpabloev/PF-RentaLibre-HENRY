@@ -4,11 +4,19 @@ import type { NextRequest } from "next/server";
 //pasa por este codigo y continua
 // https://nextjs.org/docs/advanced-features/middleware
 
+
 export function middleware(request: NextRequest) {
   //console.log(request.nextUrl.pathname)
-  
 
-  const jwt = request.cookies.get("next-auth.session-token")?.value;
+  let jwtLoc3000 = request.cookies.get("next-auth.session-token")?.value;
+  let jwtVercel = request.cookies.get("__Secure-next-auth.session-token")?.value;
+
+  let jwt = '';
+  
+  if(jwtLoc3000) jwt = jwtLoc3000;
+  if(jwtVercel) jwt = jwtVercel;
+
+
   //console.log(jwt); // => 'fast'
 
   /*   const allCookies = request.cookies.getAll()

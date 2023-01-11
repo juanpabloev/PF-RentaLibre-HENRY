@@ -26,10 +26,10 @@ function Footer() {
           <Link as={NextLink} href={"/contact"}>
             Contacto
           </Link>
-          <Link as={NextLink} href={"faq"}>
+          <Link as={NextLink} href={"/faq"}>
             Preguntas Frecuentes
           </Link>
-          <Link as={NextLink} href={"legal"}>
+          <Link as={NextLink} href={"/legal"}>
             Legales
           </Link>
         </Stack>

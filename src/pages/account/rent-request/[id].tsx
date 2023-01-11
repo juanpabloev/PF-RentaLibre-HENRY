@@ -84,7 +84,7 @@ export default function ProductDetail() {
     try {
       //envio notificaciond e email - si publicacon ok:
 
-      const url = 'http://localhost:3000'
+      const url = process.env.NEXT_PUBLIC_HOME_URL
 
       const urlRentReq = `${url}/account/rent-checkout/${id}/?totalDays=${totalDays}&totalPrice=${totalPrice}&startDate=${startDate}&endDate=${endDate}&U=${session?.data?.userDB?.id}`
 
