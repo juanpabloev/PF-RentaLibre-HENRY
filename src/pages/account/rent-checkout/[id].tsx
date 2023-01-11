@@ -153,7 +153,7 @@ export default function ProductDetail() {
       });
 
 
-      router.push("/");
+      //router.push("/");
 
     } catch (error) {
       console.error(error);
