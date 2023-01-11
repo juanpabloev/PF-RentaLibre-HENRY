@@ -77,7 +77,7 @@ model Product {
   methodName         String?
   securityDeposit    Float?
   disabled           Boolean @default(false)
-
+  deleted            Boolean @default(false)
 }
 
 model Category {
