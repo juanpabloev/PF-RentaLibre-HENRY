@@ -147,9 +147,9 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = account.access_token;
         //token.id = profile.id
       }
-      if (user) {
+      /* if (user) {
         token.role = userDB?.role;
-      }
+      } */
       //console.log(token)
 
       return token;
