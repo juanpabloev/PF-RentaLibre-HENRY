@@ -59,7 +59,7 @@ export default function Productlist() {
           page,
         }).data?.filter((p)=> p.disabled === false)
       } else if (!!q && !category) {
-        products = trpc.product.getProductByTitle.useQuery({ title: q }).data
+        products = trpc.product.getProductByTitle.useQuery({ title: q, order, limit, page }).data
         ?.filter((p)=> p.disabled === false)
       } else {
         products = trpc.product.getProductByTitleAndCategory.useQuery({
@@ -80,7 +80,6 @@ export default function Productlist() {
     } else {
       products = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data?.filter((p)=> p.disabled === false)
     }
-  }
   const [data, setData] = useState<any>(undefined);
 
   function getAvarage(product: any) {
