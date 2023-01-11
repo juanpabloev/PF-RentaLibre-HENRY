@@ -6,6 +6,8 @@ import {
   Container,
   SimpleGrid,
 } from "@chakra-ui/react";
+import Link from "next/link";
+import NextLink from "next/link";
 import React from "react";
 import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
 import Slider from "react-slick";
@@ -79,23 +81,25 @@ export default function CardProductHome({ dataCarusel }) {
             backgroundRepeat="no-repeat"
             backgroundImage={`url(${data.picture})`}
           >
-            <Container size="container.lg" height="600px" position="relative">
-              <Stack
-                spacing={6}
-                w={"full"}
-                maxW={"lg"}
-                position="absolute"
-                top="50%"
-                transform="translate(0, -50%)"
-              >
-                {/* <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
+            <NextLink href={data.url ? data.url : "/"}>
+              <Container size="container.lg" height="600px" position="relative">
+                <Stack
+                  spacing={6}
+                  w={"full"}
+                  maxW={"lg"}
+                  position="absolute"
+                  top="50%"
+                  transform="translate(0, -50%)"
+                >
+                  {/* <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
                   {card.title}
                 </Heading>
                 <Text fontSize={{ base: 'md', lg: 'lg' }} color="GrayText">
                   {card.text} 
                 </Text>*/}
-              </Stack>
-            </Container>
+                </Stack>
+              </Container>
+            </NextLink>
           </Box>
         ))}
       </Slider>
