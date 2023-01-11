@@ -38,10 +38,13 @@ export default function Profile() {
     stateName: "",
     cityName: "",
     phoneNumber: "",
+    houseNumber:"",
+    street:"",
     saveButton: false,
   });
 
   const [editShow, setEditShow] = useState({
+    address: false,
     inputName: false,
     inputPostal: false,
     inputPhone: false,
@@ -140,9 +143,13 @@ export default function Profile() {
       countryName,
       stateName,
       cityName,
+      street,
+      houseNumber,
       phoneNumber,
     } = editUser;
     userUpdate.mutateAsync({
+      street: street ? street : user?.streetAddress?.street ? user.streetAddress.street : '',
+      houseNumber: houseNumber ? houseNumber : user?.streetAddress?.houseNumber ? user.streetAddress.houseNumber : '',
       userId: session?.userDB.id,
       name: name ? name : user?.name,
       userPicture: userPicture ? userPicture : user?.image ? user.image : "",
@@ -178,6 +185,7 @@ export default function Profile() {
     })
 
     setEditShow({
+      address:false,
       inputName: false,
       inputPostal: false,
       inputPhone: false,
@@ -191,6 +199,8 @@ export default function Profile() {
 
   function handleDismissClick() {
     setEditUser({
+      street:"",
+      houseNumber:"",
       name: "",
       userPicture: "",
       lastName: "",
@@ -446,6 +456,65 @@ export default function Profile() {
               />
             ) : null}
 
+<Flex >
+              <Text ml="2%" fontSize="20px" fontWeight="semibold">
+                DOMICILIO:
+              </Text>
+              <Text
+                ml="5px"
+                color="blue"
+                fontSize="20px"
+                fontWeight="semibold"
+                mr="1%"
+              >
+                {" "}
+                {editUser.street ? editUser.street : user?.streetAddress?.street}{" -- "}
+                {editUser.houseNumber ? editUser.houseNumber : user?.streetAddress?.houseNumber}
+              </Text>
+              <button
+                onClick={() =>
+                  setEditShow({
+                    ...editShow,
+                    address: editShow.address ? false : true,
+                  })
+                }
+              >
+                <Img
+                  h="20px"
+                  w="20px"
+                  src="https://firebasestorage.googleapis.com/v0/b/rentalibre-fbbda.appspot.com/o/userPicture%2Flapiz.png?alt=media&token=7b37e919-dc4c-4fc3-a424-aba961083482"
+                />
+              </button>
+            </Flex>
+            {editShow.address ? (
+              <Flex
+                mt="10px"
+                mb="10px"
+                w="100%"
+                flexDirection={{ base: "column", sm: "row" }}
+              >
+                <Input
+                  mb={{ base: "10px", sm: "0" }}
+                  placeholder="Calle..."
+                  w="200px"
+                  ml="2%"
+                  value={editUser.street}
+                  onChange={(e) =>
+                    setEditUser({ ...editUser, street: e.target.value, saveButton: true })
+                  }
+                />
+                <Input
+                  placeholder="Número de casa..."
+                  w="200px"
+                  ml="2%"
+                  value={editUser.houseNumber}
+                  onChange={(e) =>
+                    setEditUser({ ...editUser, houseNumber: e.target.value, saveButton: true })
+                  }
+                />
+              </Flex>
+            ) : null}
+
             <Flex>
               <Text ml="2%" fontSize="20px" fontWeight="semibold">
                 LOCACIÓN:
@@ -544,9 +613,12 @@ export default function Profile() {
                   ))}
               </Select>
             ) : null}
+            
 
             {
               editUser.saveButton ?
+              editUser.street ||
+              editUser.houseNumber ||
                 editUser.userPicture ||
                   editUser.stateName ||
                   editUser.phoneNumber ||
