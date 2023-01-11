@@ -25,11 +25,7 @@ import {
     Select,
     Box,
     Image,
-    Stack,
-    Link,
-    VStack,
-    Progress,
-
+    Stack
 } from "@chakra-ui/react";
 
 import { uploadFile } from "../../utils/upload-functions/firebase-functions";
@@ -73,7 +69,6 @@ export default function AddPublication() {
     const router = useRouter()
 
     const categoriesDB = trpc.category.getCategories.useQuery().data;
-    //console.log(categoriesDB) // array con objetos: : id, name
 
     const [state, setState] = useState(initState);
 
@@ -176,7 +171,6 @@ export default function AddPublication() {
             ...ob,
             [filename]: { ...ob[filename], progress }
         }));
-        //console.log(statusObject)
     };
 
 
@@ -191,7 +185,6 @@ export default function AddPublication() {
         for (let file of files) {
             const preview = (await getPreview(file)) as string;
             objects[file.name] = { preview };
-            //console.log(preview)
         }
         setStatusObject(objects);
         const promises = files.map((file) => {
@@ -199,14 +192,7 @@ export default function AddPublication() {
                 onUpdateUpload(snapshot, file.name)
             );
         });
-        const ls = await Promise.all(promises); //ls - links
-        //setLinks(ls);
-        //setLoading(false);
-
-        /* setLinks(prev => ({
-            ...prev,
-            links: links.push?.apply(links, ls)
-        })) */
+        const ls = await Promise.all(promises); 
 
         setState((prev) => ({
             ...prev,
@@ -216,26 +202,6 @@ export default function AddPublication() {
             },
 
         }))
-
-        /*  ls.map((l) => (
-             setState((prev) => ({
-                 ...prev,
-                     [values.pictures]: values.pictures.push(l)
- 
-             }))
-         )) */
-        //console.log(values.pictures)
-
-        /* ls.map((l) => (
-            setState((prev) => ({
-                ...prev,
-                values: {
-                    ...prev.values,
-                    [values.pictures]: [values.pictures.push(l)]
-                },
-            }))
-        ))
-        console.log(values?.pictures) */
     }
 
     const productPublication = trpc.product.createProducts.useMutation()
@@ -247,7 +213,6 @@ export default function AddPublication() {
         e.preventDefault()
 
         const sendValues = {
-            //UserId: session?.userDB.id,
             title: state.values.title,
             categoryId: state.values.category,
             description: state.values.description,
@@ -265,8 +230,6 @@ export default function AddPublication() {
             isLoading: true,
         }));
         try {
-            //console.log(sendValues);
-
             await productPublication.mutateAsync(
                 sendValues
             ).then((data: any) => {
@@ -281,8 +244,6 @@ export default function AddPublication() {
                 subject: 'Su publicación ha sido exitosa',
                 message: 'Estimado ' + session?.userDB.name + '. Su artículo ' + sendValues.title + ' ha sido publicado correctamente. Usted puede administrar sus publicaciones desde https://rentalibre.vercel.app/account/my-publications. Saudos, El equipo de rentalibre.'
             };
-
-            //console.log(values);
 
             if (true) {
                 sendEmail(values);
@@ -336,11 +297,9 @@ export default function AddPublication() {
             <FormLabel marginBottom={5}>Teléfono: {session?.userDB.phoneNumber}</FormLabel>
             <FormLabel marginBottom={5}>¿Datos Correctos?</FormLabel>
             <Center marginBottom={10}>
-                <a href={"/profile"}>
-                    <Button colorScheme='teal' size='md'>
+                    <Button colorScheme='teal' size='md' onClick={() => router.push('/account/profile')}>
                         Editar Perfil
                     </Button>
-                </a>
             </Center>
 
             <FormControl isRequired isInvalid={touched.category && !values.category} mb={5}>
@@ -429,31 +388,8 @@ export default function AddPublication() {
             </FormControl>
 
             <div className="Spinner">
-                {/*            <h2>Start with one:</h2>
-                <input accept="image/*" multiple onChange={handleMultiple} type="file" />
-                <h3>Links:</h3>
-                <ul>
-                    {values.pictures.map((li: any) => (
-                        <li key={li}>{li}</li>
-                    ))}
-                </ul>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-                    {Object.values(statusObject).map((ob) => {
-                        return (
-                            <Box key={v4()}>
-                                <Image
-                                    width="180"
-                                    src={ob.preview}
-                                    key={v4()}
-                                    alt="preview"
-                                />
-                                <p>{ob.progress}%</p>
-                            </Box>
-                        );
-                    })}
-                </div> */}
                 {loading && (
-                    <img
+                    <Image
                         alt="spinner"
                         width="200"
                         src="https://c.tenor.com/I6kN-6X7nhAAAAAi/loading-buffering.gif"

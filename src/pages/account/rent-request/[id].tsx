@@ -6,7 +6,6 @@ import {
   Text,
   Image,
   Flex,
-  VStack,
   HStack,
   Button,
   Heading,
@@ -15,18 +14,14 @@ import {
   useColorModeValue,
   List,
   ListItem,
-  Badge,
-  Textarea,
   useToast,
-  Input,
   Center,
 } from "@chakra-ui/react";
 
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
-import Style from "../../../styles/id.module.css";
+import React from "react";
 
 import sendEmail from "../../../utils/contact-functions/contact-Email";
 
@@ -46,8 +41,6 @@ const validate = (input: any) => {
 
 export default function ProductDetail() {
 
-  // console.log('Window Location:', window.location)
-
   const myKeysValues = window.location.search;
   const urlParams = new URLSearchParams(myKeysValues);
 
@@ -58,7 +51,6 @@ export default function ProductDetail() {
   const endDate = urlParams.get('endDate');
   const userIdRent: any = urlParams.get('U');
 
-  //console.log(totalDays, totalPrice)
 
   const toast = useToast();
   const router = useRouter();
@@ -67,12 +59,6 @@ export default function ProductDetail() {
   //trae del back con id
   const product = trpc.product.getProductByID.useQuery({ id }).data;
   const userRent = trpc.user.getUser.useQuery({ userId: userIdRent }).data;
-  //console.log('UUUUUUUUUUUUUSSSSSSSSSSSERRRRRRR' + userRent)
-
-  //const authorized = session.data?.userDB?.role === "ADMIN";
-
-  //const colorTxt = useColorModeValue("black", "gray.900");
-  //const colorBg = useColorModeValue("yellow.300", "orange.50");
 
   async function handleSubmit(e: any) {
     e.preventDefault();
@@ -110,8 +96,6 @@ export default function ProductDetail() {
         <p> Saudos, El equipo de rentalibre.</p>
       `,
       };
-
-      //console.log(values);
 
       if (true) {
         sendEmail(values);

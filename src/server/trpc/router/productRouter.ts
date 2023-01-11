@@ -56,8 +56,6 @@ export const productRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const { title } = input;
-      console.log(title)
-
       const productByTitleAndDescription = await ctx.prisma.product.findMany({
         include: {
           rating: true,
@@ -129,7 +127,6 @@ export const productRouter = router({
       });
       const categoryId = category?.id;
       let productByCategory;
-      console.log(title);
       if (title == " ") {
         productByCategory = await ctx.prisma.product.findMany({
           include: {

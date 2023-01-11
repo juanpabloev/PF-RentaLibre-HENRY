@@ -10,10 +10,7 @@ import {
     Image
   } from '@chakra-ui/react';
   
-  /* const IMAGE =
-    'https://images.unsplash.com/photo-1518051870910-a46e30d9db16?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1350&q=80';
-   */
-  export default function CardProductHome({ id, photo, productName, productPrice, category, fecha}) {
+  export default function CardProductHome({ id, photo, productName, productPrice, category, fecha} : any) {
     return (
         <Center py={12}>
           <Link href={`/productDetail/${id}`}>
@@ -40,7 +37,6 @@ import {
                 pos: 'absolute',
                 top: 5,
                 left: 0,
-                /* backgroundImage: `url(${["photo/s"]})`, */
                 backgroundImage: `url(${photo})`,
                 filter: 'blur(15px)',
                 zIndex: -1,

@@ -4,9 +4,7 @@ import {
   IconButton,
   useBreakpointValue,
   Container,
-  SimpleGrid,
 } from "@chakra-ui/react";
-import Link from "next/link";
 import NextLink from "next/link";
 import React from "react";
 import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
@@ -91,12 +89,6 @@ export default function CardProductHome({ dataCarusel }) {
                   top="50%"
                   transform="translate(0, -50%)"
                 >
-                  {/* <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
-                  {card.title}
-                </Heading>
-                <Text fontSize={{ base: 'md', lg: 'lg' }} color="GrayText">
-                  {card.text} 
-                </Text>*/}
                 </Stack>
               </Container>
             </NextLink>

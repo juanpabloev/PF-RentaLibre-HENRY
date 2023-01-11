@@ -2,31 +2,21 @@ import CardProductList from "../components/CardProductList";
 import styles from "../styles/productList.module.css";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { RouterOutputs, trpc } from "../utils/trpc";
-import { FaLeaf } from "react-icons/fa";
+import { trpc } from "../utils/trpc";
 
 import {
   Box,
   Flex,
-  Text,
   Highlight,
-  HStack,
-  Link,
-  IconButton,
   Button,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
+
   MenuDivider,
-  useDisclosure,
   useColorModeValue,
-  Stack,
 } from "@chakra-ui/react";
-import { RxCaretDown as ChevronDownIcon } from "react-icons/rx";
 
 export default function Productlist() {
   const router = useRouter();
@@ -38,8 +28,6 @@ export default function Productlist() {
   //trae del back
   const utils = trpc.useContext();
   let products: any;
-  console.log(category)
-  console.log(!!category)
   if(products === undefined){
     if (category || q) {
       if (!!category && !q) {

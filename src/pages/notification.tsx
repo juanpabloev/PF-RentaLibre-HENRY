@@ -1,15 +1,12 @@
 import React from "react";
 import Link from "next/link";
 import {
-  Badge,
-  Button,
   Center,
   Flex,
   Heading,
   Image,
   Stack,
   Text,
-  useColorModeValue,
   Box,
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
@@ -21,10 +18,9 @@ const Notification = () => {
     const notification = trpc.notification.getNotification.useQuery({
         userId: session?.data?.userDB?.id,
         }).data;
-        console.log(notification)
     return(
         notification && notification[0]?.user.length === 0 ? <h1> No tienes notificaciones todavia </h1> :
-        notification && notification![0]?.user.map((notification) => (
+        notification && notification![0]?.user.map((notification: any) => (
             <Center key={notification.notificationType[0]?.productId} py={6}>
                 <Link href={`/productDetail/${notification.notificationType[0]?.productId}`}>
                 <Stack
@@ -36,7 +32,6 @@ const Notification = () => {
                 bg="white"
                 boxShadow={"xl"}
                 padding={4}
-            
                 >
                 <Flex flex={0.4} align="center">
                     <Box w="170px">

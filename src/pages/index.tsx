@@ -5,18 +5,6 @@ import CardProductHome from "../components/CardProductHome";
 import Carusel from "../components/Carusel";
 import { RouterOutputs, trpc } from "../utils/trpc";
 
-// interface Item {
-//   id: number;
-//   title: string;
-//   price: number;
-//   userName: string;
-//   pictures: string[];
-//   description: string;
-//   fecha: string;
-//   category: string;
-//   available: boolean;
-// }
-
 interface Props {
   data: RouterOutputs["product"]["getProducts"];
   dataCarusel: Carusel[];
@@ -64,11 +52,3 @@ export default function Page({}: Props, props: Props) {
     </>
   );
 }
-
-// export const getStaticProps = async () => {
-//   return {
-//     props: {
-//       dataCarusel,
-//     },
-//   };
-// };

@@ -19,8 +19,6 @@ function Faq() {
               </div>
             </div>
           </div>
-
-          {/* PREGUNTAS Y RESPUESTAS */}
           <div className="-mx-4 flex flex-wrap">
             <div className="w-full px-4  ">
               <div className="single-faq mb-8 w-full rounded-lg border border-[#f78010] bg-gray-300 p-4 sm:p-8 lg:px-6 xl:px-8">

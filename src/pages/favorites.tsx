@@ -2,22 +2,14 @@ import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { trpc } from "../utils/trpc";
 import {
-  Box,
   List,
   ListItem,
   ListIcon,
-  Image,
-  Divider,
-  CloseButton,
   Stack,
   useColorModeValue,
   Center,
-  useToast,
 } from "@chakra-ui/react";
-import Link from "next/link";
 import {
-  AiOutlineCloseCircle,
-  AiFillCloseSquare,
   AiOutlineCloseSquare,
 } from "react-icons/ai";
 import CardProductFavorites from "../components/CardProductFavorites";
@@ -28,7 +20,6 @@ function Favorites() {
   const favorites = trpc.user.getFavorites.useQuery({
     userId: session?.user?.id,
   });
-  console.log(favorites.data);
   const [lenght, setLenght] = useState(favorites?.data?.length);
   const utils = trpc.useContext();
 
