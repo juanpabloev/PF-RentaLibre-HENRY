@@ -311,7 +311,14 @@ export default function WithSubnavigation() {
                   {n.read === false ? <Badge colorScheme="red" borderRadius="full" px="2">
                           Nuevo
                           </Badge> : null}
-                    <Text>{n.notificationType[0]?.message} de el usuario: </Text>
+                {n.notificationType[0]?.type === "Review" ? 
+                    <Text>
+                      {n.notificationType[0]?.message} de: {n.userAction.name}
+                    </Text>
+                  :
+                    <Text>
+                      {n.notificationType[0]?.message} por: {n.userAction.name}
+                    </Text>}
                     
                   </MenuItem>
                 </Link>

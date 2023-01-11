@@ -17,12 +17,10 @@ import { trpc } from "../utils/trpc";
 
 const Notification = () => {
     const session = useSession();
-    if(session.status === "loading") return <h1> Loading... </h1>
     if(session.status === "unauthenticated") return <h1> No estas logueado </h1>
     const notification = trpc.notification.getNotification.useQuery({
         userId: session?.data?.userDB?.id,
         }).data;
-
         console.log(notification)
     return(
         notification && notification[0]?.user.length === 0 ? <h1> No tienes notificaciones todavia </h1> :
@@ -64,12 +62,16 @@ const Notification = () => {
                     <Heading fontSize={"xl"} fontFamily={"body"}>
                     {notification.notificationType[0]?.productName}
                     </Heading>
-                    <Text fontWeight={600} color={"gray.500"} size="sm" mb={4}>
-                    {notification.notificationType[0]?.type}
-                    </Text>
-                    <Text fontWeight={600} fontSize={"xl"}>
-                    {notification.notificationType[0]?.message} de {notification.userAction.name}
-                    </Text>
+                        <Text fontWeight={600} color={"gray.500"} size="sm" mb={4}>
+                            {notification.notificationType[0]?.type}
+                        </Text>
+                        {notification.notificationType[0]?.type === "Review" ?
+                        <Text fontWeight={600} fontSize={"xl"}>
+                            {notification.notificationType[0]?.message} de {notification.userAction.name}
+                        </Text> : 
+                        <Text fontWeight={600} fontSize={"xl"}>
+                            {notification.notificationType[0]?.message} por {notification.userAction.name}
+                        </Text>}
                 </Stack>
                 </Stack>
             </Link>
