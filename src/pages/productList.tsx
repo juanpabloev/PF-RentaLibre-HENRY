@@ -45,17 +45,18 @@ export default function Productlist() {
       if (!!category && !q) {
         products = trpc.product.getProductByCategory.useQuery({
           categoryName: category,
-        }).data;
+        }).data?.filter((p)=> p.disabled === false)
       } else if (!!q && !category) {
-        products = trpc.product.getProductByTitle.useQuery({ title: q }).data;
+        products = trpc.product.getProductByTitle.useQuery({ title: q }).data
+        ?.filter((p)=> p.disabled === false)
       } else {
         products = trpc.product.getProductByTitleAndCategory.useQuery({
           title: q,
           categoryName: category,
-        }).data;
+        }).data?.filter((p)=> p.disabled === false)
       }
     } else {
-      products = trpc.product.getProducts.useQuery({ limit: 10, page }).data;
+      products = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data?.filter((p)=> p.disabled === false)
     }
   }
   const [data, setData] = useState<any>(undefined);
