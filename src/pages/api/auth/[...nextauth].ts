@@ -141,7 +141,7 @@ export const authOptions: NextAuthOptions = {
 
     async jwt({ token, account, profile, user, isNewUser }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
-      const userDB = await prisma.user.findUnique({ where: { id: token.sub } });
+      //const userDB = await prisma.user.findUnique({ where: { id: token.sub } });
 
       if (account) {
         token.accessToken = account.access_token;
