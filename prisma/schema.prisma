@@ -37,8 +37,13 @@ model User {
   banned         Boolean @default(false)
   user           Notification[] @relation(name: "user")
   userAction     Notification[] @relation(name: "userAction")
+  streetAddress  Address?
 }
 
+type Address {
+  street      String?
+  houseNumber String?
+}
 
 type Location {
   country  String?
