@@ -12,6 +12,7 @@ const Success = () => {
     const { payment_id, id }: any = router.query;
     const product = trpc.product.getProductByID.useQuery({ id }).data;
     const payment = trpc.user.makeTransaction.useMutation();
+    const createNotification = trpc.notification.createNotification.useMutation();
     const notification = trpc.notification.getNotification.useQuery({
         userId: session?.data?.userDB?.id,
       }).data;
@@ -34,15 +35,23 @@ useEffect(() => {
                 buyerId: session?.data?.userDB?.id,
                 productId: product?.id!,
             })
-            sendEmail({
+            createNotification.mutate({
+                type: "Alquiler",
+                message: "Tu producto ha sido alquilado",
+                productId: product?.id!,
+                id:product?.userId!,
+                productName: product?.title!,
+                productImage: product?.pictures[0]!,
+            })
+            /* sendEmail({
                 name: session?.data?.user?.name!,
                 email: session?.data?.user?.email!,
                 subject: 'Compra realizada',
                 message: 'Su compra ha sido realizada con exito, su id de transaccion es: ' + payment_id
-            })
+            }) */
     }
 }
-}, [product])
+}, [createNotification, payment, payment_id, product, session?.data?.userDB?.id, submit.comprobate])
         
     if (!session) {
         return (
@@ -66,7 +75,7 @@ useEffect(() => {
         />
       <Heading as="h2" size="xl" mt={6} mb={2}>
         {session?.data?.user?.name}, 
-        has rentado un {product?.title} con exito
+        has rentado {product?.title} con exito
       </Heading>
       <Text color={'gray.500'}>
         #{payment_id} es su id de transaccion,

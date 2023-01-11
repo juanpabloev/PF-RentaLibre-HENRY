@@ -84,35 +84,38 @@ export default function ProductDetail() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`,
+            Authorization: `Bearer APP_USR-5672095275524228-121515-ef3e594e4fc515b3e4d7d98cff8d97e1-1263932815`,
           },
           body: JSON.stringify({
             payer: {
               email: session?.data?.user?.email,
               phone: "",
+              name: session?.data?.user?.name,
             },
+            product_id: id,
             items: [
               {
                 title: product?.title,
                 description: product?.description,
                 picture_url: product?.pictures[0],
                 category_id: product?.category,
+                id: product?.id,
                 quantity: 1, //AGREGAR PRODUCT?.QUANTITY a schema
-                unit_price: product?.price,
+                unit_price: parseFloat(totalPrice!),
               },
             ],
             back_urls: {
-              success: "http://localhost:3000/success",
-              failure: "http://localhost:3000/failure",
-              pending: "http://localhost:3000/pending",
+              success: `http://localhost:3000/success/${id}`,
+              failure: `http://localhost:3000/failure/${id}`,
+              pending: `http://localhost:3000/pending/${id}`,
             },
             notification_url:
-              "https://04c5-191-97-97-69.sa.ngrok.io/api/notificar",
+            `https://rentalibre.vercel.app/success/${id}`,
           }),
         }
       );
       const json = await res.json();
-      console.log(json, session?.data?.user?.email);
+      console.log(json, process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION);
       router.push(json.init_point);
 
       const values = {
