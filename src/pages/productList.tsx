@@ -61,11 +61,16 @@ export default function Productlist() {
   const [data, setData] = useState<any>(undefined);
   const [order, setOrder] = useState("Más relevantes");
 
+  function getAvarage(product: any) {
+    const avarage = product.rating.map((k: any) => k.stars).reduce((total: any, star: any) => total + star, 0) / product.rating.length;
+    return isNaN(avarage) ? 0 : avarage;
+  }
+
   function handleOrder(e: string) {
     if(e === 'relevantes'){
       setOrder("Más relevantes");
-      data.sort((a: any, b: any) => {
-        return b.id - a.id;
+      data?.sort((a: any, b: any) => {
+      return getAvarage(b) - getAvarage(a);
       });
       }else if(e === 'menor'){
       setOrder("Menor precio");
