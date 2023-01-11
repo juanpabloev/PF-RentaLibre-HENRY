@@ -35,7 +35,7 @@ import {
   useDisclosure,
   HStack,
   VStack,
-  Badge
+  Badge,
 } from "@chakra-ui/react";
 
 import {
@@ -56,16 +56,16 @@ export default function WithSubnavigation() {
   const { data: session, status } = useSession();
   const sessionId = session?.userDB?.id;
   const notification = trpc.notification.getNotification.useQuery({
-    userId: sessionId
+    userId: sessionId,
   }).data;
-  const updateNotification = trpc.notification.readNotification.useMutation()
+  const updateNotification = trpc.notification.readNotification.useMutation();
   const { isOpen, onToggle } = useDisclosure();
   const [inputSearch, setInputSearch] = useState("");
   const [selectCategory, setSelectCategory] = useState(
     router.query.category ?? ""
   );
-  
-  const handleRead = (id: any, idP:any) => {
+
+  const handleRead = (id: any, idP: any) => {
     updateNotification.mutate({ id });
     router.push(`/productDetail/${idP}`);
   };
@@ -190,7 +190,7 @@ export default function WithSubnavigation() {
           {" "}
           {!session && (
             <Button
-              as={"a"}
+              as={NextLink}
               fontSize={"lg"}
               fontWeight={600}
               color={"white"}
@@ -202,17 +202,16 @@ export default function WithSubnavigation() {
           )}
           {session && (
             <>
-              
               <Flex minWidth="max-content" alignItems="center" gap="2">
-                <Link href={`/account/profile`}>
-                <Text fontSize={"lg"} fontWeight={600} color={"white"}>
-                  Hola, {session.user?.name}
-                </Text>
+                <Link as={NextLink} href={`/account/profile`}>
+                  <Text fontSize={"lg"} fontWeight={600} color={"white"}>
+                    Hola, {session.user?.name}
+                  </Text>
                 </Link>
               </Flex>
 
               <Button
-                as={"a"}
+                as={NextLink}
                 fontSize={"lg"}
                 fontWeight={600}
                 color={"white"}
@@ -268,74 +267,95 @@ export default function WithSubnavigation() {
           spacing={6}
         >
           {status === "authenticated" ? (
-          <Menu>
-            <MenuButton
-              py={2}
-              transition="all 0.3s"
-              _focus={{ boxShadow: 'none' }}>
-              <HStack>
-                <VStack
-                  display={{ base: 'none', md: 'flex' }}
-                  alignItems="flex-start"
-                  spacing="1px"
-                  ml="2">
-                  
-                  <IconButton
-                    size="md"
-                    variant="ghost"
-                    aria-label="open menu"
-                    color='gray.600'
-                    icon={<FiBell />}
-                  /> 
-                </VStack>
-                <Box display={{ base: 'none', md: 'flex' }}>
-                  <Text>
-                      {notification && notification![0]!.user?.filter((notification) => notification.read === false).length > 0 ? <div>
-                        <Badge colorScheme="red" borderRadius="full" px="2">
-                          {notification![0]?.user?.filter(
-    (notification) => notification.read === false
-  ).length}            
-                        </Badge>
-                      </div> : null} 
-                  </Text>
-                </Box>
-              </HStack>
-            </MenuButton>
-            <MenuList
-              bg='white'
-              borderColor='gray.200'
+            <Menu>
+              <MenuButton
+                py={2}
+                transition="all 0.3s"
+                _focus={{ boxShadow: "none" }}
               >
-               {notification &&notification![0]!.user.filter((notification) => notification.read === false).map(n =>
-                <Link href={`/productDetail/${n.notificationType[0]?.productId}`} key={n.id} onClick={() => handleRead(n.id, n.notificationType[0]?.productId)}>
-                  <MenuItem>
-                  {n.read === false ? <Badge colorScheme="red" borderRadius="full" px="2">
-                          Nuevo
-                          </Badge> : null}
-                {n.notificationType[0]?.type === "Review" ? 
+                <HStack>
+                  <VStack
+                    display={{ base: "none", md: "flex" }}
+                    alignItems="flex-start"
+                    spacing="1px"
+                    ml="2"
+                  >
+                    <IconButton
+                      size="md"
+                      variant="ghost"
+                      aria-label="open menu"
+                      color="gray.600"
+                      icon={<FiBell />}
+                    />
+                  </VStack>
+                  <Box display={{ base: "none", md: "flex" }}>
                     <Text>
-                      {n.notificationType[0]?.message} de: {n.userAction.name}
+                      {notification &&
+                      notification![0]!.user?.filter(
+                        (notification) => notification.read === false
+                      ).length > 0 ? (
+                        <div>
+                          <Badge colorScheme="red" borderRadius="full" px="2">
+                            {
+                              notification![0]?.user?.filter(
+                                (notification) => notification.read === false
+                              ).length
+                            }
+                          </Badge>
+                        </div>
+                      ) : null}
                     </Text>
-                  :
-                    <Text>
-                      {n.notificationType[0]?.message} por: {n.userAction.name}
-                    </Text>}
-                    
+                  </Box>
+                </HStack>
+              </MenuButton>
+              <MenuList bg="white" borderColor="gray.200">
+                {notification &&
+                  notification![0]!.user
+                    .filter((notification) => notification.read === false)
+                    .map((n) => (
+                      <Link
+                        href={`/productDetail/${n.notificationType[0]?.productId}`}
+                        key={n.id}
+                        onClick={() =>
+                          handleRead(n.id, n.notificationType[0]?.productId)
+                        }
+                      >
+                        <MenuItem>
+                          {n.read === false ? (
+                            <Badge colorScheme="red" borderRadius="full" px="2">
+                              Nuevo
+                            </Badge>
+                          ) : null}
+                          {n.notificationType[0]?.type === "Review" ? (
+                            <Text>
+                              {n.notificationType[0]?.message} de:{" "}
+                              {n.userAction.name}
+                            </Text>
+                          ) : (
+                            <Text>
+                              {n.notificationType[0]?.message} por:{" "}
+                              {n.userAction.name}
+                            </Text>
+                          )}
+                        </MenuItem>
+                      </Link>
+                    ))}
+                {notification &&
+                notification![0]!.user.filter(
+                  (notification) => notification.read === false
+                ).length === 0 ? null : (
+                  <hr></hr>
+                )}
+                <Link as={NextLink} href="/notification">
+                  <MenuItem>
+                    <Badge>Ver todas las notificaciones</Badge>
                   </MenuItem>
                 </Link>
-              )}
-              {notification &&notification![0]!.user.filter((notification) => notification.read === false).length === 0 ? null : <hr></hr>}
-              <Link href='/notification'>
-                <MenuItem>
-                  <Badge>
-                    Ver todas las notificaciones
-                  </Badge>
-                </MenuItem>
-              </Link>
-            </MenuList>
-          </Menu>
-          ): null}
+              </MenuList>
+            </Menu>
+          ) : null}
           <Button
-            as={"a"}
+            as={NextLink}
             fontSize={"sm"}
             fontWeight={600}
             color={"#404c5a"}
@@ -345,7 +365,7 @@ export default function WithSubnavigation() {
             Publicar
           </Button>
           <Button
-            as={"a"}
+            as={NextLink}
             fontSize={"sm"}
             fontWeight={600}
             color={"#404c5a"}
@@ -486,7 +506,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
     <Stack spacing={4} onClick={children && onToggle}>
       <Flex
         py={2}
-        as={Link}
+        as={NextLink}
         href={href ?? "#"}
         justify={"space-between"}
         align={"center"}
