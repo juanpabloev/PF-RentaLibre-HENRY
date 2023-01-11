@@ -38,9 +38,9 @@ export default function Productlist() {
   //trae del back
   const utils = trpc.useContext();
   let products: any;
-  console.log(category)
-  console.log(!!category)
-  if(products === undefined){
+  const [page, setPage] = useState(1);
+
+  if (products === undefined) {
     if (category || q) {
       if (!!category && !q) {
         products = trpc.product.getProductByCategory.useQuery({
@@ -55,31 +55,31 @@ export default function Productlist() {
         }).data;
       }
     } else {
-      products = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data;
+      products = trpc.product.getProducts.useQuery({ limit: 10, page }).data;
     }
   }
   const [data, setData] = useState<any>(undefined);
   const [order, setOrder] = useState("Más relevantes");
 
   function handleOrder(e: string) {
-    if(e === 'relevantes'){
+    if (e === "relevantes") {
       setOrder("Más relevantes");
       data.sort((a: any, b: any) => {
         return b.id - a.id;
       });
-      }else if(e === 'menor'){
+    } else if (e === "menor") {
       setOrder("Menor precio");
       data.sort((a: any, b: any) => {
         return a.price - b.price;
       });
-    }else if(e === 'mayor'){
+    } else if (e === "mayor") {
       setOrder("Mayor precio");
       data.sort((a: any, b: any) => {
         return b.price - a.price;
       });
     }
   }
-  
+
   //para que refresque los datos
   useEffect(() => {
     setOrder("Más relevantes");
@@ -87,6 +87,17 @@ export default function Productlist() {
   }, [products]);
 
   if (!data) return <p>No profile data</p>;
+
+  const handleNext = (e: any) => {
+    setPage(page + 1);
+    e.preventDefault();
+    utils.product.getProducts.invalidate();
+  };
+  const handlePrevious = (e: any) => {
+    if (page > 1) setPage(page - 1);
+    e.preventDefault();
+    utils.product.getProducts.invalidate();
+  };
 
   return (
     <div>
@@ -114,15 +125,15 @@ export default function Productlist() {
                 Ordenar por: {order}
               </MenuButton>
               <MenuList zIndex={2}>
-                <MenuItem onClick={() => handleOrder('relevantes')}>
+                <MenuItem onClick={() => handleOrder("relevantes")}>
                   Más relevantes
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem onClick={() => handleOrder('menor')}>
+                <MenuItem onClick={() => handleOrder("menor")}>
                   Menor precio
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem onClick={() => handleOrder('mayor')}>
+                <MenuItem onClick={() => handleOrder("mayor")}>
                   Mayor precio
                 </MenuItem>
               </MenuList>
@@ -143,6 +154,16 @@ export default function Productlist() {
           />
         ))}
       </div>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignContent="center"
+        margin="5"
+      >
+        <Button onClick={(e) => handlePrevious(e)}>Anterior</Button>
+        <Button>{page}</Button>
+        <Button onClick={(e) => handleNext(e)}>Proximo</Button>
+      </Box>
     </div>
   );
 }
