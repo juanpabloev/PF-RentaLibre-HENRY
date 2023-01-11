@@ -469,11 +469,10 @@ export default function ProductDetail() {
               >Consultar Fechas
               </Text>
                 <DateRangeComp
-                /* userId={session?.data?.user?.id}
-                userEmail={session?.data?.user?.email}
-                userName={session?.data?.user?.name} */
                 productPhoto={product?.pictures[0]}
                 productName={product?.title}
+                productUserName={product?.user?.name}
+                productUserEmail={product?.user?.email}
                 productPrice={product?.price}
                 productId={product?.id}
                 />
