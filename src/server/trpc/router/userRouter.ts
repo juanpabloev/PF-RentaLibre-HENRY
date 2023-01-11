@@ -165,6 +165,11 @@ export const userRouter = router({
               buyer: true,
             },
           },
+          products: {
+            include : {
+              user: true
+            }
+          }
         },
       });
       return user;
