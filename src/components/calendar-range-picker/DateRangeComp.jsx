@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
-import { DateRange } from "react-date-range";
 
+import { DateRange } from "react-date-range";
 import format from "date-fns/format";
 import { addDays } from "date-fns";
 
@@ -21,6 +21,7 @@ export default function DateRangeComp({
   productPrice,
 }) {
   //console.log(productId, productName, productPhoto, productPrice);
+
 
   const toast = useToast();
   const session = useSession();
@@ -81,7 +82,7 @@ export default function DateRangeComp({
       const startDate = format(range[0].startDate, "dd/MM/yyyy");
       const endDate = format(range[0].endDate, "dd/MM//yyyy");
 
-      const urlRentReq = `${url}/account/rent-request/${productId}/?totalDays=${totalDays}&totalPrice=${totalPrice}&startDate=${startDate}&endDate=${endDate}`
+      const urlRentReq = `${url}/account/rent-request/${productId}/?totalDays=${totalDays}&totalPrice=${totalPrice}&startDate=${startDate}&endDate=${endDate}&U=${session?.data?.userDB?.id}`
 
       /* 
       //DAtos a eviar por url: 

@@ -30,6 +30,7 @@ import Style from "../../../styles/id.module.css";
 
 import sendEmail from "../../../utils/contact-functions/contact-Email";
 
+
 const validate = (input: any) => {
   const errors = {
     stars: false,
@@ -56,7 +57,7 @@ export default function ProductDetail() {
   const totalPrice = urlParams.get('totalPrice');
   const startDate = urlParams.get('startDate');
   const endDate = urlParams.get('endDate');
-  const userIdRent: any = urlParams.get('U');
+  const userIdRentFROM: any = urlParams.get('U'); //este es el ID del locador - par aeviar confirmacion operacion
 
   //console.log(totalDays, totalPrice)
 
@@ -66,47 +67,65 @@ export default function ProductDetail() {
   const { id }: any = router.query;
   //trae del back con id
   const product = trpc.product.getProductByID.useQuery({ id }).data;
-  const userRent = trpc.user.getUser.useQuery({ userId: userIdRent }).data;
-  //console.log('UUUUUUUUUUUUUSSSSSSSSSSSERRRRRRR' + userRent)
+  const userRentFROM = trpc.user.getUser.useQuery({ userId: userIdRentFROM }).data;
 
-  //const authorized = session.data?.userDB?.role === "ADMIN";
+  const authorized = session.data?.userDB?.role === "ADMIN";
 
-  //const colorTxt = useColorModeValue("black", "gray.900");
-  //const colorBg = useColorModeValue("yellow.300", "orange.50");
+  const colorTxt = useColorModeValue("black", "gray.900");
+  const colorBg = useColorModeValue("yellow.300", "orange.50");
 
   async function handleSubmit(e: any) {
     e.preventDefault();
-
     try {
-      //envio notificaciond e email - si publicacon ok:
 
-      const url = 'http://localhost:3000'
-
-      const urlRentReq = `${url}/account/rent-checkout/${id}/?totalDays=${totalDays}&totalPrice=${totalPrice}&startDate=${startDate}&endDate=${endDate}&U=${session?.data?.userDB?.id}`
-
-      /* 
-      //DAtos a eviar por url: 
-        - totalDays
-        - totalPrice
-        - startDate
-        - endDate
-        - userID (U)
-       */
-
+      const res = await fetch(
+        "https://api.mercadopago.com/checkout/preferences",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`,
+          },
+          body: JSON.stringify({
+            payer: {
+              email: session?.data?.user?.email,
+              phone: "",
+            },
+            items: [
+              {
+                title: product?.title,
+                description: product?.description,
+                picture_url: product?.pictures[0],
+                category_id: product?.category,
+                quantity: 1, //AGREGAR PRODUCT?.QUANTITY a schema
+                unit_price: product?.price,
+              },
+            ],
+            back_urls: {
+              success: "http://localhost:3000/success",
+              failure: "http://localhost:3000/failure",
+              pending: "http://localhost:3000/pending",
+            },
+            notification_url:
+              "https://04c5-191-97-97-69.sa.ngrok.io/api/notificar",
+          }),
+        }
+      );
+      const json = await res.json();
+      console.log(json, session?.data?.user?.email);
+      router.push(json.init_point);
 
       const values = {
-        name: userRent?.name,
-        email: userRent?.email,
-        subject: `Consulta sobre su artículo ${product?.title}`,
+        name: userRentFROM?.name,
+        email: userRentFROM?.email,
+        subject: `¡Alquiler Concretado! ${product?.title}`,
         message: `
-        <h3>Su consultas por ${product?.title} ha sido aprobada entre las siguientes fechas:</h3><br>
+        <h3>Su artículo ${product?.title} ha sido alquilado entre siguientes fechas:</h3><br>
         <h4>Desde el: ${startDate}</h4>
-        <h4>Desde el:  ${endDate}</h4>
+        <h4>Hasta el:  ${endDate}</h4>
         <h4>Condiciones alquiler:</h4>
-        <p>- Cantidad de dias de alquiler:${totalDays}</p>
-        <p>- Total a cobrar: $${totalPrice}</p>
-        <p>Si usted está de acuerdo con las condiciones del sitio, las fechas y el precio, por favor haga click en el siguiente link para abonar la operación:</p>
-        <p> ${urlRentReq}</p><br>
+        <p>- Cantidad de días de alquiler:${totalDays}</p>
+        <p>- Total a cobrar: $${totalPrice}</p><br>
         <p> Saudos, El equipo de rentalibre.</p>
       `,
       };
@@ -121,18 +140,19 @@ export default function ProductDetail() {
 
       //********************************** */
       toast({
-        title: "¡Su Autorización ha sido Enviada!",
+        title: "¡ GRACIAS !",
         status: "success",
         duration: 2000,
         position: "top",
       });
-      router.push("/");
+
+
+      //router.push("/");
 
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
-  };
-
+  }
 
   return (
     <Container maxW={"7xl"}>
@@ -234,7 +254,7 @@ export default function ProductDetail() {
                 fontWeight={"500"}
                 textTransform={"uppercase"}
                 mb={"4"}
-              >PRECIO TOTAL A ABONAR POR EL LOCATARIO:
+              >PRECIO TOTAL A ABONAR:
               </Text>
               <List spacing={2}>
                 <ListItem>
@@ -264,7 +284,7 @@ export default function ProductDetail() {
               }}
               onClick={handleSubmit}
             >
-              AUTORIZAR LA OPERACION
+              ¡ ALQUILAR !
             </Button>
           </Center>
 
