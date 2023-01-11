@@ -228,6 +228,7 @@ export default function Profile() {
               <MenuItem as={Button} onClick={() => setEditShow({ ...editShow, confirmationOfDeleteUser: true })}>Eliminar cuenta</MenuItem>
               <MenuItem as={Button} onClick={() => router.push('/account/my-publications')}>Mis Publicaciones</MenuItem>
               <MenuItem as={Button} onClick={() => router.push('/forms/claim')}>Abrir Reclamo</MenuItem>
+             {session?.userDB.role === 'ADMIN' ? <MenuItem as={Button} onClick={() => router.push('/admin/dashboard')}>Dashboard De Administradores</MenuItem> : null} 
             </MenuGroup>
             <MenuDivider />
           </MenuList>
