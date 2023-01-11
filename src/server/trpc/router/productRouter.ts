@@ -1,4 +1,5 @@
 import { title } from "process";
+import { MdDescription } from "react-icons/md";
 import { string, z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 
@@ -55,17 +56,32 @@ export const productRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const { title } = input;
+      console.log(title)
 
-      const productByTiltle = await ctx.prisma.product.findMany({
+      const productByTitleAndDescription = await ctx.prisma.product.findMany({
+        include: {
+          rating: true,
+          category: true,
+          user: true,
+        },
         where: {
-          title: {
-            contains: title,
-            mode: "insensitive",
-          },
+          OR: [
+            {
+              title: {
+                contains: title,
+                mode: "insensitive",
+              },
+            },
+            {
+              description: {
+                contains: title,
+                mode: "insensitive",
+              },
+            },
+          ],
         },
       });
-
-      return productByTiltle;
+      return productByTitleAndDescription;
     }),
   getProductByTitleAndCategory: publicProcedure
     .input(

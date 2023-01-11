@@ -24,11 +24,13 @@ export default function CardProductList({
   productPrice,
   rating,
 }) {
-  let avarage = 0;
+  let avarage = 0.0;
   if (rating && rating.length > 0) {
     let sum = 0;
     rating?.forEach((rating) => (sum += rating.stars));
-    avarage = sum / rating.length;
+    avarage = (sum / rating.length).toFixed(1);
+  } else {
+    avarage = '0.0';
   }
   return (
     <Center py={6}>
@@ -70,7 +72,7 @@ export default function CardProductList({
               {productName}
             </Heading>
             <Text fontWeight={600} color={"gray.500"} size="sm" mb={4}>
-              {"Valoraciones: " + avarage + "/5  estrellas" + " *"}
+              {"Valoraciones: " + avarage + "/5.0  estrellas" + " *"}
             </Text>
             <Text fontWeight={600} fontSize={"xl"}>
               {"$ " + productPrice}
