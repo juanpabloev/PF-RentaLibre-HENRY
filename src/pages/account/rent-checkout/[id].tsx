@@ -153,7 +153,7 @@ export default function ProductDetail() {
       });
 
 
-      //router.push("/");
+      router.push("/");
 
     } catch (error) {
       console.error(error);
@@ -281,8 +281,7 @@ export default function ProductDetail() {
                 mt={8}
                 size={"lg"}
                 py={"7"}
-                bg={useColorModeValue("teal", "gray.50")}
-                color={useColorModeValue("white", "teal")}
+                colorScheme="teal"
                 textTransform={"uppercase"}
                 _hover={{
                   transform: "translateY(2px)",
@@ -297,7 +296,7 @@ export default function ProductDetail() {
             {!session?.data?.user?.name && (
               <Button colorScheme="teal" onClick={handlesignIn}
               >
-                Ingresar
+                INGRESAR
               </Button>
             )}
           </Center>
