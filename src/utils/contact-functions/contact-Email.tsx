@@ -7,7 +7,7 @@ interface Values {
 
 export default async function sendEmail(values: Values) {
     console.log(values)
-    await fetch(`//api/contactMail`, {
+    await fetch(`/api/contactMail`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
