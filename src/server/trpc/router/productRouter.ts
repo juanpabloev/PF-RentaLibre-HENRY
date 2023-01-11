@@ -8,14 +8,42 @@ export const productRouter = router({
       z.object({
         page: z.number(),
         limit: z.number().min(1).max(100).default(10),
+        order: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { page, limit } = input;
+      const { page, limit, order } = input;
+      let orderByInp;
+      switch (order) {
+        case "Menor precio":
+          orderByInp = "asc";
+          break;
+        case "Mayor precio":
+          orderByInp = "desc";
+          break;
+        default:
+          orderByInp = null;
+          break;
+      }
 
       const products = await ctx.prisma.product.findMany({
         skip: page * limit - limit,
         take: limit,
+        where: {
+          disabled: false,
+        },
+        orderBy: order
+          ? orderByInp
+            ? ({
+                price: orderByInp,
+              } as any)
+            : {
+                favorito: {
+                  _count: "desc",
+                },
+              }
+          : undefined,
+
         include: {
           rating: true,
           category: true,
@@ -51,18 +79,47 @@ export const productRouter = router({
     .input(
       z.object({
         title: z.string(),
+        page: z.number(),
+        limit: z.number().min(1).max(100).default(10),
+        order: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { title } = input;
+      const { title, page, limit, order } = input;
+      let orderByInp;
+      switch (order) {
+        case "Menor precio":
+          orderByInp = "asc";
+          break;
+        case "Mayor precio":
+          orderByInp = "desc";
+          break;
+        default:
+          orderByInp = null;
+          break;
+      }
 
       const productByTiltle = await ctx.prisma.product.findMany({
+        skip: page * limit - limit,
+        take: limit,
         where: {
+          disabled: false,
           title: {
             contains: title,
             mode: "insensitive",
           },
         },
+        orderBy: order
+          ? orderByInp
+            ? ({
+                price: orderByInp,
+              } as any)
+            : {
+                favorito: {
+                  _count: "desc",
+                },
+              }
+          : undefined,
       });
 
       return productByTiltle;
@@ -72,10 +129,25 @@ export const productRouter = router({
       z.object({
         title: z.string(),
         categoryName: z.string(),
+        page: z.number(),
+        limit: z.number().min(1).max(100).default(10),
+        order: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { title, categoryName } = input;
+      const { title, categoryName, page, limit, order } = input;
+      let orderByInp;
+      switch (order) {
+        case "Menor precio":
+          orderByInp = "asc";
+          break;
+        case "Mayor precio":
+          orderByInp = "desc";
+          break;
+        default:
+          orderByInp = null;
+          break;
+      }
 
       const category = await ctx.prisma.category.findFirst({
         where: { name: categoryName },
@@ -83,18 +155,32 @@ export const productRouter = router({
       const categoryId = category?.id;
 
       const productsByTittleAndCategory = await ctx.prisma.product.findMany({
+        skip: page * limit - limit,
+        take: limit,
         include: {
           rating: true,
           category: true,
           user: true,
         },
         where: {
+          disabled: false,
           categoryId,
           title: {
             contains: title,
             mode: "insensitive",
           },
         },
+        orderBy: order
+          ? orderByInp
+            ? ({
+                price: orderByInp,
+              } as any)
+            : {
+                favorito: {
+                  _count: "desc",
+                },
+              }
+          : undefined,
       });
 
       return productsByTittleAndCategory;
@@ -104,10 +190,25 @@ export const productRouter = router({
       z.object({
         categoryName: z.string(),
         title: z.string().default(" "),
+        page: z.number(),
+        limit: z.number().min(1).max(100).default(10),
+        order: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { categoryName } = input;
+      const { categoryName, page, limit, order } = input;
+      let orderByInp;
+      switch (order) {
+        case "Menor precio":
+          orderByInp = "asc";
+          break;
+        case "Mayor precio":
+          orderByInp = "desc";
+          break;
+        default:
+          orderByInp = null;
+          break;
+      }
       const category = await ctx.prisma.category.findFirst({
         where: { name: categoryName },
       });
@@ -116,29 +217,57 @@ export const productRouter = router({
       console.log(title);
       if (title == " ") {
         productByCategory = await ctx.prisma.product.findMany({
+          skip: page * limit - limit,
+          take: limit,
           include: {
             rating: true,
             category: true,
             user: true,
           },
           where: {
+            disabled: false,
             categoryId,
             title: {
               contains: title,
               mode: "insensitive",
             },
           },
+          orderBy: order
+            ? orderByInp
+              ? ({
+                  price: orderByInp,
+                } as any)
+              : {
+                  favorito: {
+                    _count: "desc",
+                  },
+                }
+            : undefined,
         });
       } else {
         productByCategory = await ctx.prisma.product.findMany({
+          skip: page * limit - limit,
+          take: limit,
           include: {
             rating: true,
             category: true,
             user: true,
           },
           where: {
+            disabled: false,
             categoryId,
           },
+          orderBy: order
+            ? orderByInp
+              ? ({
+                  price: orderByInp,
+                } as any)
+              : {
+                  favorito: {
+                    _count: "desc",
+                  },
+                }
+            : undefined,
         });
       }
 
@@ -162,7 +291,17 @@ export const productRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { title, brand, model, pictures, securityDeposit, price, categoryId, description, availability } = input;
+      const {
+        title,
+        brand,
+        model,
+        pictures,
+        securityDeposit,
+        price,
+        categoryId,
+        description,
+        availability,
+      } = input;
       const product = await ctx.prisma.product.create({
         data: {
           title,
@@ -172,7 +311,7 @@ export const productRouter = router({
           model,
           pictures,
           securityDeposit,
-          category: {connect: {id: categoryId}},
+          category: { connect: { id: categoryId } },
           availability,
           user: {
             connect: {
@@ -225,20 +364,22 @@ export const productRouter = router({
     });
   }),
   disableProduct: publicProcedure
-  .input(z.object({
-    disabled: z.boolean(),
-    productId: z.string()
-  }))
-  .mutation(async ({ctx,input})=>{
-    const {disabled,productId} = input
-    const disabledProduct = await ctx.prisma.product.update({
-      where: {
-        id: productId
-      },
-      data: {
-        disabled,
-      }
-    })
-  return disabledProduct
-}),
+    .input(
+      z.object({
+        disabled: z.boolean(),
+        productId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { disabled, productId } = input;
+      const disabledProduct = await ctx.prisma.product.update({
+        where: {
+          id: productId,
+        },
+        data: {
+          disabled,
+        },
+      });
+      return disabledProduct;
+    }),
 });
