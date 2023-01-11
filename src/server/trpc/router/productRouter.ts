@@ -1,4 +1,5 @@
 import { title } from "process";
+import { MdDescription } from "react-icons/md";
 import { string, z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 
@@ -85,6 +86,7 @@ export const productRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
+
       const { title, page, limit, order } = input;
       let orderByInp;
       switch (order) {
@@ -98,16 +100,30 @@ export const productRouter = router({
           orderByInp = null;
           break;
       }
-
-      const productByTiltle = await ctx.prisma.product.findMany({
+      const productByTitle = await ctx.prisma.product.findMany({
         skip: page * limit - limit,
         take: limit,
+        include: {
+          rating: true,
+          category: true,
+          user: true,
+        },
         where: {
           disabled: false,
-          title: {
-            contains: title,
-            mode: "insensitive",
+          OR: [
+          {
+            title: {
+              contains: title,
+              mode: "insensitive",
+            },
           },
+          {
+            description: {
+              contains: title,
+              mode: "insensitive",
+            },
+          },
+        ],
         },
         orderBy: order
           ? orderByInp
@@ -121,8 +137,7 @@ export const productRouter = router({
               }
           : undefined,
       });
-
-      return productByTiltle;
+      return productByTitle;
     }),
   getProductByTitleAndCategory: publicProcedure
     .input(
@@ -331,37 +346,49 @@ export const productRouter = router({
       });
     }),
 
-  deleteProduct: publicProcedure.mutation(async ({ ctx }) => {
-    const deleteProduct = await ctx.prisma.user.update({
-      where: {
-        id: "6395a57846a0e8adb17b8257",
-      },
+   deleteProduct: publicProcedure
+  .input(z.object({productId: z.string(),deleted: z.boolean()}))
+  .mutation(async ({ ctx,input}) => {
+    const {productId,deleted} = input;
+    const deleteProduct = await ctx.prisma.product.update({
+       where: {
+        id: productId,
+       },
       data: {
-        products: {
-          deleteMany: [{ id: "6395dd0bc06f1d7ba549237a" }],
-        },
+        deleted
       },
     });
+    return deleteProduct
   }),
-  updateProduct: publicProcedure.mutation(async ({ ctx }) => {
-    const updateProduct = await ctx.prisma.user.update({
+  updateProduct: publicProcedure
+  .input(z.object({
+    title:z.string().optional(),
+    categoryId:z.string().optional(),
+    model:z.string().optional(),
+    brand:z.string().optional(),
+    price:z.number().optional(),
+    securityDeposit:z.number().optional(),
+    description:z.string().optional(),
+    productId: z.string(),
+    pictures: z.array(z.string()).optional()
+  }))
+  .mutation(async ({ ctx,input}) => {
+   const {pictures,title,categoryId,model,brand,price,securityDeposit,description,productId} = input
+    const updateProduct = await ctx.prisma.product.update({
       where: {
-        id: "6395a57846a0e8adb17b8257",
+        id: productId,
       },
       data: {
-        products: {
-          update: {
-            where: {
-              id: "6395d258c9f34b57356092e9",
-            },
-            data: {
-              title: "Moto Voladora",
-              price: 5.5,
-            },
-          },
-        },
+          title,
+        category: {
+         connect: {
+          id: categoryId
+         }
       },
-    });
+      model,brand,price,securityDeposit,description,pictures
+    }
+   })
+   return updateProduct
   }),
   disableProduct: publicProcedure
     .input(

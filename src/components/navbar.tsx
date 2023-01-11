@@ -51,7 +51,6 @@ import { MdReviews } from "react-icons/md";
 export default function WithSubnavigation() {
   const router = useRouter();
   const { id }: any = router.query;
-  const product = trpc.product.getProductByID.useQuery({ id }).data;
   const categories = trpc.category.getCategories.useQuery().data;
   const { data: session, status } = useSession();
   const sessionId = session?.userDB?.id;

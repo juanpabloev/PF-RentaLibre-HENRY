@@ -57,7 +57,10 @@ export default function Productlist() {
           order,
           limit,
           page,
-        }).data;
+        }).data?.filter((p)=> p.disabled === false)
+      } else if (!!q && !category) {
+        products = trpc.product.getProductByTitle.useQuery({ title: q }).data
+        ?.filter((p)=> p.disabled === false)
       } else {
         products = trpc.product.getProductByTitleAndCategory.useQuery({
           title: q,
@@ -72,14 +75,25 @@ export default function Productlist() {
         limit,
         page,
         order,
-      }).data;
+        }).data?.filter((p)=> p.disabled === false)
+      }
+    } else {
+      products = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data?.filter((p)=> p.disabled === false)
     }
   }
   const [data, setData] = useState<any>(undefined);
 
+  function getAvarage(product: any) {
+    const avarage = product.rating.map((k: any) => k.stars).reduce((total: any, star: any) => total + star, 0) / product.rating.length;
+    return isNaN(avarage) ? 0 : avarage;
+  }
+
   function handleOrder(e: string) {
     if (e === "relevantes") {
       setOrder("Más relevantes");
+      data?.sort((a: any, b: any) => {
+      return getAvarage(b) - getAvarage(a);
+      });
     } else if (e === "menor") {
       setOrder("Menor precio");
     } else if (e === "mayor") {
