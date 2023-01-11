@@ -459,7 +459,7 @@ export default function AddPublication() {
                     })}
                 </div> */}
                 {loading && (
-                    <img
+                    <Image
                         alt="spinner"
                         width="200"
                         src="https://c.tenor.com/I6kN-6X7nhAAAAAi/loading-buffering.gif"

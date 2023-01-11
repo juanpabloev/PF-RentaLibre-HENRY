@@ -39,28 +39,48 @@ export default function Productlist() {
   const utils = trpc.useContext();
   let products: any;
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [order, setOrder] = useState("");
 
   if (products === undefined) {
     if (category || q) {
       if (!!category && !q) {
         products = trpc.product.getProductByCategory.useQuery({
           categoryName: category,
+          order,
+          limit,
+          page,
+        }).data;
+      } else if (!!q && !category) {
+        products = trpc.product.getProductByTitle.useQuery({
+          title: q,
+          order,
+          limit,
+          page,
         }).data?.filter((p)=> p.disabled === false)
       } else if (!!q && !category) {
-        products = trpc.product.getProductByTitle.useQuery({ title: q }).data
+        products = trpc.product.getProductByTitle.useQuery({ title: q, order, limit, page }).data
         ?.filter((p)=> p.disabled === false)
       } else {
         products = trpc.product.getProductByTitleAndCategory.useQuery({
           title: q,
           categoryName: category,
+          limit,
+          page,
+          order,
+        }).data;
+      }
+    } else {
+      products = trpc.product.getProducts.useQuery({
+        limit,
+        page,
+        order,
         }).data?.filter((p)=> p.disabled === false)
       }
     } else {
       products = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data?.filter((p)=> p.disabled === false)
     }
-  }
   const [data, setData] = useState<any>(undefined);
-  const [order, setOrder] = useState("Más relevantes");
 
   function getAvarage(product: any) {
     const avarage = product.rating.map((k: any) => k.stars).reduce((total: any, star: any) => total + star, 0) / product.rating.length;
@@ -75,20 +95,13 @@ export default function Productlist() {
       });
     } else if (e === "menor") {
       setOrder("Menor precio");
-      data.sort((a: any, b: any) => {
-        return a.price - b.price;
-      });
     } else if (e === "mayor") {
       setOrder("Mayor precio");
-      data.sort((a: any, b: any) => {
-        return b.price - a.price;
-      });
     }
   }
 
   //para que refresque los datos
   useEffect(() => {
-    setOrder("Más relevantes");
     setData(products);
   }, [products]);
 
@@ -166,9 +179,13 @@ export default function Productlist() {
         alignContent="center"
         margin="5"
       >
-        <Button onClick={(e) => handlePrevious(e)}>Anterior</Button>
+        {page > 1 ? (
+          <Button onClick={(e) => handlePrevious(e)}>Anterior</Button>
+        ) : null}
         <Button>{page}</Button>
-        <Button onClick={(e) => handleNext(e)}>Proximo</Button>
+        {data?.length >= limit ? (
+          <Button onClick={(e) => handleNext(e)}>Proximo</Button>
+        ) : null}
       </Box>
     </div>
   );
