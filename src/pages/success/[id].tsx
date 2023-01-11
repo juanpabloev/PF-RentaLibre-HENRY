@@ -51,7 +51,7 @@ useEffect(() => {
             }) */
     }
 }
-}, [product])
+}, [createNotification, payment, payment_id, product, session?.data?.userDB?.id, submit.comprobate])
         
     if (!session) {
         return (

@@ -134,52 +134,6 @@ export default function ProductDetail() {
   const colorTxt = useColorModeValue("black", "gray.900");
   const colorBg = useColorModeValue("yellow.300", "orange.50");
 
-  async function handleSubmit() {
-    try {
-      const res = await fetch(
-        "https://api.mercadopago.com/checkout/preferences",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`,
-          },
-          body: JSON.stringify({
-            payer: {
-              email: session?.data?.user?.email,
-              phone: "",
-              name: session?.data?.user?.name,
-            },
-            product_id: id,
-            items: [
-              {
-                title: product?.title,
-                description: product?.description,
-                picture_url: product?.pictures[0],
-                category_id: product?.category,
-                id: product?.id,
-                quantity: 1, //AGREGAR PRODUCT?.QUANTITY a schema
-                unit_price: product?.price,
-              },
-            ],
-            back_urls: {
-              success: `http://localhost:3000/success/${id}`,
-              failure: `http://localhost:3000/failure/${id}`,
-              pending: `http://localhost:3000/pending/${id}`,
-            },
-            notification_url:
-              `https://rentalibre.vercel.app/success/${id}`,
-          }),
-        }
-      );
-      console.log(id)
-      const json = await res.json();
-      router.push(json.init_point);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   const handleFavorites = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     addFavorite.mutate({ productId: id });
@@ -478,36 +432,7 @@ export default function ProductDetail() {
                 />
               </div>
             </Box>
-
             <HStack spacing={75} justifyContent={"center"}></HStack>
-            <Button
-              rounded={10}
-              w={250}
-              mt={8}
-              size={"lg"}
-              py={"7"}
-              bg={useColorModeValue("teal", "gray.50")}
-              color={useColorModeValue("white", "teal")}
-              textTransform={"uppercase"}
-              _hover={{
-                transform: "translateY(2px)",
-                boxShadow: "lg",
-              }}
-              onClick={handleSubmit}
-            >
-              {product?.availability ? (
-                <Badge ml={2} colorScheme="green">
-                  Disponible para renta!
-                </Badge>
-              ) : (
-                <Badge ml={2} colorScheme="red">
-                  No disponible
-                </Badge>
-              )}
-            </Button>
-            
-          
-
           <Stack direction="row" alignItems="center" justifyContent={"center"}>
             <MdLocalShipping />
             <Text>Consultar Envío</Text>
