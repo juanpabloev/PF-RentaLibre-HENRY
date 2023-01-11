@@ -79,46 +79,4 @@ export function handleChangeRating(
   });
 }
 
-export function handleSubmitRatingProduct(
-  e: FormEvent<HTMLFormElement>,
-  state: any
-) {
-  e.preventDefault();
-  createRatingProduct.mutate(state);
-}
 
-export function handleChangeRatingProduct(
-  e: ChangeEvent<HTMLInputElement>,
-  changeState: any,
-  state: any
-) {
-  changeState({
-    ...state,
-    [e.target.name]: e.target.value,
-  });
-}
-
-export function createPaymentmethod (){
-  createPayment.mutate()
-}
-
-export function deleteProduct () {
-  deleteP.mutate()
-}
-
-export function updateProduct() {
-  updateP.mutate();
-  //updateR.mutate();
-}
-
-export function deleteUser() {
-  // deleteU.mutate();
-}
-
-// export function addFavorite () {
-//  addF.mutate()
-// }
-
-// export function deleteFavorite () {
-//  deleteF.mutate()
-// }
