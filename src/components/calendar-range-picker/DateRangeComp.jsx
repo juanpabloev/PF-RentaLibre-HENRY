@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 
 import { DateRange } from "react-date-range";
@@ -157,9 +157,19 @@ export default function DateRangeComp({
           onClick={() => setOpen((open) => !open)}
         />
 
-        <Button colorScheme="teal" onClick={handleSendDates}>
+        {session?.data?.user?.name && (
+          <Button colorScheme="teal" onClick={handleSendDates}>
           Enviar Consulta
         </Button>
+        )}
+
+        {!session?.data?.user?.name && (
+          <Button colorScheme="teal" onClick={signIn}>
+          Ingresar
+        </Button>
+        )}
+
+        
       </HStack>
 
       <div ref={refOne}>

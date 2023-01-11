@@ -24,11 +24,15 @@ import {
 
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Style from "../../../styles/id.module.css";
 
 import sendEmail from "../../../utils/contact-functions/contact-Email";
+
+function handlesignIn() {
+  signIn()
+}
 
 const validate = (input: any) => {
   const errors = {
@@ -101,9 +105,9 @@ export default function ProductDetail() {
         message: `
         <h3>Su consultas por ${product?.title} ha sido aprobada entre las siguientes fechas:</h3><br>
         <h4>Desde el: ${startDate}</h4>
-        <h4>Desde el:  ${endDate}</h4>
+        <h4>>Hasta el:  ${endDate}</h4>
         <h4>Condiciones alquiler:</h4>
-        <p>- Cantidad de dias de alquiler:${totalDays}</p>
+        <p>- Cantidad de dias de alquiler: ${totalDays}</p>
         <p>- Total a cobrar: $${totalPrice}</p>
         <p>Si usted está de acuerdo con las condiciones del sitio, las fechas y el precio, por favor haga click en el siguiente link para abonar la operación:</p>
         <p> ${urlRentReq}</p><br>
@@ -249,23 +253,34 @@ export default function ProductDetail() {
 
           <HStack spacing={75} justifyContent={"center"}></HStack>
           <Center>
-            <Button
-              rounded={10}
-              w={300}
-              mt={8}
-              size={"lg"}
-              py={"7"}
-              bg={useColorModeValue("teal", "gray.50")}
-              color={useColorModeValue("white", "teal")}
-              textTransform={"uppercase"}
-              _hover={{
-                transform: "translateY(2px)",
-                boxShadow: "lg",
-              }}
-              onClick={handleSubmit}
-            >
-              AUTORIZAR LA OPERACION
-            </Button>
+
+            {session?.data?.user?.name && (
+              <Button
+                rounded={10}
+                w={300}
+                mt={8}
+                size={"lg"}
+                py={"7"}
+                bg={useColorModeValue("teal", "gray.50")}
+                color={useColorModeValue("white", "teal")}
+                textTransform={"uppercase"}
+                _hover={{
+                  transform: "translateY(2px)",
+                  boxShadow: "lg",
+                }}
+                onClick={handleSubmit}
+              >
+                AUTORIZAR LA OPERACION
+              </Button>
+            )}
+
+            {!session?.data?.user?.name && (
+              <Button colorScheme="teal" onClick={handlesignIn}
+              >
+                Ingresar
+              </Button>
+            )}
+
           </Center>
 
           {/* 
