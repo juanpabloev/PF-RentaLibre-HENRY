@@ -333,7 +333,7 @@ export default function ProductDetail() {
       </Container>
     )
   } else {
-    return router.push('/access-denied')
+    router.push('/access-denied')
   }
 
 }

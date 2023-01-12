@@ -283,7 +283,7 @@ export default function AddPublication() {
         }
     };
 
-    if (status === "authenticated" && !session?.userDB?.banned) {
+    if (!session?.userDB?.banned) {
 
         return (
             <Container maxW="450px" mt={12}>
@@ -500,7 +500,7 @@ export default function AddPublication() {
             </Container>
         );
     } else {
-        return router.push('/access-denied')
+        router.push('/access-denied')
     }
 
 }

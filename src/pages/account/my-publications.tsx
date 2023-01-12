@@ -40,6 +40,6 @@ export default function MyPublications() {
       </div>
     );
   } else {
-    return router.push('/access-denied')
+    router.push('/access-denied')
   }
 }

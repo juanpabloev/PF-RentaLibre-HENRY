@@ -647,6 +647,6 @@ export default function EditPublication() {
       </Flex>
     );
   } else {
-    return router.push("/access-denied");
+    router.push("/access-denied");
   }
 }
