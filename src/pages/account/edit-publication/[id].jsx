@@ -88,7 +88,7 @@ export default function EditPublication() {
     );
   }
   const toast = useToast();
-  const { data: session, status } = useSession({ required: true });
+  const { data: session, status } = useSession({ required: true })
   const categoriesDB = trpc.category.getCategories.useQuery().data;
 
   const [editShow, setEditShow] = useState({
@@ -337,6 +337,7 @@ export default function EditPublication() {
             />
           )}
           <Flex>
+          <Flex>
             <Text fontSize="20px" fontWeight="semibold" ml="1%">
               Descripción:
             </Text>
@@ -346,12 +347,14 @@ export default function EditPublication() {
               color="blue.400"
               fontSize="20px"
               fontWeight="semibold"
+              w='80%'
             >
               {editPublication.description
                 ? editPublication.description
                 : product?.description}
             </Text>
-            <Box mr="1%" mt="1%">
+            </Flex>
+            <Box justifyContent="center" ml="1%" mr="1%" mt="1%" w='20%'>
               <button
                 onClick={() =>
                   setEditShow({
@@ -367,7 +370,8 @@ export default function EditPublication() {
                 />
               </button>
             </Box>
-          </Flex>
+            </Flex>
+          
           {editShow.inputDescription && (
             <Textarea
               value={editPublication.description}
