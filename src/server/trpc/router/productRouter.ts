@@ -51,7 +51,6 @@ export const productRouter = router({
           user: true,
         },
       });
-
       return products;
     }),
   getProductByID: publicProcedure
@@ -109,7 +108,6 @@ export const productRouter = router({
           user: true,
         },
         where: {
-          disabled: false,
           OR: [
           {
             title: {
@@ -122,8 +120,9 @@ export const productRouter = router({
               contains: title,
               mode: "insensitive",
             },
-          },
+          },     
         ],
+        disabled: false,
         },
         orderBy: order
           ? orderByInp
