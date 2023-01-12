@@ -13,7 +13,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-
   MenuDivider,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -47,7 +46,7 @@ export default function Productlist() {
           order,
           limit,
           page,
-        }).data
+        }).data;
       } else {
         products = trpc.product.getProductByTitleAndCategory.useQuery({
           title: q,
@@ -62,22 +61,14 @@ export default function Productlist() {
         limit,
         page,
         order,
-        }).data
-      }
+      }).data;
     }
-  const [data, setData] = useState<any>(undefined);
-
-  function getAvarage(product: any) {
-    const avarage = product.rating.map((k: any) => k.stars).reduce((total: any, star: any) => total + star, 0) / product.rating.length;
-    return isNaN(avarage) ? 0 : avarage;
   }
+  const [data, setData] = useState<any>(undefined);
 
   function handleOrder(e: string) {
     if (e === "relevantes") {
       setOrder("Más relevantes");
-      data?.sort((a: any, b: any) => {
-      return getAvarage(b) - getAvarage(a);
-      });
     } else if (e === "menor") {
       setOrder("Menor precio");
     } else if (e === "mayor") {

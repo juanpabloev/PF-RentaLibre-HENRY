@@ -31,7 +31,7 @@ export const productRouter = router({
         skip: page * limit - limit,
         take: limit,
         where: {
-          disabled: false,
+          visible: "Hab",
         },
         orderBy: order
           ? orderByInp
@@ -76,7 +76,7 @@ export const productRouter = router({
 
       return productById;
     }),
-    getProductByTitle: publicProcedure
+  getProductByTitle: publicProcedure
     .input(
       z.object({
         title: z.string(),
@@ -86,7 +86,6 @@ export const productRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-
       const { title, page, limit, order } = input;
       let orderByInp;
       switch (order) {
@@ -109,21 +108,21 @@ export const productRouter = router({
           user: true,
         },
         where: {
-          disabled: false,
+          visible: "Hab",
           OR: [
-          {
-            title: {
-              contains: title,
-              mode: "insensitive",
+            {
+              title: {
+                contains: title,
+                mode: "insensitive",
+              },
             },
-          },
-          {
-            description: {
-              contains: title,
-              mode: "insensitive",
+            {
+              description: {
+                contains: title,
+                mode: "insensitive",
+              },
             },
-          },
-        ],
+          ],
         },
         orderBy: order
           ? orderByInp
@@ -178,7 +177,7 @@ export const productRouter = router({
           user: true,
         },
         where: {
-          disabled: false,
+          visible: "Hab",
           categoryId,
           title: {
             contains: title,
@@ -239,7 +238,7 @@ export const productRouter = router({
             user: true,
           },
           where: {
-            disabled: false,
+            visible: "Hab",
             categoryId,
             title: {
               contains: title,
@@ -262,13 +261,14 @@ export const productRouter = router({
         productByCategory = await ctx.prisma.product.findMany({
           skip: page * limit - limit,
           take: limit,
+
           include: {
             rating: true,
             category: true,
             user: true,
           },
           where: {
-            disabled: false,
+            visible: "Hab",
             categoryId,
           },
           orderBy: order
@@ -345,50 +345,68 @@ export const productRouter = router({
       });
     }),
 
-   deleteProduct: publicProcedure
-  .input(z.object({productId: z.string(),deleted: z.boolean()}))
-  .mutation(async ({ ctx,input}) => {
-    const {productId,deleted} = input;
-    const deleteProduct = await ctx.prisma.product.update({
-       where: {
-        id: productId,
-       },
-      data: {
-        deleted
-      },
-    });
-    return deleteProduct
-  }),
+  deleteProduct: publicProcedure
+    .input(z.object({ productId: z.string(), deleted: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const { productId, deleted } = input;
+      const deleteProduct = await ctx.prisma.product.update({
+        where: {
+          id: productId,
+        },
+        data: {
+          deleted,
+          visible: "Des",
+        },
+      });
+      return deleteProduct;
+    }),
   updateProduct: publicProcedure
-  .input(z.object({
-    title:z.string().optional(),
-    categoryId:z.string().optional(),
-    model:z.string().optional(),
-    brand:z.string().optional(),
-    price:z.number().optional(),
-    securityDeposit:z.number().optional(),
-    description:z.string().optional(),
-    productId: z.string(),
-    pictures: z.array(z.string()).optional()
-  }))
-  .mutation(async ({ ctx,input}) => {
-   const {pictures,title,categoryId,model,brand,price,securityDeposit,description,productId} = input
-    const updateProduct = await ctx.prisma.product.update({
-      where: {
-        id: productId,
-      },
-      data: {
+    .input(
+      z.object({
+        title: z.string().optional(),
+        categoryId: z.string().optional(),
+        model: z.string().optional(),
+        brand: z.string().optional(),
+        price: z.number().optional(),
+        securityDeposit: z.number().optional(),
+        description: z.string().optional(),
+        productId: z.string(),
+        pictures: z.array(z.string()).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const {
+        pictures,
+        title,
+        categoryId,
+        model,
+        brand,
+        price,
+        securityDeposit,
+        description,
+        productId,
+      } = input;
+      const updateProduct = await ctx.prisma.product.update({
+        where: {
+          id: productId,
+        },
+        data: {
           title,
-        category: {
-         connect: {
-          id: categoryId
-         }
-      },
-      model,brand,price,securityDeposit,description,pictures
-    }
-   })
-   return updateProduct
-  }),
+          category: {
+            connect: {
+              id: categoryId,
+            },
+          },
+          model,
+          brand,
+          price,
+          securityDeposit,
+          description,
+          pictures,
+        },
+      });
+      return updateProduct;
+    }),
   disableProduct: publicProcedure
     .input(
       z.object({
@@ -404,6 +422,7 @@ export const productRouter = router({
         },
         data: {
           disabled,
+          visible: disabled ? "Des" : "Hab",
         },
       });
       return disabledProduct;

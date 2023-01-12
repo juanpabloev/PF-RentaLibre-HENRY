@@ -82,6 +82,7 @@ model Product {
   methodName         String?
   securityDeposit    Float?
   disabled           Boolean @default(false)
+  visible            String  @default("Hab")
   deleted            Boolean @default(false)
 }
 
