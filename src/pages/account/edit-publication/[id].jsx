@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 
 export default function EditPublication() {
+  const { data: session, status } = useSession({ required: true })
   let positionPicture = 0;
   const router = useRouter();
   const { id } = router.query;
@@ -88,7 +89,7 @@ export default function EditPublication() {
     );
   }
   const toast = useToast();
-  const { data: session, status } = useSession({ required: true })
+  
   const categoriesDB = trpc.category.getCategories.useQuery().data;
 
   const [editShow, setEditShow] = useState({
@@ -195,8 +196,7 @@ export default function EditPublication() {
     });
   }
 
-  if (status === "authenticated" && !session?.userDB?.banned) {
-    return (
+  return (
       <Flex w="100%" mt={12}>
         <Box w="50%">
           <Input
@@ -650,7 +650,4 @@ export default function EditPublication() {
         </Flex>
       </Flex>
     );
-  } else {
-    router.push("/access-denied");
-  }
 }
