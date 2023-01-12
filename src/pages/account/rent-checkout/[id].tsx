@@ -178,7 +178,7 @@ export default function ProductDetail() {
                 {product?.title}
               </Heading>
               <Text
-                color={useColorModeValue("gray.900", "gray.400")}
+                color={"grey.800"}
                 fontWeight={300}
                 fontSize={"2xl"}
               >
@@ -191,14 +191,14 @@ export default function ProductDetail() {
               direction={"column"}
               divider={
                 <StackDivider
-                  borderColor={useColorModeValue("gray.200", "gray.600")}
+                  borderColor={"grey.800"}
                 />
               }
             >
               <Box>
                 <Text
                   fontSize={{ base: "16px", lg: "18px" }}
-                  color={useColorModeValue("yellow.500", "yellow.300")}
+                  color={"grey.800"}
                   fontWeight={"500"}
                   textTransform={"uppercase"}
                   mb={"4"}
@@ -214,7 +214,7 @@ export default function ProductDetail() {
               <Box>
                 <Text
                   fontSize={{ base: "16px", lg: "18px" }}
-                  color={useColorModeValue("yellow.500", "yellow.300")}
+                  color={"yellow.800"}
                   fontWeight={"500"}
                   textTransform={"uppercase"}
                   mb={"4"}
@@ -230,7 +230,7 @@ export default function ProductDetail() {
               <Box>
                 <Text
                   fontSize={{ base: "16px", lg: "18px" }}
-                  color={useColorModeValue("yellow.500", "yellow.300")}
+                  color={"yellow.800"}
                   fontWeight={"500"}
                   textTransform={"uppercase"}
                   mb={"4"}
@@ -246,7 +246,7 @@ export default function ProductDetail() {
               <Box>
                 <Text
                   fontSize={{ base: "16px", lg: "18px" }}
-                  color={useColorModeValue("yellow.500", "yellow.300")}
+                  color={"yellow.800"}
                   fontWeight={"500"}
                   textTransform={"uppercase"}
                   mb={"4"}
