@@ -19,7 +19,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-import DateRangeComp from '../../components/calendar-range-picker/DateRangeComp';
+import DateRangeComp from "../../components/calendar-range-picker/DateRangeComp";
 
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
@@ -69,7 +69,8 @@ export default function ProductDetail() {
     },
   });
   const addFavorite = trpc.user.addFavorite.useMutation();
-  const addTypeNotification = trpc.notification.createNotification.useMutation();
+  const addTypeNotification =
+    trpc.notification.createNotification.useMutation();
   const [ratingInput, setRatingInput] = useState({
     rating: "3",
     comment: "",
@@ -87,7 +88,7 @@ export default function ProductDetail() {
     (rating) => rating.userRater.id === session.data?.user?.id
   );
   if (userComment) alredyCommented = true;
-  useEffect(() => { }, [alredyCommented]);
+  useEffect(() => {}, [alredyCommented]);
 
   const authorized = session.data?.userDB?.role === "ADMIN";
 
@@ -125,7 +126,8 @@ export default function ProductDetail() {
       });
       addTypeNotification.mutate({
         type: "Review",
-        message: `Tu producto ha recibido un review: "`+ratingInput.comment+`"`,
+        message:
+          `Tu producto ha recibido un review: "` + ratingInput.comment + `"`,
         productId: id,
         id: product?.userId!,
         productName: product?.title!,
@@ -134,11 +136,11 @@ export default function ProductDetail() {
     }
   };
 
-  let avarage = 0;
+  let avarage: any = 0;
   if (product?.rating && product?.rating.length > 0) {
     let sum = 0;
     product?.rating?.forEach((rating: any) => (sum += rating.stars));
-    avarage = sum / product?.rating.length;
+    avarage = (sum / product?.rating.length).toFixed(1);
   }
 
   const handleDelete = (e: any) => {
@@ -304,32 +306,31 @@ export default function ProductDetail() {
                 Usuario
               </Text>
               <List spacing={2}>
-                <ListItem>
-                  {product?.user?.name}
-                </ListItem>
+                <ListItem>{product?.user?.name}</ListItem>
               </List>
             </Box>
           </Stack>
-            <Box>
-              <div className="datePicker">
+          <Box>
+            <div className="datePicker">
               <Text
                 fontSize={{ base: "16px", lg: "18px" }}
                 color={useColorModeValue("yellow.500", "yellow.300")}
                 fontWeight={"500"}
                 textTransform={"uppercase"}
                 mb={"2"}
-              >Consultar Fechas
+              >
+                Consultar Fechas
               </Text>
-                <DateRangeComp
+              <DateRangeComp
                 productName={product?.title}
                 productUserName={product?.user?.name}
                 productUserEmail={product?.user?.email}
                 productPrice={product?.price}
                 productId={product?.id}
-                />
-              </div>
-            </Box>
-            <HStack spacing={75} justifyContent={"center"}></HStack>
+              />
+            </div>
+          </Box>
+          <HStack spacing={75} justifyContent={"center"}></HStack>
           <Stack direction="row" alignItems="center" justifyContent={"center"}>
             <MdLocalShipping />
             <Text>Consultar Envío</Text>
