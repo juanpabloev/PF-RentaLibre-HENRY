@@ -76,7 +76,7 @@ export const productRouter = router({
 
       return productById;
     }),
-  getProductByTitle: publicProcedure
+    getProductByTitle: publicProcedure
     .input(
       z.object({
         title: z.string(),

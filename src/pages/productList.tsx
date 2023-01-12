@@ -47,10 +47,7 @@ export default function Productlist() {
           order,
           limit,
           page,
-        }).data?.filter((p:any)=> p.disabled === false)
-      } else if (!!q && !category) {
-        products = trpc.product.getProductByTitle.useQuery({ title: q, order, limit, page }).data
-        ?.filter((p:any)=> p.disabled === false)
+        }).data
       } else {
         products = trpc.product.getProductByTitleAndCategory.useQuery({
           title: q,
@@ -65,10 +62,8 @@ export default function Productlist() {
         limit,
         page,
         order,
-        }).data?.filter((p)=> p.disabled === false)
+        }).data
       }
-    } else {
-      products = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data?.filter((p)=> p.disabled === false)
     }
   const [data, setData] = useState<any>(undefined);
 
