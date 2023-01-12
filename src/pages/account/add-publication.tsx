@@ -340,6 +340,13 @@ export default function AddPublication() {
                 <Text color="red.500" fontSize="md" marginBottom={5}
                 >Debe proporcionar teléfono, edite perfil para continuar</Text>
             }
+            {session?.userDB.streetAddress &&
+                <FormLabel marginBottom={5}>Domicilio: {session?.userDB.streetAddress.street} {session?.userDB.streetAddress.houseNumber}</FormLabel>
+            }
+            {!session?.userDB.streetAddress &&
+                <Text color="red.500" fontSize="md" marginBottom={5}
+                >Debe proporcionar una domicilio, edite perfil para continuar</Text>
+            }
             <FormLabel marginBottom={5}>¿Datos Correctos?</FormLabel>
             <Center marginBottom={10}>
                 <a href={"/account/profile"}>
@@ -544,7 +551,7 @@ export default function AddPublication() {
                     colorScheme="blue"
                     isLoading={isLoading}
                     disabled={
-                        !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500 || !values.pictures || values.pictures.length > 4 || values.pictures.length === 0 || !session?.userDB.phoneNumber
+                        !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500 || !values.pictures || values.pictures.length > 4 || values.pictures.length === 0 || !session?.userDB.phoneNumber || !session?.userDB.streetAddress
                     }
                     onClick={onSubmit}
                     marginBottom={10}
