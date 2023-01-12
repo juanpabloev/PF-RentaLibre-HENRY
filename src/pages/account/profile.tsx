@@ -1,4 +1,4 @@
-import { Box, Text, Input, Img, Button, Flex } from "@chakra-ui/react";
+import { Box, Text, Input, Img, Button, Flex, Center } from "@chakra-ui/react";
 import { trpc } from "../../utils/trpc";
 import React, { useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -37,8 +37,8 @@ export default function Profile() {
     stateName: "",
     cityName: "",
     phoneNumber: "",
-    houseNumber:"",
-    street:"",
+    houseNumber: "",
+    street: "",
     saveButton: false,
   });
 
@@ -184,7 +184,7 @@ export default function Profile() {
     })
 
     setEditShow({
-      address:false,
+      address: false,
       inputName: false,
       inputPostal: false,
       inputPhone: false,
@@ -198,8 +198,8 @@ export default function Profile() {
 
   function handleDismissClick() {
     setEditUser({
-      street:"",
-      houseNumber:"",
+      street: "",
+      houseNumber: "",
       name: "",
       userPicture: "",
       lastName: "",
@@ -237,7 +237,7 @@ export default function Profile() {
               <MenuItem as={Button} onClick={() => setEditShow({ ...editShow, confirmationOfDeleteUser: true })}>Eliminar cuenta</MenuItem>
               <MenuItem as={Button} onClick={() => router.push('/account/my-publications')}>Mis Publicaciones</MenuItem>
               <MenuItem as={Button} onClick={() => router.push('/forms/claim')}>Abrir Reclamo</MenuItem>
-             {session?.userDB.role === 'ADMIN' ? <MenuItem as={Button} onClick={() => router.push('/admin/dashboard')}>Dashboard De Administradores</MenuItem> : null} 
+              {session?.userDB.role === 'ADMIN' ? <MenuItem as={Button} onClick={() => router.push('/admin/dashboard')}>Dashboard De Administradores</MenuItem> : null}
             </MenuGroup>
             <MenuDivider />
           </MenuList>
@@ -286,6 +286,11 @@ export default function Profile() {
             cambiar foto
           </Button>
         </Flex>
+
+        {session?.userDB?.banned &&
+        <Center marginTop={15}>
+          <Text color={'red'} fontSize={'lg'}>USUARIO BLOQUEADO. CONTACTAR A SOPORTE.</Text>
+        </Center>}
 
         <Flex
           mt="5%"
@@ -455,7 +460,7 @@ export default function Profile() {
               />
             ) : null}
 
-<Flex >
+            <Flex >
               <Text ml="2%" fontSize="20px" fontWeight="semibold">
                 DOMICILIO:
               </Text>
@@ -612,13 +617,13 @@ export default function Profile() {
                   ))}
               </Select>
             ) : null}
-            
+
 
             {
               editUser.saveButton ?
-              editUser.street ||
-              editUser.houseNumber ||
-                editUser.userPicture ||
+                editUser.street ||
+                  editUser.houseNumber ||
+                  editUser.userPicture ||
                   editUser.stateName ||
                   editUser.phoneNumber ||
                   editUser.name ||

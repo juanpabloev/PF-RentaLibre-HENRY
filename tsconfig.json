@@ -17,6 +17,6 @@
     "noUncheckedIndexedAccess": true,
     //"noImplicitAny": false
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs", "src/pages/productList.tsx"],
   "exclude": ["node_modules"]
 }
