@@ -51,7 +51,6 @@ export const productRouter = router({
           user: true,
         },
       });
-
       return products;
     }),
   getProductByID: publicProcedure
