@@ -229,7 +229,6 @@ export const productRouter = router({
       });
       const categoryId = category?.id;
       let productByCategory;
-      console.log(title);
       if (title == " ") {
         productByCategory = await ctx.prisma.product.findMany({
           skip: page * limit - limit,

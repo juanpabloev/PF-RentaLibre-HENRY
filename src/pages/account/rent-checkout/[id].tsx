@@ -6,7 +6,6 @@ import {
   Text,
   Image,
   Flex,
-  VStack,
   HStack,
   Button,
   Heading,
@@ -15,17 +14,14 @@ import {
   useColorModeValue,
   List,
   ListItem,
-  Badge,
-  Textarea,
   useToast,
-  Input,
   Center,
 } from "@chakra-ui/react";
 
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
-import { useSession, signIn } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import React from "react";
 import Style from "../../../styles/id.module.css";
 
 import sendEmail from "../../../utils/contact-functions/contact-Email";
@@ -50,19 +46,14 @@ const validate = (input: any) => {
 
 export default function ProductDetail() {
 
-  // console.log('Window Location:', window.location)
-
   const myKeysValues = window.location.search;
   const urlParams = new URLSearchParams(myKeysValues);
 
-  //const id = urlParams.get('prodId');
   const totalDays = urlParams.get('totalDays');
   const totalPrice = urlParams.get('totalPrice');
   const startDate = urlParams.get('startDate');
   const endDate = urlParams.get('endDate');
   const userIdRentFROM: any = urlParams.get('U'); //este es el ID del locador - par aeviar confirmacion operacion
-
-  //console.log(totalDays, totalPrice)
 
   const toast = useToast();
   const router = useRouter();
@@ -87,7 +78,7 @@ export default function ProductDetail() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer APP_USR-5672095275524228-121515-ef3e594e4fc515b3e4d7d98cff8d97e1-1263932815`,
+            Authorization: `${process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION}`,
           },
           body: JSON.stringify({
             payer: {
@@ -108,9 +99,9 @@ export default function ProductDetail() {
               },
             ],
             back_urls: {
-              success: `http://localhost:3000/success/${id}`,
-              failure: `http://localhost:3000/failure/${id}`,
-              pending: `http://localhost:3000/pending/${id}`,
+              success: `${process.env.NEXTAUTH_URL}/success/${id}`,
+              failure: `${process.env.NEXTAUTH_URL}/failure/${id}`,
+              pending: `${process.env.NEXTAUTH_URL}pending/${id}`,
             },
             notification_url:
               `https://rentalibre.vercel.app/success/${id}`,
@@ -118,7 +109,6 @@ export default function ProductDetail() {
         }
       );
       const json = await res.json();
-      console.log(json, process.env.NEXT_PUBLIC_MERCADOLIBRE_AUTHORIZATION);
       router.push(json.init_point);
 
       const values = {
@@ -135,8 +125,6 @@ export default function ProductDetail() {
         <p> Saudos, El equipo de rentalibre.</p>
       `,
       };
-
-      //console.log(values);
 
       if (true) {
         sendEmail(values);

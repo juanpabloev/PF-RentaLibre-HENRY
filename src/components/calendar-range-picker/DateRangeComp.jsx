@@ -1,37 +1,23 @@
 import { useSession, signIn } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
-
 import { DateRange } from "react-date-range";
 import format from "date-fns/format";
 import { addDays } from "date-fns";
-
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-
 import sendEmail from "../../utils/contact-functions/contact-Email";
-
-import { Box, VStack, HStack, Button, useToast, Input } from "@chakra-ui/react";
+import { HStack, Button, useToast } from "@chakra-ui/react";
 
 export default function DateRangeComp({
   productId,
-  productPhoto,
   productName,
   productUserEmail,
   productUserName,
   productPrice,
 }) {
-  //console.log(productId, productName, productPhoto, productPrice);
-
 
   const toast = useToast();
   const session = useSession();
-
-  //const url = process.env.NEXTAUTH_URL
-  const url = process.env.NEXT_PUBLIC_HOME_URL
-
-  //console.log(session);
-
-  // date state
 
   const [range, setRange] = useState([
     {
@@ -53,9 +39,7 @@ export default function DateRangeComp({
     document.addEventListener("click", hideOnClickOutside, true);
   }, []);
 
-  // hide dropdown on ESC press
   const hideOnEscape = (e) => {
-    // console.log(e.key)
     if (e.key === "Escape") {
       setOpen(false);
     }
@@ -63,8 +47,6 @@ export default function DateRangeComp({
 
   // Hide on outside click
   const hideOnClickOutside = (e) => {
-    // console.log(refOne.current)
-    // console.log(e.target)
     if (refOne.current && !refOne.current.contains(e.target)) {
       setOpen(false);
     }
@@ -74,15 +56,13 @@ export default function DateRangeComp({
     e.preventDefault();
 
     try {
-      //envio notificaciond e email - si publicacon ok:
-
       const differenceDays = range[0].endDate.getTime() - range[0].startDate.getTime();
       const totalDays = Math.ceil(differenceDays / (1000 * 3600 * 24));
       const totalPrice = productPrice*totalDays;
       const startDate = format(range[0].startDate, "dd/MM/yyyy");
       const endDate = format(range[0].endDate, "dd/MM//yyyy");
 
-      const urlRentReq = `${url}/account/rent-request/${productId}/?totalDays=${totalDays}&totalPrice=${totalPrice}&startDate=${startDate}&endDate=${endDate}&U=${session?.data?.userDB?.id}`
+      const urlRentReq = `${process.env.NEXTAUTH_URL}/account/rent-request/${productId}/?totalDays=${totalDays}&totalPrice=${totalPrice}&startDate=${startDate}&endDate=${endDate}&U=${session?.data?.userDB?.id}`
 
       /* 
       //DAtos a eviar por url: 
@@ -111,26 +91,12 @@ export default function DateRangeComp({
         <p> Saudos, El equipo de rentalibre.</p>
       `,
       };
-
-      //console.log(values);
-
       if (true) {
             sendEmail(values);
         } else {
             console.log('No Data response from publication');
         };
 
-      //********************************** */
-      //console.log(range);
-
-      /* setRange([
-          {
-            startDate: new Date(),
-            endDate: addDays(new Date(), 7),
-            key: "selection",
-          },
-        ]);
- */
       toast({
         title: "¡Su Consulta ha sido Enviada!",
         status: "success",
@@ -139,7 +105,6 @@ export default function DateRangeComp({
       });
 
       router.push("/");
-      
     } catch (error) {
       console.log(error);
     }

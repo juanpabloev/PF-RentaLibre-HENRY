@@ -9,17 +9,16 @@ import DashboardRentedProducts from "../../components/profileComponents/dashboar
 import PhoneNumberInput from "../../components/profileComponents/input-phoneNumber";
 import { provincias } from "../../utils/provincias-ciudades/provincias";
 import { localidades } from "../../utils/provincias-ciudades/localidades";
-import { useSession, signIn, signOut, getSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import {
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  MenuItemOption,
   MenuGroup,
-  MenuOptionGroup,
   MenuDivider,
+  Image,
 } from '@chakra-ui/react'
 import Confirmation from "../../components/profileComponents/confirmation-of-delete";
 import PopUpModification from "../../components/profileComponents/popUpModification";
@@ -248,11 +247,11 @@ export default function Profile() {
         </Text>
         {editUser.userPicture && !editShow.changePhoto ? (
           <>
-            <Img
+            <Image
               src={editUser.userPicture}
               m="0px auto 0px auto"
-              w="200px"
-              h="200px"
+              w="50px"
+              h="50px"
               alt="img"
               borderRadius="10px"
             />

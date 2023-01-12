@@ -4,7 +4,6 @@ import { Box, Heading, Text, Image } from '@chakra-ui/react';
 import { CheckCircleIcon } from '@chakra-ui/icons';
 import { useRouter } from "next/router";
 import { trpc } from "../../utils/trpc";
-import sendEmail from "../../utils/contact-functions/contact-Email";
 
 const Success = () => {
     const session = useSession();
@@ -43,12 +42,6 @@ useEffect(() => {
                 productName: product?.title!,
                 productImage: product?.pictures[0]!,
             })
-            /* sendEmail({
-                name: session?.data?.user?.name!,
-                email: session?.data?.user?.email!,
-                subject: 'Compra realizada',
-                message: 'Su compra ha sido realizada con exito, su id de transaccion es: ' + payment_id
-            }) */
     }
 }
 }, [createNotification, payment, payment_id, product, session?.data?.userDB?.id, submit.comprobate])

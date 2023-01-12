@@ -4,8 +4,6 @@ import { useRouter } from 'next/router'
 import Admin from "../../components/adminComponents/admin";
 import ErrorPage from 'next/error'
 
-
-
 const Dashboard = () => {
   const { data: session, status } = useSession({ required: true })
   const router = useRouter()

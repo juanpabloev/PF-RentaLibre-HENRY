@@ -4,7 +4,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  FormHelperText,
   Heading,
   Input,
   Text,
@@ -60,7 +59,6 @@ export default function Contact() {
     try {
       values.message = 'E-MAIL: ' + values.email + ' / MENSAJE: ' + values.message;
       values.email = 'rentalibre2022@gmail.com';
-      console.log(values);
       sendEmail(values);
       setTouched({
         name: false,

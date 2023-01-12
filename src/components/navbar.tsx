@@ -1,11 +1,10 @@
-import { Session } from "inspector";
-import { getSession, signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 
 import styles from "../styles/navbar.module.css";
-import { RouterOutputs, trpc } from "../utils/trpc";
+import { trpc } from "../utils/trpc";
 
 import {
   Box,
@@ -145,7 +144,7 @@ export default function WithSubnavigation() {
               maxWidth={"max-content"}
               onChange={handleChangeSelect}
             >
-              {categories?.map((c, index) => (
+              {categories?.map((c:any, index:any) => (
                 <option key={index} value={c.name}>
                   {c.name}{" "}
                 </option>
@@ -291,13 +290,13 @@ export default function WithSubnavigation() {
                     <Text>
                       {notification &&
                       notification![0]!.user?.filter(
-                        (notification) => notification.read === false
+                        (notification: any) => notification.read === false
                       ).length > 0 ? (
                         <div>
                           <Badge colorScheme="red" borderRadius="full" px="2">
                             {
                               notification![0]?.user?.filter(
-                                (notification) => notification.read === false
+                                (notification:any) => notification.read === false
                               ).length
                             }
                           </Badge>
@@ -310,8 +309,8 @@ export default function WithSubnavigation() {
               <MenuList bg="white" borderColor="gray.200">
                 {notification &&
                   notification![0]!.user
-                    .filter((notification) => notification.read === false)
-                    .map((n) => (
+                    .filter((notification:any) => notification.read === false)
+                    .map((n:any) => (
                       <Link
                         href={`/productDetail/${n.notificationType[0]?.productId}`}
                         key={n.id}
@@ -341,7 +340,7 @@ export default function WithSubnavigation() {
                     ))}
                 {notification &&
                 notification![0]!.user.filter(
-                  (notification) => notification.read === false
+                  (notification:any) => notification.read === false
                 ).length === 0 ? null : (
                   <hr></hr>
                 )}
@@ -559,47 +558,6 @@ interface NavItem {
 }
 
 const NAV_ITEMS: Array<NavItem> = [
-  // {
-  //   label: "Categorías",
-  //   children: [
-  //     {
-  //       label: "Bienes de Consumo no Duraderos",
-  //       href: "/productList?category=Bienes de Consumo no Duraderos",
-  //     },
-  //     {
-  //       label: "Bienes de Equipo",
-  //       href: "/productList?category=Bienes de Equipo",
-  //     },
-  //     {
-  //       label: "Cuidado de la Salud",
-  //       href: "/productList?category=Cuidado de la Salud",
-  //     },
-  //     {
-  //       label: "Energía",
-  //       href: "/productList?category=Energía",
-  //     },
-  //     {
-  //       label: "Electrónica, Audio y Video",
-  //       href: "/productList?category=Electrónica, Audio y Video",
-  //     },
-  //     {
-  //       label: "Industrias Básicas",
-  //       href: "/productList?category=Industrias Básicas",
-  //     },
-  //     {
-  //       label: "Servicio al Consumidor",
-  //       href: "/productList?category=Servicio al Consumidor",
-  //     },
-  //     {
-  //       label: "Electrodomésticos y Aires Ac.",
-  //       href: "/productList?category=Electrodomésticos y Aires Ac.",
-  //     },
-  //     {
-  //       label: "Transportación",
-  //       href: "/productList?category=Transportación",
-  //     },
-  //   ],
-  // },
   {
     label: "Todas",
     href: "/productList",

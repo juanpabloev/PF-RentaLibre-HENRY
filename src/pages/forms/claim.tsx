@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSession, signIn, signOut, getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 import {
     Button,
@@ -7,22 +7,16 @@ import {
     FormControl,
     FormErrorMessage,
     FormLabel,
-    FormHelperText,
     Heading,
     Input,
     Text,
     Textarea,
     useToast,
-
 } from "@chakra-ui/react";
-
-
-//import sendEmail from "../utils/contact-functions/contact-Email";
 
 const initValues = { name: "", email: "", subject: "", message: "", transactionNumber: "" };
 
 const initState = { isLoading: false, error: "", values: initValues };
-
 
 export default function Claim() {
     const toast = useToast();
@@ -66,15 +60,6 @@ export default function Claim() {
             isLoading: true,
         }));
         try {
-            console.log(values);
-            //sendEmail(values);
-
-//77777777777777777777777777777777777
-
-//ACA AGREGAR LO QUE ADONDE QUERRAMOS ENVIAR LA INFO !!!!!!
-
-////////////////////////////////////////////////////
-
             setTouched({
                 name: false,
                 email: false,
@@ -106,7 +91,6 @@ export default function Claim() {
                     {error}
                 </Text>
             )}
-
             <FormLabel marginBottom={5}>Nombre: {session?.userDB.name}</FormLabel>
 
             <FormControl isRequired isInvalid={touched.transactionNumber && !values.transactionNumber} mb={5}>
@@ -121,7 +105,6 @@ export default function Claim() {
                 />
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
-
             <FormControl
                 isRequired isInvalid={touched.message && !values.message} mb={5}
             >
@@ -136,7 +119,6 @@ export default function Claim() {
                 />
                 <FormErrorMessage>Obligatorio</FormErrorMessage>
             </FormControl>
-
             <Button
                 variant="outline"
                 colorScheme="blue"
@@ -144,8 +126,7 @@ export default function Claim() {
                 disabled={
                     !values.transactionNumber || !values.message
                 }
-                onClick={onSubmit}
-            >
+                onClick={onSubmit}>
                 Enviar
             </Button>
         </Container>

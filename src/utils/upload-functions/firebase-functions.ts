@@ -8,26 +8,7 @@ import {
 
 import { storage } from "../../../firebaseConfig";
 
-import { v4 } from "uuid"; //crea random UUID- se le suma al nombre del archivo
-
-
-/// EJ: usageOfFirebaseStorage-3.tsx /// - misma carpeta
-
-// methods
-
-//se ejecuta on change
-
-// Recibe parametros obligatorios:
-/* 
-- URL para upload
-- archivo a subir
-- prefijo del archivo (string)
-
-OPCIONALES: UPDATE CALL BACK
-
---> retorna url archivo en firebase
-
- */
+import { v4 } from "uuid"; 
 
 export const uploadFile = (
   uploadToURL: string,
