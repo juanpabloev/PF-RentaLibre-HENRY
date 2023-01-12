@@ -19,12 +19,12 @@ export default function Page({}: Props, props: Props) {
   //export default function Page() {
 
   //trae la data del back
-  const { data } = trpc.product.getProducts.useQuery({ limit: 10, page: 1 });
+  const data = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data?.filter((p)=> p.disabled === false)
 
   const resCarusel = trpc.product.getProducts.useQuery({
     page: 1,
     limit: 7,
-  }).data;
+  }).data?.filter((p)=> p.disabled === false)
   //mapea la data del carrusel para mostrarla en el carrusel
   const dataCarusel = resCarusel?.map((product, index) => {
     return {

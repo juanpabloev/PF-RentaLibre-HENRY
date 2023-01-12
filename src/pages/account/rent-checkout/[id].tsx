@@ -20,12 +20,15 @@ import {
 
 import { MdLocalShipping } from "react-icons/md";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import React from "react";
 import Style from "../../../styles/id.module.css";
 
 import sendEmail from "../../../utils/contact-functions/contact-Email";
 
+function handlesignIn() {
+  signIn()
+}
 
 const validate = (input: any) => {
   const errors = {
@@ -101,7 +104,7 @@ export default function ProductDetail() {
               pending: `${process.env.NEXTAUTH_URL}pending/${id}`,
             },
             notification_url:
-            `https://rentalibre.vercel.app/success/${id}`,
+              `https://rentalibre.vercel.app/success/${id}`,
           }),
         }
       );
@@ -254,29 +257,36 @@ export default function ProductDetail() {
               </List>
             </Box>
 
-
-
           </Stack>
 
           <HStack spacing={75} justifyContent={"center"}></HStack>
           <Center>
-            <Button
-              rounded={10}
-              w={300}
-              mt={8}
-              size={"lg"}
-              py={"7"}
-              bg={useColorModeValue("teal", "gray.50")}
-              color={useColorModeValue("white", "teal")}
-              textTransform={"uppercase"}
-              _hover={{
-                transform: "translateY(2px)",
-                boxShadow: "lg",
-              }}
-              onClick={handleSubmit}
-            >
-              ¡ ALQUILAR !
-            </Button>
+
+            {session?.data?.user?.name && (
+              <Button
+                rounded={10}
+                w={300}
+                mt={8}
+                size={"lg"}
+                py={"7"}
+                colorScheme="teal"
+                textTransform={"uppercase"}
+                _hover={{
+                  transform: "translateY(2px)",
+                  boxShadow: "lg",
+                }}
+                onClick={handleSubmit}
+              >
+                ¡ ALQUILAR !
+              </Button>
+            )}
+
+            {!session?.data?.user?.name && (
+              <Button colorScheme="teal" onClick={handlesignIn}
+              >
+                INGRESAR
+              </Button>
+            )}
           </Center>
 
           {/* 

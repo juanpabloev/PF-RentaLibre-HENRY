@@ -28,26 +28,49 @@ export default function Productlist() {
   //trae del back
   const utils = trpc.useContext();
   let products: any;
-  if(products === undefined){
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [order, setOrder] = useState("");
+
+  if (products === undefined) {
     if (category || q) {
       if (!!category && !q) {
         products = trpc.product.getProductByCategory.useQuery({
           categoryName: category,
+          order,
+          limit,
+          page,
         }).data;
       } else if (!!q && !category) {
-        products = trpc.product.getProductByTitle.useQuery({ title: q }).data;
+        products = trpc.product.getProductByTitle.useQuery({
+          title: q,
+          order,
+          limit,
+          page,
+        }).data?.filter((p:any)=> p.disabled === false)
+      } else if (!!q && !category) {
+        products = trpc.product.getProductByTitle.useQuery({ title: q, order, limit, page }).data
+        ?.filter((p:any)=> p.disabled === false)
       } else {
         products = trpc.product.getProductByTitleAndCategory.useQuery({
           title: q,
           categoryName: category,
+          limit,
+          page,
+          order,
         }).data;
       }
     } else {
-      products = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data;
+      products = trpc.product.getProducts.useQuery({
+        limit,
+        page,
+        order,
+        }).data?.filter((p)=> p.disabled === false)
+      }
+    } else {
+      products = trpc.product.getProducts.useQuery({ limit: 10, page: 1 }).data?.filter((p)=> p.disabled === false)
     }
-  }
   const [data, setData] = useState<any>(undefined);
-  const [order, setOrder] = useState("Más relevantes");
 
   function getAvarage(product: any) {
     const avarage = product.rating.map((k: any) => k.stars).reduce((total: any, star: any) => total + star, 0) / product.rating.length;
@@ -55,31 +78,35 @@ export default function Productlist() {
   }
 
   function handleOrder(e: string) {
-    if(e === 'relevantes'){
+    if (e === "relevantes") {
       setOrder("Más relevantes");
       data?.sort((a: any, b: any) => {
       return getAvarage(b) - getAvarage(a);
       });
-      }else if(e === 'menor'){
+    } else if (e === "menor") {
       setOrder("Menor precio");
-      data.sort((a: any, b: any) => {
-        return a.price - b.price;
-      });
-    }else if(e === 'mayor'){
+    } else if (e === "mayor") {
       setOrder("Mayor precio");
-      data.sort((a: any, b: any) => {
-        return b.price - a.price;
-      });
     }
   }
-  
+
   //para que refresque los datos
   useEffect(() => {
-    setOrder("Más relevantes");
     setData(products);
   }, [products]);
 
   if (!data) return <p>No profile data</p>;
+
+  const handleNext = (e: any) => {
+    setPage(page + 1);
+    e.preventDefault();
+    utils.product.getProducts.invalidate();
+  };
+  const handlePrevious = (e: any) => {
+    if (page > 1) setPage(page - 1);
+    e.preventDefault();
+    utils.product.getProducts.invalidate();
+  };
 
   return (
     <div>
@@ -107,15 +134,15 @@ export default function Productlist() {
                 Ordenar por: {order}
               </MenuButton>
               <MenuList zIndex={2}>
-                <MenuItem onClick={() => handleOrder('relevantes')}>
+                <MenuItem onClick={() => handleOrder("relevantes")}>
                   Más relevantes
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem onClick={() => handleOrder('menor')}>
+                <MenuItem onClick={() => handleOrder("menor")}>
                   Menor precio
                 </MenuItem>
                 <MenuDivider />
-                <MenuItem onClick={() => handleOrder('mayor')}>
+                <MenuItem onClick={() => handleOrder("mayor")}>
                   Mayor precio
                 </MenuItem>
               </MenuList>
@@ -136,6 +163,20 @@ export default function Productlist() {
           />
         ))}
       </div>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignContent="center"
+        margin="5"
+      >
+        {page > 1 ? (
+          <Button onClick={(e) => handlePrevious(e)}>Anterior</Button>
+        ) : null}
+        <Button>{page}</Button>
+        {data?.length >= limit ? (
+          <Button onClick={(e) => handleNext(e)}>Proximo</Button>
+        ) : null}
+      </Box>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { DateRange } from "react-date-range";
 import format from "date-fns/format";
@@ -81,7 +81,7 @@ export default function DateRangeComp({
         message: `
         <h3>¿Está su artículo ${productName} disponible entre las siguientes fechas?</h3><br>
         <h4>Desde el: ${startDate}</h4>
-        <h4>Desde el:  ${endDate}</h4>
+        <h4>Hasta el: ${endDate}</h4>
         <h4>Condiciones alquiler:</h4>
         <p>Precio alquiler diario: ${productPrice}</p>
         <p>- Cantidad de dias de alquiler:${totalDays}</p>
@@ -123,9 +123,19 @@ export default function DateRangeComp({
           onClick={() => setOpen((open) => !open)}
         />
 
-        <Button colorScheme="teal" onClick={handleSendDates}>
+        {session?.data?.user?.name && (
+          <Button colorScheme="teal" onClick={handleSendDates}>
           Enviar Consulta
         </Button>
+        )}
+
+        {!session?.data?.user?.name && (
+          <Button colorScheme="teal" onClick={signIn}>
+          INGRESAR
+        </Button>
+        )}
+
+        
       </HStack>
 
       <div ref={refOne}>

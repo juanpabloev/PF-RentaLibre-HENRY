@@ -165,6 +165,11 @@ export const userRouter = router({
               buyer: true,
             },
           },
+          products: {
+            include : {
+              user: true
+            }
+          }
         },
       });
       return user;
@@ -209,6 +214,8 @@ export const userRouter = router({
   userUpdate: publicProcedure
     .input(
       z.object({
+        street: z.string().optional(),
+        houseNumber: z.string().optional(),
         userId: z.string().optional(),
         name: z.string().optional(),
         userPicture: z.string().optional(),
@@ -222,6 +229,8 @@ export const userRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const {
+        street,
+        houseNumber,
         name,
         userPicture,
         lastName,
@@ -238,6 +247,10 @@ export const userRouter = router({
         id:userId
       },
       data: {
+      streetAddress:{
+        street,
+        houseNumber
+      },
       phoneNumber,
       name,
       image:userPicture,

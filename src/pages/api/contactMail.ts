@@ -4,20 +4,7 @@ import nodemailer from "nodemailer";
 const gmail = process.env.GMAIL_ACCOUNT;
 const gmailPass = process.env.GMAIL_ACCCOUNT_PASS;
 
-//////////////////////////////////////////
-// ESTA FUNCION SE AUTOEJECUTA AL LLAMAR A LA RUTA: api/contactMail
-/* 
-
-ej:
-
-usar funcion sendMail desde:
-\src\utils\contact-functions
-
-*/
-
-///////////////////////////////////////////////////////
-
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const nodemail = async (req: NextApiRequest, res: NextApiResponse) => {
   const { name, email, message, subject } = req.body;
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -44,3 +31,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
   return res.status(200).json({ error: "" });
 };
+
+export default nodemail;
