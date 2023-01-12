@@ -15,8 +15,11 @@ import {
   useColorModeValue,
   List,
   ListItem,
+  Badge,
   Textarea,
+  IconButton,
   useToast,
+  Input,
 } from "@chakra-ui/react";
 
 import DateRangeComp from '../../components/calendar-range-picker/DateRangeComp';
@@ -26,6 +29,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Style from "../../styles/id.module.css";
+import Carusel from "../../components/Carusel";
 
 const validate = (input: any) => {
   const errors = {
@@ -197,6 +201,13 @@ export default function ProductDetail() {
     }
   };
 
+  const dataCarusel = product?.pictures.map((image, index) => {
+    return {
+      id: index,
+      picture: image,
+    };
+  });
+  
   return (
     <Container maxW={"7xl"}>
       <SimpleGrid
@@ -205,15 +216,7 @@ export default function ProductDetail() {
         py={{ base: 18, md: 24 }}
       >
         <Flex>
-          <Image
-            rounded={10}
-            alt={"product image"}
-            src={product?.pictures[0]}
-            fit={"cover"}
-            align={"center"}
-            w={"100%"}
-            h={{ base: "100%", sm: "400px", lg: "500px" }}
-          />
+        <Carusel dataCarusel={dataCarusel} />
         </Flex>
         <Stack spacing={{ base: 6, md: 10 }}>
           <Box as={"header"}>
@@ -275,6 +278,12 @@ export default function ProductDetail() {
               >
                 {product?.description}
               </Text>
+              {/* <Text fontSize={'lg'}>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  aliquid amet at delectus doloribus dolorum expedita hic, ipsum
+                  maxime modi nam officiis porro, quae, quisquam quos
+                  reprehenderit velit? Natus, totam.
+                </Text> */}
             </VStack>
             <Box>
               <Text
@@ -290,7 +299,14 @@ export default function ProductDetail() {
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
                 <List spacing={2}>
                   <ListItem>{product?.category.name}</ListItem>
+                  {/*  <ListItem>Master Chronometer Certified</ListItem>{' '}
+                    <ListItem>Tachymeter</ListItem> */}
                 </List>
+                {/* <List spacing={2}>
+                    <ListItem>Anti‑magnetic</ListItem>
+                    <ListItem>Chronometer</ListItem>
+                    <ListItem>Small seconds</ListItem>
+                  </List> */}
               </SimpleGrid>
             </Box>
             <Box>
@@ -303,14 +319,63 @@ export default function ProductDetail() {
               >
                 Usuario
               </Text>
+
               <List spacing={2}>
                 <ListItem>
+                  {/* <Text as={'span'} fontWeight={'bold'}>
+                      Between lugs:
+                    </Text>{' '} */}
                   {product?.user?.name}
                 </ListItem>
+                {/* <ListItem>
+                    <Text as={'span'} fontWeight={'bold'}>
+                      Bracelet:
+                    </Text>{' '}
+                    leather strap
+                  </ListItem>
+                  <ListItem>
+                    <Text as={'span'} fontWeight={'bold'}>
+                      Case:
+                    </Text>{' '}
+                    Steel
+                  </ListItem>
+                  <ListItem>
+                    <Text as={'span'} fontWeight={'bold'}>
+                      Case diameter:
+                    </Text>{' '}
+                    42 mm
+                  </ListItem>
+                  <ListItem>
+                    <Text as={'span'} fontWeight={'bold'}>
+                      Dial color:
+                    </Text>{' '}
+                    Black
+                  </ListItem>
+                  <ListItem>
+                    <Text as={'span'} fontWeight={'bold'}>
+                      Crystal:
+                    </Text>{' '}
+                    Domed, scratch‑resistant sapphire crystal with anti‑reflective
+                    treatment inside
+                  </ListItem>
+                  <ListItem>
+                    <Text as={'span'} fontWeight={'bold'}>
+                      Water resistance:
+                    </Text>{' '}
+                    5 bar (50 metres / 167 feet){' '}
+                  </ListItem> */}
               </List>
             </Box>
           </Stack>
+
+
+          {/* <HStack spacing={75} justifyContent={"left"}> */}
+
             <Box>
+
+              {/* AGRAGAR ACA CALENDARIO session?.data?.user?.email */}
+
+
               <div className="datePicker">
               <Text
                 fontSize={{ base: "16px", lg: "18px" }}
