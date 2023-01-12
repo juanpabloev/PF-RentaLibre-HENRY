@@ -101,7 +101,7 @@ export default function ProductDetail() {
             back_urls: {
               success: `${process.env.NEXT_PUBLIC_HOME_URL}/success/${id}`,
               failure: `${process.env.NEXT_PUBLIC_HOME_URL}/failure/${id}`,
-              pending: `${process.env.NEXT_PUBLIC_HOME_URL}pending/${id}`,
+              pending: `${process.env.NEXT_PUBLIC_HOME_URL}/pending/${id}`,
             },
             notification_url:
               `${process.env.NEXT_PUBLIC_HOME_URL}/success/${id}`,
