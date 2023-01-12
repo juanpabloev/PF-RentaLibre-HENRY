@@ -26,6 +26,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Style from "../../styles/id.module.css";
+import Carusel from "../../components/Carusel";
 
 const validate = (input: any) => {
   const errors = {
@@ -198,6 +199,13 @@ export default function ProductDetail() {
       setEdit(true);
     }
   };
+  const dataCarusel = product?.pictures.map((image, index) => {
+    return {
+      id: index,
+      picture: image,
+    };
+  });
+
 
   return (
     <Container maxW={"7xl"}>
@@ -207,15 +215,7 @@ export default function ProductDetail() {
         py={{ base: 18, md: 24 }}
       >
         <Flex>
-          <Image
-            rounded={10}
-            alt={"product image"}
-            src={product?.pictures[0]}
-            fit={"cover"}
-            align={"center"}
-            w={"100%"}
-            h={{ base: "100%", sm: "400px", lg: "500px" }}
-          />
+          <Carusel dataCarusel={dataCarusel}/>
         </Flex>
         <Stack spacing={{ base: 6, md: 10 }}>
           <Box as={"header"}>
