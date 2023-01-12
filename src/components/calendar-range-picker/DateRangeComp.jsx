@@ -55,6 +55,8 @@ export default function DateRangeComp({
   const handleSendDates = async (e) => {
     e.preventDefault();
 
+    const url = process.env.NEXT_PUBLIC_HOME_URL
+
     try {
       const differenceDays = range[0].endDate.getTime() - range[0].startDate.getTime();
       const totalDays = Math.ceil(differenceDays / (1000 * 3600 * 24));
@@ -62,7 +64,7 @@ export default function DateRangeComp({
       const startDate = format(range[0].startDate, "dd/MM/yyyy");
       const endDate = format(range[0].endDate, "dd/MM//yyyy");
 
-      const urlRentReq = `${process.env.NEXTAUTH_URL}/account/rent-request/${productId}/?totalDays=${totalDays}&totalPrice=${totalPrice}&startDate=${startDate}&endDate=${endDate}&U=${session?.data?.userDB?.id}`
+      const urlRentReq = `${url}/account/rent-request/${productId}/?totalDays=${totalDays}&totalPrice=${totalPrice}&startDate=${startDate}&endDate=${endDate}&U=${session?.data?.userDB?.id}`
 
       /* 
       //DAtos a eviar por url: 
