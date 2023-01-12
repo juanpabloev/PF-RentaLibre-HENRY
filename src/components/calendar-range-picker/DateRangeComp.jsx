@@ -87,7 +87,7 @@ export default function DateRangeComp({
         <p>- Cantidad de dias de alquiler:${totalDays}</p>
         <p>- Total a cobrar: $${totalPrice}</p>
         <p>Si usted está de acuerdo con las condiciones del sitio, las fechas y el precio, por favor haga click en el siguiente link para confirmar:</p>
-        <p> ${urlRentReq}</p><br>
+        <p> ${process.env.NEXT_PUBLIC_HOME_URL}/account/rent-request/${productId}/?totalDays=${totalDays}&totalPrice=${totalPrice}&startDate=${startDate}&endDate=${endDate}&U=${session?.data?.userDB?.id}</p><br>
         <p> Saudos, El equipo de rentalibre.</p>
       `,
       };

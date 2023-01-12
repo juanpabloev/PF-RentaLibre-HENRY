@@ -99,12 +99,12 @@ export default function ProductDetail() {
               },
             ],
             back_urls: {
-              success: `${process.env.NEXTAUTH_URL}/success/${id}`,
-              failure: `${process.env.NEXTAUTH_URL}/failure/${id}`,
-              pending: `${process.env.NEXTAUTH_URL}pending/${id}`,
+              success: `${process.env.NEXT_PUBLIC_HOME_URL}/success/${id}`,
+              failure: `${process.env.NEXT_PUBLIC_HOME_URL}/failure/${id}`,
+              pending: `${process.env.NEXT_PUBLIC_HOME_URL}pending/${id}`,
             },
             notification_url:
-              `https://rentalibre.vercel.app/success/${id}`,
+              `${process.env.NEXT_PUBLIC_HOME_URL}/success/${id}`,
           }),
         }
       );
