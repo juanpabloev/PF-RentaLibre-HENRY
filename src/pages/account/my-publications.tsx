@@ -1,3 +1,4 @@
+import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import CardProductMyProduct from "../../components/CardProduct-MyProduct";
 import styles from "../../styles/productList.module.css";
 import React, { useState, useEffect } from "react";
@@ -11,26 +12,34 @@ import {
 import { RxCaretDown as ChevronDownIcon } from "react-icons/rx";
 
 export default function MyPublications() {
+  const { data: session, status } = useSession({ required: true })
   const products = trpc.user.getUser.useQuery({}).data?.products
 
-  return (
-    <div>
-      <Center>
-      <div className={styles.cardsDivProdHome}>
-        {products?.map((p: any) => (
-          <CardProductMyProduct
-          deleted={p.deleted}
-          disabled={p.disabled}
-            productName={p.title}
-            photo={p.pictures[0]}
-            productPrice={p.price}
-            rating={p.rating}
-            id={p.id}
-            key={p.id}
-          />
-        ))}
+  const router = useRouter()
+
+  if (status === "authenticated" && !session?.userDB?.banned) {
+
+    return (
+      <div>
+        <Center>
+          <div className={styles.cardsDivProdHome}>
+            {products?.map((p: any) => (
+              <CardProductMyProduct
+                deleted={p.deleted}
+                disabled={p.disabled}
+                productName={p.title}
+                photo={p.pictures[0]}
+                productPrice={p.price}
+                rating={p.rating}
+                id={p.id}
+                key={p.id}
+              />
+            ))}
+          </div>
+        </Center>
       </div>
-      </Center>
-    </div>
-  );
+    );
+  } else {
+    return router.push('/access-denied')
+  }
 }

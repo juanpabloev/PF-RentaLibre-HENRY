@@ -121,152 +121,153 @@ export default function ProductDetail() {
     }
   };
 
+  if (!session?.data?.userDB?.banned) {
 
-  return (
-    <Container maxW={"7xl"}>
-      <SimpleGrid
-        columns={{ base: 1, lg: 2 }}
-        spacing={{ base: 8, md: 10 }}
-        py={{ base: 18, md: 24 }}
-      >
-        <Flex>
-          <Image
-            rounded={10}
-            alt={"product image"}
-            src={product?.pictures[0]}
-            fit={"cover"}
-            align={"center"}
-            w={"100%"}
-            h={{ base: "100%", sm: "400px", lg: "500px" }}
-          />
-        </Flex>
-        <Stack spacing={{ base: 6, md: 10 }}>
-          <Box as={"header"}>
-            <Heading
-              lineHeight={1.1}
-              fontWeight={600}
-              fontSize={{ base: "2xl", sm: "4xl", lg: "5xl" }}
-            >
-              {product?.title}
-            </Heading>
-            <Text
-              color={useColorModeValue("gray.900", "gray.400")}
-              fontWeight={300}
-              fontSize={"2xl"}
-            >
-              {"Valor diario: $" + product?.price}
-            </Text>
-          </Box>
-
-          <Stack
-            spacing={{ base: 4, sm: 6 }}
-            direction={"column"}
-            divider={
-              <StackDivider
-                borderColor={useColorModeValue("gray.200", "gray.600")}
-              />
-            }
-          >
-            <Box>
+    return (
+      <Container maxW={"7xl"}>
+        <SimpleGrid
+          columns={{ base: 1, lg: 2 }}
+          spacing={{ base: 8, md: 10 }}
+          py={{ base: 18, md: 24 }}
+        >
+          <Flex>
+            <Image
+              rounded={10}
+              alt={"product image"}
+              src={product?.pictures[0]}
+              fit={"cover"}
+              align={"center"}
+              w={"100%"}
+              h={{ base: "100%", sm: "400px", lg: "500px" }}
+            />
+          </Flex>
+          <Stack spacing={{ base: 6, md: 10 }}>
+            <Box as={"header"}>
+              <Heading
+                lineHeight={1.1}
+                fontWeight={600}
+                fontSize={{ base: "2xl", sm: "4xl", lg: "5xl" }}
+              >
+                {product?.title}
+              </Heading>
               <Text
-                fontSize={{ base: "16px", lg: "18px" }}
-                color={useColorModeValue("yellow.500", "yellow.300")}
-                fontWeight={"500"}
-                textTransform={"uppercase"}
-                mb={"4"}
-              >Inicio del Alquiler:
+                color={useColorModeValue("gray.900", "gray.400")}
+                fontWeight={300}
+                fontSize={"2xl"}
+              >
+                {"Valor diario: $" + product?.price}
               </Text>
-              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
+            </Box>
+
+            <Stack
+              spacing={{ base: 4, sm: 6 }}
+              direction={"column"}
+              divider={
+                <StackDivider
+                  borderColor={useColorModeValue("gray.200", "gray.600")}
+                />
+              }
+            >
+              <Box>
+                <Text
+                  fontSize={{ base: "16px", lg: "18px" }}
+                  color={useColorModeValue("yellow.500", "yellow.300")}
+                  fontWeight={"500"}
+                  textTransform={"uppercase"}
+                  mb={"4"}
+                >Inicio del Alquiler:
+                </Text>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
+                  <List spacing={2}>
+                    <ListItem>{startDate}</ListItem>
+                  </List>
+                </SimpleGrid>
+              </Box>
+
+              <Box>
+                <Text
+                  fontSize={{ base: "16px", lg: "18px" }}
+                  color={useColorModeValue("yellow.500", "yellow.300")}
+                  fontWeight={"500"}
+                  textTransform={"uppercase"}
+                  mb={"4"}
+                >FIN DEL ALQUILER:
+                </Text>
                 <List spacing={2}>
-                  <ListItem>{startDate}</ListItem>
+                  <ListItem>
+                    {endDate}
+                  </ListItem>
                 </List>
-              </SimpleGrid>
-            </Box>
+              </Box>
 
-            <Box>
-              <Text
-                fontSize={{ base: "16px", lg: "18px" }}
-                color={useColorModeValue("yellow.500", "yellow.300")}
-                fontWeight={"500"}
-                textTransform={"uppercase"}
-                mb={"4"}
-              >FIN DEL ALQUILER:
-              </Text>
-              <List spacing={2}>
-                <ListItem>
-                  {endDate}
-                </ListItem>
-              </List>
-            </Box>
+              <Box>
+                <Text
+                  fontSize={{ base: "16px", lg: "18px" }}
+                  color={useColorModeValue("yellow.500", "yellow.300")}
+                  fontWeight={"500"}
+                  textTransform={"uppercase"}
+                  mb={"4"}
+                >CANTIDAD DE DIAS:
+                </Text>
+                <List spacing={2}>
+                  <ListItem>
+                    {totalDays} días
+                  </ListItem>
+                </List>
+              </Box>
 
-            <Box>
-              <Text
-                fontSize={{ base: "16px", lg: "18px" }}
-                color={useColorModeValue("yellow.500", "yellow.300")}
-                fontWeight={"500"}
-                textTransform={"uppercase"}
-                mb={"4"}
-              >CANTIDAD DE DIAS:
-              </Text>
-              <List spacing={2}>
-                <ListItem>
-                  {totalDays} días
-                </ListItem>
-              </List>
-            </Box>
-
-            <Box>
-              <Text
-                fontSize={{ base: "16px", lg: "18px" }}
-                color={useColorModeValue("yellow.500", "yellow.300")}
-                fontWeight={"500"}
-                textTransform={"uppercase"}
-                mb={"4"}
-              >PRECIO TOTAL A ABONAR POR EL LOCATARIO:
-              </Text>
-              <List spacing={2}>
-                <ListItem>
-                  ${totalPrice}
-                </ListItem>
-              </List>
-            </Box>
+              <Box>
+                <Text
+                  fontSize={{ base: "16px", lg: "18px" }}
+                  color={useColorModeValue("yellow.500", "yellow.300")}
+                  fontWeight={"500"}
+                  textTransform={"uppercase"}
+                  mb={"4"}
+                >PRECIO TOTAL A ABONAR POR EL LOCATARIO:
+                </Text>
+                <List spacing={2}>
+                  <ListItem>
+                    ${totalPrice}
+                  </ListItem>
+                </List>
+              </Box>
 
 
 
-          </Stack>
+            </Stack>
 
-          <HStack spacing={75} justifyContent={"center"}></HStack>
-          <Center>
+            <HStack spacing={75} justifyContent={"center"}></HStack>
+            <Center>
 
-            {session?.data?.user?.name && (
-              <Button
-                rounded={10}
-                w={300}
-                mt={8}
-                size={"lg"}
-                py={"7"}
-                colorScheme="teal"
-                textTransform={"uppercase"}
-                _hover={{
-                  transform: "translateY(2px)",
-                  boxShadow: "lg",
-                }}
-                onClick={handleSubmit}
-              >
-                AUTORIZAR LA OPERACION
-              </Button>
-            )}
+              {session?.data?.user?.name && (
+                <Button
+                  rounded={10}
+                  w={300}
+                  mt={8}
+                  size={"lg"}
+                  py={"7"}
+                  colorScheme="teal"
+                  textTransform={"uppercase"}
+                  _hover={{
+                    transform: "translateY(2px)",
+                    boxShadow: "lg",
+                  }}
+                  onClick={handleSubmit}
+                >
+                  AUTORIZAR LA OPERACION
+                </Button>
+              )}
 
-            {!session?.data?.user?.name && (
-              <Button colorScheme="teal" onClick={handlesignIn}
-              >
-                INGRESAR
-              </Button>
-            )}
+              {!session?.data?.user?.name && (
+                <Button colorScheme="teal" onClick={handlesignIn}
+                >
+                  INGRESAR
+                </Button>
+              )}
 
-          </Center>
+            </Center>
 
-          {/* 
+            {/* 
           
 //ESTA SERIA LA LOGICA CON AVAILABLE DESDE LA BASE DE DATOS - AHORA VA POR DEFECTO VIA QUERY
           
@@ -296,15 +297,18 @@ export default function ProductDetail() {
             )}
           </Button> */}
 
-          <Stack direction="row" alignItems="center" justifyContent={"center"}>
-            <MdLocalShipping />
-            <Text>Consultar Envío</Text>
+            <Stack direction="row" alignItems="center" justifyContent={"center"}>
+              <MdLocalShipping />
+              <Text>Consultar Envío</Text>
+            </Stack>
           </Stack>
-        </Stack>
-      </SimpleGrid>
-      <hr></hr>
+        </SimpleGrid>
+        <hr></hr>
 
-      <hr />
-    </Container>
-  );
+        <hr />
+      </Container>
+    )
+  } else {
+    return router.push('/access-denied')
+  }
 }

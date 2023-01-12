@@ -192,7 +192,7 @@ export default function AddPublication() {
                 onUpdateUpload(snapshot, file.name)
             );
         });
-        const ls = await Promise.all(promises); 
+        const ls = await Promise.all(promises);
 
         setState((prev) => ({
             ...prev,
@@ -283,219 +283,224 @@ export default function AddPublication() {
         }
     };
 
-    return (
-        <Container maxW="450px" mt={12}>
-            <Heading marginBottom={30} textAlign='center'>Publicar Artículo</Heading>
-            {error && (
-                <Text color="red.300" my={4} fontSize="xl">
-                    {error}
-                </Text>
-            )}
+    if (status === "authenticated" && !session?.userDB?.banned) {
 
-            <FormLabel marginBottom={5}>Nombre: {session?.userDB.name}</FormLabel>
-            <FormLabel marginBottom={5}>E-mail: {session?.userDB.email}</FormLabel>
-            {session?.userDB.phoneNumber &&
-                <FormLabel marginBottom={5}>Teléfono: {session?.userDB.phoneNumber}</FormLabel>
-            }
-            {!session?.userDB.phoneNumber &&
-                <Text color="red.500" fontSize="md" marginBottom={5}
-                >Debe proporcionar teléfono, edite perfil para continuar</Text>
-            }
-            {session?.userDB.streetAddress &&
-                <FormLabel marginBottom={5}>Domicilio: {session?.userDB.streetAddress.street} {session?.userDB.streetAddress.houseNumber}</FormLabel>
-            }
-            {!session?.userDB.streetAddress &&
-                <Text color="red.500" fontSize="md" marginBottom={5}
-                >Debe proporcionar una domicilio, edite perfil para continuar</Text>
-            }
-            <FormLabel marginBottom={5}>¿Datos Correctos?</FormLabel>
-            <Center marginBottom={10}>
+        return (
+            <Container maxW="450px" mt={12}>
+                <Heading marginBottom={30} textAlign='center'>Publicar Artículo</Heading>
+                {error && (
+                    <Text color="red.300" my={4} fontSize="xl">
+                        {error}
+                    </Text>
+                )}
+
+                <FormLabel marginBottom={5}>Nombre: {session?.userDB.name}</FormLabel>
+                <FormLabel marginBottom={5}>E-mail: {session?.userDB.email}</FormLabel>
+                {session?.userDB.phoneNumber &&
+                    <FormLabel marginBottom={5}>Teléfono: {session?.userDB.phoneNumber}</FormLabel>
+                }
+                {!session?.userDB.phoneNumber &&
+                    <Text color="red.500" fontSize="md" marginBottom={5}
+                    >Debe proporcionar teléfono, edite perfil para continuar</Text>
+                }
+                {session?.userDB.streetAddress &&
+                    <FormLabel marginBottom={5}>Domicilio: {session?.userDB.streetAddress.street} {session?.userDB.streetAddress.houseNumber}</FormLabel>
+                }
+                {!session?.userDB.streetAddress &&
+                    <Text color="red.500" fontSize="md" marginBottom={5}
+                    >Debe proporcionar una domicilio, edite perfil para continuar</Text>
+                }
+                <FormLabel marginBottom={5}>¿Datos Correctos?</FormLabel>
+                <Center marginBottom={10}>
                     <Button colorScheme='teal' size='md' onClick={() => router.push('/account/profile')}>
                         Editar Perfil
                     </Button>
-            </Center>
-
-            <FormControl isRequired isInvalid={touched.category && !values.category} mb={5}>
-                <FormLabel>Categoría</FormLabel>
-                <Select
-                    variant='filled'
-                    placeholder='Elegir'
-                    name="category"
-                    errorBorderColor="red.300"
-                    value={values.category}
-                    onChange={handleSelect}
-                    onBlur={onBlur}
-                >
-                    {categoriesDB?.sort().map((c: any) => (
-                        <option value={c.id} key={c.id}>{c.name}</option>
-                    ))}
-                </Select>
-                <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl>
-
-            <FormControl isRequired isInvalid={touched.title && !values.title} mb={5}>
-                <FormLabel>Título</FormLabel>
-                <Input
-                    type="text"
-                    name="title"
-                    errorBorderColor="red.300"
-                    value={values.title}
-                    onChange={handleChange}
-                    onBlur={onBlur}
-                />
-                {values.title.length > 60 && (<Text color="red.500" fontSize="sm" marginTop={2}>Max 60 caracteres - {values.title.length} / 60</Text>)}
-                <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl>
-
-            <FormControl isRequired isInvalid={touched.pictures && !values.pictures} mb={5}>
-
-                {values?.pictures.length < 100 && (
-                    <FormLabel marginBottom={3} fontWeight='semibold'>Seleccione entre 1 y 4 fotos</FormLabel>)}
-
-                {values?.pictures.length !== 0 && (
-                    <Text marginBottom={3} fontWeight='semibold'>Cantidad Fotos: {values.pictures.length}</Text>)}
-
-                {values?.pictures.length > 4 && (
-                    <Text marginBottom={3} fontWeight='semibold' color="red.300">
-                        ¡NO PUEDE SELECCIONAR MAS DE 4 FOTOS!</Text>)}
-
-                <input
-                    accept="image/*"
-                    multiple
-                    onChange={handleMultiple}
-                    type="file"
-                    className={styles.customFinput}
-                />
-                <Center>
-                    <Stack direction='row' marginTop={7}>
-                        {Object.values(statusObject).map((ob: any) => {
-                            return (
-                                <Box key={v4()}>
-                                    <Image
-                                        boxSize='150px'
-                                        borderRadius={8}
-                                        objectFit='cover'
-                                        src={ob.preview}
-                                        key={v4()}
-                                        alt="preview"
-                                    />
-                                    <p>{ob.progress}%</p>
-                                </Box>
-                            );
-                        })}
-                    </Stack>
                 </Center>
+
+                <FormControl isRequired isInvalid={touched.category && !values.category} mb={5}>
+                    <FormLabel>Categoría</FormLabel>
+                    <Select
+                        variant='filled'
+                        placeholder='Elegir'
+                        name="category"
+                        errorBorderColor="red.300"
+                        value={values.category}
+                        onChange={handleSelect}
+                        onBlur={onBlur}
+                    >
+                        {categoriesDB?.sort().map((c: any) => (
+                            <option value={c.id} key={c.id}>{c.name}</option>
+                        ))}
+                    </Select>
+                    <FormErrorMessage>Obligatorio</FormErrorMessage>
+                </FormControl>
+
+                <FormControl isRequired isInvalid={touched.title && !values.title} mb={5}>
+                    <FormLabel>Título</FormLabel>
+                    <Input
+                        type="text"
+                        name="title"
+                        errorBorderColor="red.300"
+                        value={values.title}
+                        onChange={handleChange}
+                        onBlur={onBlur}
+                    />
+                    {values.title.length > 60 && (<Text color="red.500" fontSize="sm" marginTop={2}>Max 60 caracteres - {values.title.length} / 60</Text>)}
+                    <FormErrorMessage>Obligatorio</FormErrorMessage>
+                </FormControl>
+
+                <FormControl isRequired isInvalid={touched.pictures && !values.pictures} mb={5}>
+
+                    {values?.pictures.length < 100 && (
+                        <FormLabel marginBottom={3} fontWeight='semibold'>Seleccione entre 1 y 4 fotos</FormLabel>)}
+
+                    {values?.pictures.length !== 0 && (
+                        <Text marginBottom={3} fontWeight='semibold'>Cantidad Fotos: {values.pictures.length}</Text>)}
+
+                    {values?.pictures.length > 4 && (
+                        <Text marginBottom={3} fontWeight='semibold' color="red.300">
+                            ¡NO PUEDE SELECCIONAR MAS DE 4 FOTOS!</Text>)}
+
+                    <input
+                        accept="image/*"
+                        multiple
+                        onChange={handleMultiple}
+                        type="file"
+                        className={styles.customFinput}
+                    />
+                    <Center>
+                        <Stack direction='row' marginTop={7}>
+                            {Object.values(statusObject).map((ob: any) => {
+                                return (
+                                    <Box key={v4()}>
+                                        <Image
+                                            boxSize='150px'
+                                            borderRadius={8}
+                                            objectFit='cover'
+                                            src={ob.preview}
+                                            key={v4()}
+                                            alt="preview"
+                                        />
+                                        <p>{ob.progress}%</p>
+                                    </Box>
+                                );
+                            })}
+                        </Stack>
+                    </Center>
+
+                    <Center>
+                        <Button
+                            marginBottom={4}
+                            marginTop={7}
+                            colorScheme='teal'
+                            size='md'
+                            onClick={(handleResetPictures)}>
+                            Eliminar Fotos
+                        </Button>
+                    </Center>
+
+                    <FormErrorMessage>Obligatorio</FormErrorMessage>
+                </FormControl>
+
+                <div className="Spinner">
+                    {loading && (
+                        <Image
+                            alt="spinner"
+                            width="200"
+                            src="https://c.tenor.com/I6kN-6X7nhAAAAAi/loading-buffering.gif"
+                        />
+                    )}
+                </div>
+
+                <FormControl isRequired isInvalid={touched.brand && !values.brand} mb={5}>
+                    <FormLabel>Marca</FormLabel>
+                    <Input
+                        type="text"
+                        name="brand"
+                        errorBorderColor="red.300"
+                        value={values.brand}
+                        onChange={handleChange}
+                        onBlur={onBlur}
+                    />
+                    {values.brand.length > 30 && (<Text color="red.500" fontSize="sm" marginTop={2}>Max 30 caracteres - {values.brand.length} / 30</Text>)}
+                    <FormErrorMessage>Obligatorio</FormErrorMessage>
+                </FormControl>
+
+                <FormControl isRequired isInvalid={touched.model && !values.model} mb={5}>
+                    <FormLabel>Modelo</FormLabel>
+                    <Input
+                        type="text"
+                        name="model"
+                        errorBorderColor="red.300"
+                        value={values.model}
+                        onChange={handleChange}
+                        onBlur={onBlur}
+                    />
+                    {values.model.length > 30 && (<Text color="red.500" fontSize="sm" marginTop={2}>Max 30 caracteres - {values.model.length} / 30</Text>)}
+                    <FormErrorMessage>Obligatorio</FormErrorMessage>
+                </FormControl>
+
+                <FormControl isRequired isInvalid={touched.price && !values.price} mb={5}>
+                    <FormLabel>Precio</FormLabel>
+                    <Input
+                        type="number"
+                        name="price"
+                        errorBorderColor="red.300"
+                        value={values.price}
+                        onChange={handleChange}
+                        onBlur={onBlur}
+                    />
+                    {values.price < 80 && values.price > 0 && (<Text color="red.500" fontSize="sm" marginTop={2}>El precio debe ser mayor a $80</Text>)}
+                    <FormErrorMessage>Obligatorio</FormErrorMessage>
+                </FormControl>
+
+                <FormControl isRequired isInvalid={touched.securityDeposit && !values.securityDeposit} mb={5}>
+                    <FormLabel>Seña</FormLabel>
+                    <Input
+                        type="number"
+                        name="securityDeposit"
+                        errorBorderColor="red.300"
+                        value={values.securityDeposit}
+                        onChange={handleChange}
+                        onBlur={onBlur}
+                    />
+                    {values.securityDeposit < (values.price * 8) && values.securityDeposit > 0 && (<Text color="red.500" fontSize="sm" marginTop={2}>El precio debe ser mayor a ${values.price * 8}</Text>)}
+                    <FormErrorMessage>Obligatorio</FormErrorMessage>
+                </FormControl>
+
+                <FormControl
+                    isRequired isInvalid={touched.description && !values.description} mb={5}
+                >
+                    <FormLabel>Descripción</FormLabel>
+                    <Textarea
+                        name="description"
+                        rows={6}
+                        errorBorderColor="red.300"
+                        value={values.description}
+                        onChange={handleChange}
+                        onBlur={onBlur}
+                    />
+                    <FormErrorMessage>Obligatorio</FormErrorMessage>
+                </FormControl>
 
                 <Center>
                     <Button
-                        marginBottom={4}
-                        marginTop={7}
-                        colorScheme='teal'
-                        size='md'
-                        onClick={(handleResetPictures)}>
-                        Eliminar Fotos
+                        variant="outline"
+                        colorScheme="blue"
+                        isLoading={isLoading}
+                        disabled={
+                            !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500 || !values.pictures || values.pictures.length > 4 || values.pictures.length === 0 || !session?.userDB.phoneNumber || !session?.userDB.streetAddress
+                        }
+                        onClick={onSubmit}
+                        marginBottom={10}
+                    >
+                        Publicar
                     </Button>
                 </Center>
-
-                <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl>
-
-            <div className="Spinner">
-                {loading && (
-                    <Image
-                        alt="spinner"
-                        width="200"
-                        src="https://c.tenor.com/I6kN-6X7nhAAAAAi/loading-buffering.gif"
-                    />
-                )}
-            </div>
-
-            <FormControl isRequired isInvalid={touched.brand && !values.brand} mb={5}>
-                <FormLabel>Marca</FormLabel>
-                <Input
-                    type="text"
-                    name="brand"
-                    errorBorderColor="red.300"
-                    value={values.brand}
-                    onChange={handleChange}
-                    onBlur={onBlur}
-                />
-                {values.brand.length > 30 && (<Text color="red.500" fontSize="sm" marginTop={2}>Max 30 caracteres - {values.brand.length} / 30</Text>)}
-                <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl>
-
-            <FormControl isRequired isInvalid={touched.model && !values.model} mb={5}>
-                <FormLabel>Modelo</FormLabel>
-                <Input
-                    type="text"
-                    name="model"
-                    errorBorderColor="red.300"
-                    value={values.model}
-                    onChange={handleChange}
-                    onBlur={onBlur}
-                />
-                {values.model.length > 30 && (<Text color="red.500" fontSize="sm" marginTop={2}>Max 30 caracteres - {values.model.length} / 30</Text>)}
-                <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl>
-
-            <FormControl isRequired isInvalid={touched.price && !values.price} mb={5}>
-                <FormLabel>Precio</FormLabel>
-                <Input
-                    type="number"
-                    name="price"
-                    errorBorderColor="red.300"
-                    value={values.price}
-                    onChange={handleChange}
-                    onBlur={onBlur}
-                />
-                {values.price < 80 && values.price > 0 && (<Text color="red.500" fontSize="sm" marginTop={2}>El precio debe ser mayor a $80</Text>)}
-                <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl>
-
-            <FormControl isRequired isInvalid={touched.securityDeposit && !values.securityDeposit} mb={5}>
-                <FormLabel>Seña</FormLabel>
-                <Input
-                    type="number"
-                    name="securityDeposit"
-                    errorBorderColor="red.300"
-                    value={values.securityDeposit}
-                    onChange={handleChange}
-                    onBlur={onBlur}
-                />
-                {values.securityDeposit < (values.price * 8) && values.securityDeposit > 0 && (<Text color="red.500" fontSize="sm" marginTop={2}>El precio debe ser mayor a ${values.price * 8}</Text>)}
-                <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl>
-
-            <FormControl
-                isRequired isInvalid={touched.description && !values.description} mb={5}
-            >
-                <FormLabel>Descripción</FormLabel>
-                <Textarea
-                    name="description"
-                    rows={6}
-                    errorBorderColor="red.300"
-                    value={values.description}
-                    onChange={handleChange}
-                    onBlur={onBlur}
-                />
-                <FormErrorMessage>Obligatorio</FormErrorMessage>
-            </FormControl>
-
-            <Center>
-                <Button
-                    variant="outline"
-                    colorScheme="blue"
-                    isLoading={isLoading}
-                    disabled={
-                        !values.title || values.title.length > 60 || !values.brand || values.brand.length > 30 || !values.model || values.model.length > 30 || !values.description || !values.category || !values.price || values.price < 80 || !values.securityDeposit || values.securityDeposit < 3500 || !values.pictures || values.pictures.length > 4 || values.pictures.length === 0 || !session?.userDB.phoneNumber || !session?.userDB.streetAddress
-                    }
-                    onClick={onSubmit}
-                    marginBottom={10}
-                >
-                    Publicar
-                </Button>
-            </Center>
-        </Container>
-    );
+            </Container>
+        );
+    } else {
+        return router.push('/access-denied')
+    }
 
 }
